@@ -2,8 +2,31 @@ services:
   personal-finance:
     build: .
     ports:
-      - "8500:8500"
+      - "${SERVER_PORT}:${SERVER_PORT}"
     env_file:
       - .env
+    depends_on:
+      - personal-finance-db
     networks:
+      - personal_finance_net
       - app-network
+
+  # DB
+  personal-finance-db:
+    image: postgres:15
+    ports:
+      - "${DB_PORT_EXTERNAL}:${DB_PORT}"
+    env_file:
+      - .env
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - personal_finance_net
+volumes:
+  pgdata:
+
+networks:
+  personal_finance_net:
+    driver: bridge
+  app-network:
+    external: true
