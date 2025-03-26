@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class CurrencyType {
+public class Currency {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
@@ -23,17 +23,17 @@ public class CurrencyType {
 	private String name;
 	private String shortName;
 
-	public CurrencyType withId(UUID id) {
+	public Currency withId(UUID id) {
 		this.setId(id);
 		return this;
 	}
 
-	public CurrencyType withName(String name) {
+	public Currency withName(String name) {
 		this.setName(name);
 		return this;
 	}
 
-	public CurrencyType withShortName(String shortName) {
+	public Currency withShortName(String shortName) {
 		this.setShortName(shortName);
 		return this;
 	}

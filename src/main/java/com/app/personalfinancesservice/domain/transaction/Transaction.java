@@ -3,7 +3,7 @@ package com.app.personalfinancesservice.domain.transaction;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import com.app.personalfinancesservice.domain.Currency.CurrencyType;
+import com.app.personalfinancesservice.domain.Currency.Currency;
 import com.app.personalfinancesservice.domain.budget.Budget;
 import com.app.personalfinancesservice.domain.transaction.transactiontype.TransactionType;
 import jakarta.persistence.Column;
@@ -38,11 +38,11 @@ public class Transaction {
 	private Budget budget;
 
 	@OneToOne
-	@JoinColumn(name = "currency_type_id", referencedColumnName = "id", nullable = false, updatable = true)
-	private CurrencyType currency;
+	@JoinColumn(name = "currency_id", referencedColumnName = "id", nullable = false)
+	private Currency currency;
 
 	@OneToOne
-	@JoinColumn(name = "transaction_type_id", referencedColumnName = "id", nullable = false, updatable = true)
+	@JoinColumn(name = "transaction_type_id", referencedColumnName = "id", nullable = false)
 	private TransactionType transactionType;
 
 	private String name;
@@ -68,7 +68,7 @@ public class Transaction {
 		return this;
 	}
 
-	public Transaction withCurrency(CurrencyType currency) {
+	public Transaction withCurrency(Currency currency) {
 		this.setCurrency(currency);
 		return this;
 	}
