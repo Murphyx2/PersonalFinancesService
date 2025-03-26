@@ -22,6 +22,12 @@ public class Currency {
 
 	private String name;
 	private String shortName;
+	private String code;
+
+	public Currency withCode(String code) {
+		this.setCode(code);
+		return this;
+	}
 
 	public Currency withId(UUID id) {
 		this.setId(id);
