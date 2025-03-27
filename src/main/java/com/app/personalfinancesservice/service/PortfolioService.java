@@ -2,6 +2,8 @@ package com.app.personalfinancesservice.service;
 
 import java.util.UUID;
 
+import org.springframework.stereotype.Service;
+
 import com.app.personalfinancesservice.converters.PortfolioConverter;
 import com.app.personalfinancesservice.domain.portfolio.Portfolio;
 import com.app.personalfinancesservice.domain.portfolio.input.CreatePortfolioRequest;
@@ -17,6 +19,7 @@ import com.app.personalfinancesservice.exceptions.CreateNewPortfolioException;
 import com.app.personalfinancesservice.exceptions.InvalidUserIdException;
 import com.app.personalfinancesservice.repository.PortfolioRepository;
 
+@Service
 public class PortfolioService implements PortfolioServiceBase {
 
 	private static final String EXCEPTION_LABEL = "CREATE_PORTFOLIO";
@@ -37,6 +40,7 @@ public class PortfolioService implements PortfolioServiceBase {
 		try {
 			portfolio = repository.save(PortfolioConverter.convert(request));
 		} catch (Exception e) {
+			// TODO: Fix error message in the logging, It's not sending exception messages to the logging.
 			throw new CreateNewPortfolioException(EXCEPTION_LABEL, e.getMessage());
 		}
 
