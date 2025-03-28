@@ -1,7 +1,7 @@
 # Default Configuration
 spring:
   application:
-    name: PersonalFinancesService
+    name: personal-finance
   datasource:
     url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${POSTGRES_DB:personal_finance_db}
     username: ${POSTGRES_USER:postgres}
@@ -24,7 +24,7 @@ eureka:
 ---
 spring:
   application:
-    name: PersonalFinancesService
+    name: personal-finance
   config:
     activate:
       on-profile: dev
@@ -37,7 +37,7 @@ spring:
     hibernate:
       ddl-auto: update
 server:
-    port: ${DEV_SERVER:8400}
+    port: ${SERVER_PORT:8400}
 
 eureka:
   client:

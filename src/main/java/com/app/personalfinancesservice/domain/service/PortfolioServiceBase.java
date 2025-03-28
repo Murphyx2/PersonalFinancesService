@@ -13,9 +13,9 @@ public interface PortfolioServiceBase {
 
 	CreatePortfolioResponse createPortfolio(CreatePortfolioRequest request);
 
+	DeletePortfolioResponse deletePortfolio(DeletePortfolioRequest request);
+
 	GetPortfolioResponse getPortfolio(GetPortfolioRequest request);
 
 	UpdatePortfolioResponse updatePortfolio(UpdatePortfolioRequest request);
-
-	DeletePortfolioResponse deletePortfolio(DeletePortfolioRequest request);
 }
