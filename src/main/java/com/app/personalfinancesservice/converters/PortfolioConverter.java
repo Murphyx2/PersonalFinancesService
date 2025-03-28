@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import com.app.personalfinancesservice.domain.portfolio.Portfolio;
 import com.app.personalfinancesservice.domain.portfolio.input.CreatePortfolioRequest;
+import com.app.personalfinancesservice.domain.portfolio.output.CreatePortfolioResponse;
 
 public class PortfolioConverter {
 
@@ -20,6 +21,16 @@ public class PortfolioConverter {
 		}
 
 		return portfolio;
+
+	}
+
+	public static CreatePortfolioResponse convert(Portfolio portfolio) {
+		return new CreatePortfolioResponse() //
+				.withId(portfolio.getId()) //
+				.withName(portfolio.getName()) //
+				.withDescription(portfolio.getDescription()) //
+				.withCreated(portfolio.getCreated()) //
+				;
 
 	}
 

@@ -7,12 +7,13 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.app.personalfinancesservice.domain.http.HttpRoutes;
 import com.app.personalfinancesservice.domain.portfolio.input.CreatePortfolioRequest;
 import com.app.personalfinancesservice.domain.portfolio.output.CreatePortfolioResponse;
 import com.app.personalfinancesservice.service.PortfolioService;
 
 @RestController
-@RequestMapping("/api/personal-finances")
+@RequestMapping(HttpRoutes.PORTFOLIO)
 public class PortfolioController {
 
 	private final PortfolioService portfolioService;

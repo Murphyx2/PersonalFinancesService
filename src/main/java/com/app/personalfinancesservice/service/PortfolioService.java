@@ -44,7 +44,7 @@ public class PortfolioService implements PortfolioServiceBase {
 			throw new CreateNewPortfolioException(EXCEPTION_LABEL, e.getMessage());
 		}
 
-		return new CreatePortfolioResponse().withPortfolio(portfolio);
+		return  PortfolioConverter.convert(portfolio);
 	}
 
 	public CreatePortfolioResponse createPortfolio(String userId, CreatePortfolioRequest request) {
