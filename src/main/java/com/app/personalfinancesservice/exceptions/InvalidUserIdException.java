@@ -8,7 +8,7 @@ public class InvalidUserIdException extends RuntimeException {
 	private final String fieldValue;
 
 	public InvalidUserIdException(String fieldName, String fieldValue) {
-		super("Invalid UserId provided");
+		super("Invalid User ID");
 		this.fieldName = fieldName;
 		this.fieldValue = fieldValue;
 	}
