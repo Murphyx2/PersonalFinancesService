@@ -9,17 +9,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetPortfolioRequest {
+public class GetAllPortfolioRequest {
 
 	private String userId;
-	private String portfolioId;
 
-	public GetPortfolioRequest withPortfolioId(String portfolioId) {
-		this.setPortfolioId(portfolioId);
-		return this;
-	}
-
-	public GetPortfolioRequest withUserId(String userId) {
+	public GetAllPortfolioRequest withUserId(String userId) {
 		this.setUserId(userId);
 		return this;
 	}
