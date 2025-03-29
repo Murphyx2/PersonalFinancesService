@@ -10,7 +10,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -38,4 +37,39 @@ public class Portfolio {
 	private LocalDateTime created;
 
 	private LocalDateTime updated;
+
+	public Portfolio withBudgets(List<Budget> budgets) {
+		this.setBudgets(budgets);
+		return this;
+	}
+
+	public Portfolio withCreated(LocalDateTime created) {
+		this.setCreated(created);
+		return this;
+	}
+
+	public Portfolio withDescription(String description) {
+		this.setDescription(description);
+		return this;
+	}
+
+	public Portfolio withId(UUID id) {
+		this.setId(id);
+		return this;
+	}
+
+	public Portfolio withName(String name) {
+		this.setName(name);
+		return this;
+	}
+
+	public Portfolio withUpdated(LocalDateTime updated) {
+		this.setUpdated(updated);
+		return this;
+	}
+
+	public Portfolio withUserId(UUID userId) {
+		this.setUserId(userId);
+		return this;
+	}
 }
