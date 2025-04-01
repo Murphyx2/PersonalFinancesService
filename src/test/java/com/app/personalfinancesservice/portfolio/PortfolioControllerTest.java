@@ -18,7 +18,7 @@ import com.app.personalfinancesservice.domain.portfolio.input.CreatePortfolioReq
 import com.app.personalfinancesservice.domain.portfolio.input.GetPortfolioRequest;
 import com.app.personalfinancesservice.domain.portfolio.output.CreatePortfolioResponse;
 import com.app.personalfinancesservice.domain.portfolio.output.GetPortfolioResponse;
-import com.app.personalfinancesservice.exceptions.InvalidUserIdException;
+import com.app.personalfinancesservice.exceptions.InvalidIdException;
 import com.app.personalfinancesservice.service.PortfolioService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -78,13 +78,13 @@ class PortfolioControllerTest {
 	void createPortfolioInvalidUserId() throws Exception {
 
 		//Arrange
-		String exceptionLabel = "CREATE_PORTFOLIO";
+		String exceptionLabel = "PORTFOLIO";
 		String invalidUserId = "no-uuid";
 
 		// Configuration the mock to throw an exception for an Invalid ID
 		when(portfolioServiceMock.createPortfolio(any(String.class) //
 				, any(CreatePortfolioRequest.class))) //
-				.thenThrow(new InvalidUserIdException(exceptionLabel, invalidUserId));
+				.thenThrow(new InvalidIdException(exceptionLabel, "userId", invalidUserId));
 
 		mockMvc.perform(post(HttpRoutes.PORTFOLIO) //
 						.header("X-User-id", invalidUserId) //
@@ -92,7 +92,7 @@ class PortfolioControllerTest {
 						.content(REQUEST_BODY)) //
 				.andExpect(status().isBadRequest()) //
 				.andExpect(jsonPath("$.error").value(exceptionLabel)) //
-				.andExpect(jsonPath("$.message").value("Invalid User ID"))//
+				.andExpect(jsonPath("$.message").value(String.format("Invalid %s %s","userId", invalidUserId)))//
 		;
 	}
 
@@ -113,13 +113,13 @@ class PortfolioControllerTest {
 	void getPortfolioInvalidUserId() throws Exception {
 
 		//Arrange
-		String exceptionLabel = "CREATE_PORTFOLIO";
+		String exceptionLabel = "PORTFOLIO";
 		UUID validUserId = UUID.randomUUID();
 		String invalidPortfolioId = "no-uuid";
 
 		// Configuration the mock to throw an exception for an Invalid ID
 		when(portfolioServiceMock.getPortfolio(any(GetPortfolioRequest.class))) //
-				.thenThrow(new InvalidUserIdException(exceptionLabel, invalidPortfolioId));
+				.thenThrow(new InvalidIdException(exceptionLabel,"portfolioId", invalidPortfolioId));
 
 		mockMvc.perform(get(HttpRoutes.PORTFOLIO + "/{portfolioId}", invalidPortfolioId) //
 						.contentType(MediaType.APPLICATION_JSON) //
@@ -128,7 +128,7 @@ class PortfolioControllerTest {
 				.andExpect(jsonPath("$.error") //
 						.value(exceptionLabel)) //
 				.andExpect(jsonPath("$.message") //
-						.value("Invalid User ID"));
+						.value(String.format("Invalid portfolioId %s",invalidPortfolioId)));
 
 	}
 

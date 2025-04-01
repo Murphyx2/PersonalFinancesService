@@ -8,7 +8,8 @@ import com.app.personalfinancesservice.domain.portfolio.Portfolio;
 import com.app.personalfinancesservice.domain.portfolio.input.CreatePortfolioRequest;
 import com.app.personalfinancesservice.domain.portfolio.output.CreatePortfolioResponse;
 import com.app.personalfinancesservice.exceptions.CreateNewPortfolioException;
-import com.app.personalfinancesservice.exceptions.InvalidUserIdException;
+import com.app.personalfinancesservice.exceptions.InvalidIdException;
+import com.app.personalfinancesservice.exceptions.MissingIdException;
 import com.app.personalfinancesservice.repository.PortfolioRepository;
 import com.app.personalfinancesservice.service.PortfolioService;
 import org.junit.jupiter.api.Test;
@@ -38,12 +39,12 @@ class PortfolioServiceTest {
 		CreatePortfolioRequest request = new CreatePortfolioRequest() //
 				.withUserId(null);
 
-		InvalidUserIdException exception = assertThrows(InvalidUserIdException.class, () -> {
+		MissingIdException exception = assertThrows(MissingIdException.class, () -> {
 			portfolioService.createPortfolio(request);
 		});
 
-		assertEquals("Invalid User ID", exception.getMessage());
-		assertEquals("CREATE_PORTFOLIO", exception.getFieldName());
+		assertEquals("Missing userId", exception.getMessage());
+		assertEquals("PORTFOLIO", exception.getLocation());
 	}
 
 	@Test
@@ -59,7 +60,7 @@ class PortfolioServiceTest {
 		});
 
 		assertEquals("Error creating portfolio", exception.getMessage());
-		assertEquals("CREATE_PORTFOLIO", exception.getFieldName());
+		assertEquals("PORTFOLIO", exception.getFieldName());
 		assertEquals("Database error", exception.getFieldValue());
 	}
 
@@ -97,12 +98,12 @@ class PortfolioServiceTest {
 		String invalidUserId = "invalidUserId";
 		CreatePortfolioRequest request = new CreatePortfolioRequest();
 
-		InvalidUserIdException exception = assertThrows(InvalidUserIdException.class, () -> {
+		InvalidIdException exception = assertThrows(InvalidIdException.class, () -> {
 			portfolioService.createPortfolio(invalidUserId, request);
 		});
 
-		assertEquals("Invalid User ID", exception.getMessage());
-		assertEquals("CREATE_PORTFOLIO", exception.getFieldName());
+		assertEquals(String.format("Invalid userId %s", invalidUserId), exception.getMessage());
+		assertEquals("PORTFOLIO", exception.getLocation());
 		assertEquals(invalidUserId, exception.getFieldValue());
 	}
 }

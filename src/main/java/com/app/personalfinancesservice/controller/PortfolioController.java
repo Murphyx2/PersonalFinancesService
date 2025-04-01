@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,9 +14,11 @@ import com.app.personalfinancesservice.domain.http.HttpRoutes;
 import com.app.personalfinancesservice.domain.portfolio.input.CreatePortfolioRequest;
 import com.app.personalfinancesservice.domain.portfolio.input.GetAllPortfolioRequest;
 import com.app.personalfinancesservice.domain.portfolio.input.GetPortfolioRequest;
+import com.app.personalfinancesservice.domain.portfolio.input.UpdatePortfolioRequest;
 import com.app.personalfinancesservice.domain.portfolio.output.CreatePortfolioResponse;
 import com.app.personalfinancesservice.domain.portfolio.output.GetAllPortfolioResponse;
 import com.app.personalfinancesservice.domain.portfolio.output.GetPortfolioResponse;
+import com.app.personalfinancesservice.domain.portfolio.output.UpdatePortfolioResponse;
 import com.app.personalfinancesservice.service.PortfolioService;
 
 @RestController
@@ -46,5 +49,13 @@ public class PortfolioController {
 			@PathVariable String id) {
 		return ResponseEntity //
 				.ok(portfolioService.getPortfolio(new GetPortfolioRequest().withPortfolioId(id).withUserId(userId)));
+	}
+
+	@PutMapping
+	public ResponseEntity<UpdatePortfolioResponse> updatePortfolio(@RequestHeader("X-User-id") String userId, //
+			@RequestBody UpdatePortfolioRequest request) {
+
+		return ResponseEntity //
+				.ok(portfolioService.updatePortfolio(request.withUserId(userId)));
 	}
 }

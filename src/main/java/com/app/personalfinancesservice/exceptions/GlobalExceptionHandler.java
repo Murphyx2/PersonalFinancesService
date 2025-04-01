@@ -38,10 +38,26 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
 	}
 
-	@ExceptionHandler(InvalidUserIdException.class)
-	public ResponseEntity<Map<String, String>> handledInvalidUserIdException(InvalidUserIdException ex) {
+	@ExceptionHandler(InvalidIdException.class)
+	public ResponseEntity<Map<String, String>> handledInvalidIdException(InvalidIdException ex) {
 		Map<String, String> error = new HashMap<>();
-		error.put(ERROR_KEY_NAME, ex.getFieldName());
+		error.put(ERROR_KEY_NAME, ex.getLocation());
+		error.put(MESSAGE_LABEL, ex.getMessage());
+		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+	}
+
+	@ExceptionHandler(MissingIdException.class)
+	public ResponseEntity<Map<String, String>> handledMissingIdException(MissingIdException ex) {
+		Map<String, String> error = new HashMap<>();
+		error.put(ERROR_KEY_NAME, ex.getLocation());
+		error.put(MESSAGE_LABEL, ex.getMessage());
+		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+	}
+
+	@ExceptionHandler(PortfolioNotFoundException.class)
+	public ResponseEntity<Map<String, String>> handledPortfolioNotFoundException(PortfolioNotFoundException ex) {
+		Map<String, String> error = new HashMap<>();
+		error.put(ERROR_KEY_NAME, ex.getLocation());
 		error.put(MESSAGE_LABEL, ex.getMessage());
 		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
 	}

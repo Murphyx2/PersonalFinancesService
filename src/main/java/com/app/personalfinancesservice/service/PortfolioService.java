@@ -21,7 +21,9 @@ import com.app.personalfinancesservice.domain.portfolio.output.GetPortfolioRespo
 import com.app.personalfinancesservice.domain.portfolio.output.UpdatePortfolioResponse;
 import com.app.personalfinancesservice.domain.service.PortfolioServiceBase;
 import com.app.personalfinancesservice.exceptions.CreateNewPortfolioException;
-import com.app.personalfinancesservice.exceptions.InvalidUserIdException;
+import com.app.personalfinancesservice.exceptions.InvalidIdException;
+import com.app.personalfinancesservice.exceptions.MissingIdException;
+import com.app.personalfinancesservice.exceptions.PortfolioNotFoundException;
 import com.app.personalfinancesservice.repository.PortfolioRepository;
 
 @Service
@@ -29,7 +31,8 @@ public class PortfolioService implements PortfolioServiceBase {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PortfolioService.class);
 
-	private static final String EXCEPTION_LABEL = "CREATE_PORTFOLIO";
+	private static final String EXCEPTION_LABEL = "PORTFOLIO";
+	private static final String USER_ID_LABEL = "userId";
 	private final PortfolioRepository repository;
 
 	public PortfolioService(PortfolioRepository repository) {
@@ -41,7 +44,7 @@ public class PortfolioService implements PortfolioServiceBase {
 
 		//Validate UserID
 		if (request.getUserId() == null) {
-			throw new InvalidUserIdException(EXCEPTION_LABEL, "User id is required");
+			throw new MissingIdException(EXCEPTION_LABEL, USER_ID_LABEL);
 		}
 		//Proceed to save the portfolio
 		Portfolio portfolio;
@@ -61,7 +64,7 @@ public class PortfolioService implements PortfolioServiceBase {
 			request.withUserId(UUID.fromString(userId));
 		} catch (IllegalArgumentException e) {
 			LOGGER.error(EXCEPTION_LABEL, e);
-			throw new InvalidUserIdException(EXCEPTION_LABEL, userId);
+			throw new InvalidIdException(EXCEPTION_LABEL, USER_ID_LABEL, userId);
 		}
 
 		return this.createPortfolio(request);
@@ -73,32 +76,46 @@ public class PortfolioService implements PortfolioServiceBase {
 	}
 
 	@Override
-	public GetPortfolioResponse getPortfolio(GetPortfolioRequest request) {
-
-		GetPortfolioResponse response = new GetPortfolioResponse();
-		try {
-			UUID id = UUID.fromString(request.getPortfolioId());
-			UUID userId = UUID.fromString(request.getUserId());
-			response.withPortfolio(repository.getPortfolioByIdAndUserId(id, userId));
-		}catch (IllegalArgumentException e){
-			LOGGER.error(EXCEPTION_LABEL, e);
-			throw new InvalidUserIdException(EXCEPTION_LABEL, request.getPortfolioId());
-		}
-
-		return response;
-	}
-
-	@Override
 	public GetAllPortfolioResponse getAllPortfolio(GetAllPortfolioRequest request) {
 
 		GetAllPortfolioResponse response = new GetAllPortfolioResponse();
 		try {
 			UUID userId = UUID.fromString(request.getUserId());
 			response.withPortfolios(repository.getAllByUserId(userId));
-
 		} catch (IllegalArgumentException e) {
 			LOGGER.error(EXCEPTION_LABEL, e);
-			throw new InvalidUserIdException(EXCEPTION_LABEL, request.getUserId());
+			throw new InvalidIdException(EXCEPTION_LABEL, USER_ID_LABEL, request.getUserId());
+		}
+
+		if (response.getPortfolios() == null || response.getPortfolios().isEmpty()) {
+			throw new PortfolioNotFoundException(EXCEPTION_LABEL, USER_ID_LABEL, request.getUserId());
+		}
+
+		return response;
+	}
+
+	@Override
+	public GetPortfolioResponse getPortfolio(GetPortfolioRequest request) {
+
+		GetPortfolioResponse response = new GetPortfolioResponse();
+		UUID id;
+		// Is there a better way to do this?, Research a little
+		try {
+			id = UUID.fromString(request.getPortfolioId());
+		} catch (IllegalArgumentException e) {
+			LOGGER.error(EXCEPTION_LABEL, e);
+			throw new InvalidIdException(EXCEPTION_LABEL, "PortfolioID", request.getPortfolioId());
+		}
+		try {
+			UUID userId = UUID.fromString(request.getUserId());
+			response.withPortfolio(repository.getPortfolioByIdAndUserId(id, userId));
+		} catch (IllegalArgumentException e) {
+			LOGGER.error(EXCEPTION_LABEL, e);
+			throw new InvalidIdException(EXCEPTION_LABEL, USER_ID_LABEL, request.getUserId());
+		}
+
+		if (response.getPortfolio() == null) {
+			throw new PortfolioNotFoundException(EXCEPTION_LABEL, "id", request.getPortfolioId());
 		}
 
 		return response;
@@ -106,6 +123,48 @@ public class PortfolioService implements PortfolioServiceBase {
 
 	@Override
 	public UpdatePortfolioResponse updatePortfolio(UpdatePortfolioRequest request) {
-		return null;
+
+		if (request.getId() == null || request.getId().isEmpty()) {
+			throw new MissingIdException(EXCEPTION_LABEL, "portfolioId");
+		}
+
+		UpdatePortfolioResponse response = new UpdatePortfolioResponse();
+		UUID id;
+		UUID userId;
+
+		// Check if portfolio id or UserID are UUID
+		try {
+			id = UUID.fromString(request.getId());
+		} catch (IllegalArgumentException e) {
+			LOGGER.error(EXCEPTION_LABEL, e);
+			throw new InvalidIdException(EXCEPTION_LABEL, "PortfolioID", request.getId());
+		}
+
+		try {
+			userId = UUID.fromString(request.getUserId());
+		} catch (IllegalArgumentException e) {
+			LOGGER.error(EXCEPTION_LABEL, e);
+			throw new InvalidIdException(EXCEPTION_LABEL, USER_ID_LABEL, request.getUserId());
+		}
+
+		// if not found, an exception is expected
+		GetPortfolioResponse oldPortfolio = getPortfolio(new GetPortfolioRequest() //
+				.withPortfolioId(request.getId())//
+				.withUserId(request.getUserId()) //
+		);
+
+		Portfolio portfolio = PortfolioConverter //
+				.convert(request, oldPortfolio.getPortfolio()) //
+				.withId(id) //
+				.withUserId(userId) //
+				;
+		try {
+			response.withPortfolio(repository.save(portfolio));
+		} catch (RuntimeException e) {
+			LOGGER.error(EXCEPTION_LABEL, e);
+			throw new RuntimeException("Unable to save Portfolio", e);
+		}
+
+		return response;
 	}
 }
