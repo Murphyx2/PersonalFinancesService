@@ -2,6 +2,7 @@ package com.app.personalfinancesservice.portfolio;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +13,11 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.app.personalfinancesservice.controller.PortfolioController;
 import com.app.personalfinancesservice.domain.http.HttpRoutes;
+import com.app.personalfinancesservice.domain.portfolio.Portfolio;
 import com.app.personalfinancesservice.domain.portfolio.input.CreatePortfolioRequest;
+import com.app.personalfinancesservice.domain.portfolio.input.GetPortfolioRequest;
 import com.app.personalfinancesservice.domain.portfolio.output.CreatePortfolioResponse;
+import com.app.personalfinancesservice.domain.portfolio.output.GetPortfolioResponse;
 import com.app.personalfinancesservice.exceptions.InvalidUserIdException;
 import com.app.personalfinancesservice.service.PortfolioService;
 import org.junit.jupiter.api.Test;
@@ -23,6 +27,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -98,6 +103,75 @@ class PortfolioControllerTest {
 						.contentType(MediaType.APPLICATION_JSON) //
 						.content(REQUEST_BODY)) //
 				.andExpect(status().isBadRequest()) //
-				.andExpect(jsonPath("$.error").value("GENERAL_ERROR")).andExpect(jsonPath("$.message").value("Required request header 'X-User-id' for method parameter type String is not present"));
+				.andExpect(jsonPath("$.error") //
+						.value("GENERAL_ERROR")) //
+				.andExpect(jsonPath("$.message") //
+						.value("Required request header 'X-User-id' for method parameter type String is not present"));
+	}
+
+	@Test
+	void getPortfolioInvalidUserId() throws Exception {
+
+		//Arrange
+		String exceptionLabel = "CREATE_PORTFOLIO";
+		UUID validUserId = UUID.randomUUID();
+		String invalidPortfolioId = "no-uuid";
+
+		// Configuration the mock to throw an exception for an Invalid ID
+		when(portfolioServiceMock.getPortfolio(any(GetPortfolioRequest.class))) //
+				.thenThrow(new InvalidUserIdException(exceptionLabel, invalidPortfolioId));
+
+		mockMvc.perform(get(HttpRoutes.PORTFOLIO + "/{portfolioId}", invalidPortfolioId) //
+						.contentType(MediaType.APPLICATION_JSON) //
+						.header("X-User-id", validUserId.toString())) //
+				.andExpect(status().isBadRequest()) //
+				.andExpect(jsonPath("$.error") //
+						.value(exceptionLabel)) //
+				.andExpect(jsonPath("$.message") //
+						.value("Invalid User ID"));
+
+	}
+
+	@Test
+	void getPortfolioMissingUserId() throws Exception {
+
+		mockMvc.perform(get(HttpRoutes.PORTFOLIO) //
+						.contentType(MediaType.APPLICATION_JSON)) //
+				.andExpect(status().isBadRequest()) //
+				.andExpect(jsonPath("$.error") //
+						.value("GENERAL_ERROR")) //
+				.andExpect(jsonPath("$.message") //
+						.value("Required request header 'X-User-id' for method parameter type String is not present"));
+	}
+
+	@Test
+	void getPortfolioSuccess() throws Exception {
+
+		UUID validUserId = UUID.randomUUID();
+		UUID validPortfolioId = UUID.randomUUID();
+		Portfolio portfolio = new Portfolio() //
+				.withId(validPortfolioId) //
+				.withUserId(validUserId) //
+				.withBudgets(new ArrayList<>()) //
+				.withName("New Portfolio") //
+				.withDescription("This is the description of the portfolio");
+
+		GetPortfolioResponse response = new GetPortfolioResponse() //
+				.withPortfolio(portfolio);
+
+		when(portfolioServiceMock.getPortfolio(any(GetPortfolioRequest.class))) //
+				.thenReturn(response);
+
+		mockMvc.perform(get(HttpRoutes.PORTFOLIO + "/{portfolioId}", validPortfolioId.toString()) //
+						.contentType(MediaType.APPLICATION_JSON) //
+						.header("X-User-id", validUserId.toString()) //
+				) //
+				.andExpect(status().isOk()) //
+				.andExpect(jsonPath("$.portfolio").exists()) //
+				.andExpect(jsonPath("$.portfolio.id").value(portfolio.getId().toString())) //
+				.andExpect(jsonPath("$.portfolio.userId").value(portfolio.getUserId().toString())) //
+				.andExpect(jsonPath("$.portfolio.name").value(portfolio.getName())) //
+				.andExpect(jsonPath("$.portfolio.description").value(portfolio.getDescription())) //
+		;
 	}
 }
