@@ -10,15 +10,14 @@ import com.app.personalfinancesservice.exceptions.InvalidIdException;
 public class UUIDConverter {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(UUIDConverter.class);
-	private static final String EXCEPTION_LABEL = "PORTFOLIO";
 
-	public static UUID convert(String id, String idName) {
+	public static UUID convert(String id, String idName, String location) {
 		UUID uuid;
 		try {
 			uuid = UUID.fromString(id);
 		} catch (IllegalArgumentException e) {
-			LOGGER.error(EXCEPTION_LABEL, e);
-			throw new InvalidIdException(EXCEPTION_LABEL, idName, id);
+			LOGGER.error(location, e);
+			throw new InvalidIdException(location, idName, id);
 		}
 		return uuid;
 	}

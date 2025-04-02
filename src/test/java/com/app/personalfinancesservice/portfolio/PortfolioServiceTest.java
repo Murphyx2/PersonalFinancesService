@@ -86,10 +86,10 @@ class PortfolioServiceTest {
 		// Assert
 		verify(portfolioRepository, times(1)).save(any(Portfolio.class));
 
-		assertEquals(portfolio.getId(), response.getId());
-		assertEquals(portfolio.getName(), response.getName());
-		assertEquals(portfolio.getDescription(), response.getDescription());
-		assertEquals(portfolio.getCreated(), response.getCreated());
+		assertEquals(portfolio.getId(), response.getPortfolio().getId());
+		assertEquals(portfolio.getName(), response.getPortfolio().getName());
+		assertEquals(portfolio.getDescription(), response.getPortfolio().getDescription());
+		assertEquals(portfolio.getCreated(), response.getPortfolio().getCreated());
 
 	}
 

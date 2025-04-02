@@ -53,11 +53,10 @@ public class PortfolioService implements PortfolioServiceBase {
 		try {
 			portfolio = repository.save(PortfolioConverter.convert(request));
 		} catch (Exception e) {
-			LOGGER.error(EXCEPTION_LABEL, e);
 			throw new CreateNewPortfolioException(EXCEPTION_LABEL, e.getMessage());
 		}
 
-		return PortfolioConverter.convert(portfolio);
+		return new CreatePortfolioResponse().withPortfolio(portfolio);
 	}
 
 	public CreatePortfolioResponse createPortfolio(String userId, CreatePortfolioRequest request) {
@@ -91,7 +90,7 @@ public class PortfolioService implements PortfolioServiceBase {
 	public GetAllPortfolioResponse getAllPortfolio(GetAllPortfolioRequest request) {
 
 		GetAllPortfolioResponse response = new GetAllPortfolioResponse();
-		UUID userId = UUIDConverter.convert(request.getUserId(), USER_ID_LABEL);
+		UUID userId = UUIDConverter.convert(request.getUserId(), USER_ID_LABEL, EXCEPTION_LABEL);
 
 		response.withPortfolios(repository.getAllByUserId(userId));
 
@@ -106,9 +105,9 @@ public class PortfolioService implements PortfolioServiceBase {
 	public GetPortfolioResponse getPortfolio(GetPortfolioRequest request) {
 
 		UUID id = UUIDConverter //
-				.convert(request.getPortfolioId(), PORTFOLIO_ID_LABEL);
+				.convert(request.getPortfolioId(), PORTFOLIO_ID_LABEL, EXCEPTION_LABEL);
 
-		UUID userId = UUIDConverter.convert(request.getUserId(), USER_ID_LABEL);
+		UUID userId = UUIDConverter.convert(request.getUserId(), USER_ID_LABEL, EXCEPTION_LABEL);
 
 		GetPortfolioResponse response = new GetPortfolioResponse() //
 				.withPortfolio(repository.getPortfolioByIdAndUserId(id, userId));
@@ -127,8 +126,6 @@ public class PortfolioService implements PortfolioServiceBase {
 			throw new MissingIdException(EXCEPTION_LABEL, "portfolioId");
 		}
 
-		UpdatePortfolioResponse response = new UpdatePortfolioResponse();
-
 		// if not found, an exception is expected
 		GetPortfolioResponse oldPortfolio = getPortfolio(new GetPortfolioRequest() //
 				.withPortfolioId(request.getId())//
@@ -140,13 +137,8 @@ public class PortfolioService implements PortfolioServiceBase {
 				.withId(oldPortfolio.getPortfolio().getId()) //
 				.withUserId(oldPortfolio.getPortfolio().getUserId()) //
 				;
-		try {
-			response.withPortfolio(repository.save(portfolio));
-		} catch (RuntimeException e) {
-			LOGGER.error(EXCEPTION_LABEL, e);
-			throw new RuntimeException("Unable to save Portfolio", e);
-		}
 
-		return response;
+		return new UpdatePortfolioResponse() //
+				.withPortfolio(repository.save(portfolio));
 	}
 }
