@@ -52,12 +52,14 @@ class PortfolioControllerTest {
 
 		// Arrange
 		String validUserId = "550e8400-e29b-41d4-a716-446655440000";
-		CreatePortfolioResponse response = new CreatePortfolioResponse() //
-				.withId(UUID.randomUUID()) //
+		Portfolio portfolio = new Portfolio().withId(UUID.randomUUID()) //
 				.withName("New Portfolio") //
 				.withDescription("This is the description of the portfolio") //
-				.withCreated(LocalDateTime.now()) //
-				;
+				.withCreated(LocalDateTime.now());
+
+
+		CreatePortfolioResponse response = new CreatePortfolioResponse() //
+				.withPortfolio(portfolio);
 		// Configure the mock to return a success response
 		when(portfolioServiceMock.createPortfolio(eq(validUserId), any(CreatePortfolioRequest.class))) //
 				.thenReturn(response);
@@ -67,11 +69,11 @@ class PortfolioControllerTest {
 						.contentType(MediaType.APPLICATION_JSON) //
 						.content(REQUEST_BODY)) //
 				.andExpect(status().isOk()) //
-				.andExpect(jsonPath("$.id").value(response.getId().toString())) //
-				.andExpect(jsonPath("$.name").value(response.getName())) //
-				.andExpect(jsonPath("$.description").value(response.getDescription())) //
-				.andExpect(jsonPath("$.created") //
-						.value(response.getCreated().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))));
+				.andExpect(jsonPath("$.portfolio.id").value(response.getPortfolio().getId().toString())) //
+				.andExpect(jsonPath("$.portfolio.name").value(response.getPortfolio().getName())) //
+				.andExpect(jsonPath("$.portfolio.description").value(response.getPortfolio().getDescription())) //
+				.andExpect(jsonPath("$.portfolio.created") //
+						.value(response.getPortfolio().getCreated().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))));
 	}
 
 	@Test
