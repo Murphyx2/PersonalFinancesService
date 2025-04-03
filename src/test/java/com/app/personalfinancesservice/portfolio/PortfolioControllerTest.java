@@ -15,9 +15,13 @@ import com.app.personalfinancesservice.controller.PortfolioController;
 import com.app.personalfinancesservice.domain.http.HttpRoutes;
 import com.app.personalfinancesservice.domain.portfolio.Portfolio;
 import com.app.personalfinancesservice.domain.portfolio.input.CreatePortfolioRequest;
+import com.app.personalfinancesservice.domain.portfolio.input.DeletePortfolioRequest;
 import com.app.personalfinancesservice.domain.portfolio.input.GetPortfolioRequest;
+import com.app.personalfinancesservice.domain.portfolio.input.UpdatePortfolioRequest;
 import com.app.personalfinancesservice.domain.portfolio.output.CreatePortfolioResponse;
+import com.app.personalfinancesservice.domain.portfolio.output.DeletePortfolioResponse;
 import com.app.personalfinancesservice.domain.portfolio.output.GetPortfolioResponse;
+import com.app.personalfinancesservice.domain.portfolio.output.UpdatePortfolioResponse;
 import com.app.personalfinancesservice.exceptions.InvalidIdException;
 import com.app.personalfinancesservice.service.PortfolioService;
 import org.junit.jupiter.api.Test;
@@ -27,8 +31,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -42,6 +48,9 @@ class PortfolioControllerTest {
 			    "description":"This is the description of the portfolio"   \s
 			}
 			""";
+	private static final String EXCEPTION_LABEL = "PORTFOLIO";
+	private static final String PORTFOLIOID_LABEL = "portfolioId";
+	private static final String USERID_LABEL = "userId";
 	@Autowired
 	private MockMvc mockMvc;
 	@MockitoBean
@@ -56,7 +65,6 @@ class PortfolioControllerTest {
 				.withName("New Portfolio") //
 				.withDescription("This is the description of the portfolio") //
 				.withCreated(LocalDateTime.now());
-
 
 		CreatePortfolioResponse response = new CreatePortfolioResponse() //
 				.withPortfolio(portfolio);
@@ -86,7 +94,7 @@ class PortfolioControllerTest {
 		// Configuration the mock to throw an exception for an Invalid ID
 		when(portfolioServiceMock.createPortfolio(any(String.class) //
 				, any(CreatePortfolioRequest.class))) //
-				.thenThrow(new InvalidIdException(exceptionLabel, "userId", invalidUserId));
+				.thenThrow(new InvalidIdException(exceptionLabel, USERID_LABEL, invalidUserId));
 
 		mockMvc.perform(post(HttpRoutes.PORTFOLIO) //
 						.header("X-User-id", invalidUserId) //
@@ -94,7 +102,7 @@ class PortfolioControllerTest {
 						.content(REQUEST_BODY)) //
 				.andExpect(status().isBadRequest()) //
 				.andExpect(jsonPath("$.error").value(exceptionLabel)) //
-				.andExpect(jsonPath("$.message").value(String.format("Invalid %s %s","userId", invalidUserId)))//
+				.andExpect(jsonPath("$.message").value(String.format("Invalid %s %s", USERID_LABEL, invalidUserId)))//
 		;
 	}
 
@@ -112,25 +120,44 @@ class PortfolioControllerTest {
 	}
 
 	@Test
-	void getPortfolioInvalidUserId() throws Exception {
+	void deletePortfolioSuccess() throws Exception {
+
+		UUID validUserId = UUID.randomUUID();
+
+		DeletePortfolioResponse response = new DeletePortfolioResponse() //
+				.withSuccess(true);
+
+		when(portfolioServiceMock //
+				.deletePortfolio(any(DeletePortfolioRequest.class))).thenReturn(response);
+
+		mockMvc.perform(delete(HttpRoutes.PORTFOLIO + "/{portfolioId}", UUID.randomUUID().toString()) //
+						.contentType(MediaType.APPLICATION_JSON) //
+						.header("X-User-id", validUserId.toString()) //
+				) //
+				.andExpect(status().isOk()) //
+				.andExpect(jsonPath("$.success").exists()).andExpect(jsonPath("$.success").value(true));
+	}
+
+	@Test
+	void getPortfolioInvalidPortfolioId() throws Exception {
 
 		//Arrange
-		String exceptionLabel = "PORTFOLIO";
+
 		UUID validUserId = UUID.randomUUID();
 		String invalidPortfolioId = "no-uuid";
 
 		// Configuration the mock to throw an exception for an Invalid ID
 		when(portfolioServiceMock.getPortfolio(any(GetPortfolioRequest.class))) //
-				.thenThrow(new InvalidIdException(exceptionLabel,"portfolioId", invalidPortfolioId));
+				.thenThrow(new InvalidIdException(EXCEPTION_LABEL, PORTFOLIOID_LABEL, invalidPortfolioId));
 
 		mockMvc.perform(get(HttpRoutes.PORTFOLIO + "/{portfolioId}", invalidPortfolioId) //
 						.contentType(MediaType.APPLICATION_JSON) //
 						.header("X-User-id", validUserId.toString())) //
 				.andExpect(status().isBadRequest()) //
 				.andExpect(jsonPath("$.error") //
-						.value(exceptionLabel)) //
+						.value(EXCEPTION_LABEL)) //
 				.andExpect(jsonPath("$.message") //
-						.value(String.format("Invalid portfolioId %s",invalidPortfolioId)));
+						.value(String.format("Invalid %s %s", PORTFOLIOID_LABEL, invalidPortfolioId)));
 
 	}
 
@@ -167,6 +194,59 @@ class PortfolioControllerTest {
 		mockMvc.perform(get(HttpRoutes.PORTFOLIO + "/{portfolioId}", validPortfolioId.toString()) //
 						.contentType(MediaType.APPLICATION_JSON) //
 						.header("X-User-id", validUserId.toString()) //
+				) //
+				.andExpect(status().isOk()) //
+				.andExpect(jsonPath("$.portfolio").exists()) //
+				.andExpect(jsonPath("$.portfolio.id").value(portfolio.getId().toString())) //
+				.andExpect(jsonPath("$.portfolio.userId").value(portfolio.getUserId().toString())) //
+				.andExpect(jsonPath("$.portfolio.name").value(portfolio.getName())) //
+				.andExpect(jsonPath("$.portfolio.description").value(portfolio.getDescription())) //
+		;
+	}
+
+	@Test
+	void updatePortfolioInvalidPortfolioId() throws Exception {
+		UUID validUserId = UUID.randomUUID();
+		String invalidPortfolioId = "no-uuid";
+
+		when(portfolioServiceMock.updatePortfolio(any(UpdatePortfolioRequest.class))) //
+				.thenThrow(new InvalidIdException(EXCEPTION_LABEL, PORTFOLIOID_LABEL, invalidPortfolioId));
+
+		mockMvc.perform(put(HttpRoutes.PORTFOLIO) //
+						.contentType(MediaType.APPLICATION_JSON) //
+						.header("X-User-id", validUserId.toString()) //
+						.content(REQUEST_BODY) //
+				) //
+				.andExpect(status().isBadRequest()) //
+				.andExpect(jsonPath("$.error") //
+						.value(EXCEPTION_LABEL)) //
+				.andExpect(jsonPath("$.message") //
+						.value(String.format("Invalid %s %s", PORTFOLIOID_LABEL, invalidPortfolioId))) //
+		;
+	}
+
+	@Test
+	void updatePortfolioTestSuccess() throws Exception {
+		UUID validUserId = UUID.randomUUID();
+		UUID validPortfolioId = UUID.randomUUID();
+
+		Portfolio portfolio = new Portfolio() //
+				.withId(validPortfolioId) //
+				.withUserId(validUserId) //
+				.withBudgets(new ArrayList<>()) //
+				.withName("New Portfolio") //
+				.withDescription("This is the description of the portfolio");
+
+		UpdatePortfolioResponse response = new UpdatePortfolioResponse() //
+				.withPortfolio(portfolio);
+
+		when(portfolioServiceMock.updatePortfolio(any(UpdatePortfolioRequest.class))) //
+				.thenReturn(response);
+
+		mockMvc.perform(put(HttpRoutes.PORTFOLIO) //
+						.contentType(MediaType.APPLICATION_JSON) //
+						.header("X-User-id", validUserId.toString()) //
+						.content(REQUEST_BODY) //
 				) //
 				.andExpect(status().isOk()) //
 				.andExpect(jsonPath("$.portfolio").exists()) //
