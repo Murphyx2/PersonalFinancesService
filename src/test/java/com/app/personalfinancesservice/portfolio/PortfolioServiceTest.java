@@ -1,15 +1,19 @@
 package com.app.personalfinancesservice.portfolio;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.UUID;
 
 import com.app.personalfinancesservice.converters.PortfolioConverter;
 import com.app.personalfinancesservice.domain.portfolio.Portfolio;
 import com.app.personalfinancesservice.domain.portfolio.input.CreatePortfolioRequest;
+import com.app.personalfinancesservice.domain.portfolio.input.GetPortfolioRequest;
 import com.app.personalfinancesservice.domain.portfolio.output.CreatePortfolioResponse;
+import com.app.personalfinancesservice.domain.portfolio.output.GetPortfolioResponse;
 import com.app.personalfinancesservice.exceptions.CreateNewPortfolioException;
 import com.app.personalfinancesservice.exceptions.InvalidIdException;
 import com.app.personalfinancesservice.exceptions.MissingIdException;
+import com.app.personalfinancesservice.exceptions.PortfolioNotFoundException;
 import com.app.personalfinancesservice.repository.PortfolioRepository;
 import com.app.personalfinancesservice.service.PortfolioService;
 import org.junit.jupiter.api.Test;
@@ -28,9 +32,9 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class PortfolioServiceTest {
 
+	private static final String USERID_LABEL = "userId";
 	@Mock
 	private PortfolioRepository portfolioRepository;
-
 	@InjectMocks
 	private PortfolioService portfolioService;
 
@@ -102,8 +106,53 @@ class PortfolioServiceTest {
 			portfolioService.createPortfolio(invalidUserId, request);
 		});
 
-		assertEquals(String.format("Invalid userId %s", invalidUserId), exception.getMessage());
+		assertEquals(String.format("Invalid %s %s", USERID_LABEL, invalidUserId), exception.getMessage());
 		assertEquals("PORTFOLIO", exception.getLocation());
 		assertEquals(invalidUserId, exception.getFieldValue());
+	}
+
+	@Test
+	void getPortfolioNotFound() {
+		UUID validUserId = UUID.randomUUID();
+		UUID unknownPortfolioId = UUID.randomUUID();
+
+		GetPortfolioRequest request = new GetPortfolioRequest() //
+				.withPortfolioId(unknownPortfolioId.toString()) //
+				.withUserId(validUserId.toString());
+
+		when(portfolioRepository.getPortfolioByIdAndUserId(any(UUID.class), any(UUID.class))).thenReturn(null);
+
+		PortfolioNotFoundException notFoundException = assertThrows(PortfolioNotFoundException.class, () -> portfolioService.getPortfolio(request));
+
+		// Do I really need to do that?
+		assertEquals(String.format("Portfolio from %s %s not found", "id", unknownPortfolioId.toString()), notFoundException.getMessage());
+		assertEquals("PORTFOLIO", notFoundException.getLocation());
+		assertEquals(unknownPortfolioId.toString(), notFoundException.getFieldValue());
+	}
+
+	@Test
+	void getPortfolioSuccess() {
+		UUID validUserId = UUID.randomUUID();
+		UUID validPortfolioId = UUID.randomUUID();
+
+		Portfolio portfolio = new Portfolio() //
+				.withId(validUserId) //
+				.withUserId(validPortfolioId) //
+				.withName("Test name Portfolio") //
+				.withDescription("Test description portfolio") //
+				.withBudgets(new ArrayList<>()).withCreated(LocalDateTime.now());
+
+		GetPortfolioRequest request = new GetPortfolioRequest() //
+				.withPortfolioId(validPortfolioId.toString()) //
+				.withUserId(validUserId.toString());
+
+		when(portfolioRepository.getPortfolioByIdAndUserId(any(UUID.class), any(UUID.class))).thenReturn(portfolio);
+
+		GetPortfolioResponse response = portfolioService.getPortfolio(request);
+
+		assertEquals(portfolio.getId(), response.getPortfolio().getId());
+		assertEquals(portfolio.getName(), response.getPortfolio().getName());
+		assertEquals(portfolio.getDescription(), response.getPortfolio().getDescription());
+		assertEquals(portfolio.getCreated(), response.getPortfolio().getCreated());
 	}
 }
