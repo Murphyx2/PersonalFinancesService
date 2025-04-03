@@ -62,7 +62,7 @@ class BudgetControllerTest {
 						.content(REQUEST_BODY) //
 				) //
 				.andExpect(status().isBadRequest()) //
-				.andExpect(jsonPath("$.error").value(PORTFOLIO_LABEL)) //
+				.andExpect(jsonPath("$.error").value(BUDGET_LABEL)) //
 				.andExpect(jsonPath("$.message").value(String.format("Invalid %s %s", "portfolioId", ""))) //
 		;
 	}
