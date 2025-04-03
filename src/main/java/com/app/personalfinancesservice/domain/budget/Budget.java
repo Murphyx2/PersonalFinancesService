@@ -6,9 +6,13 @@ import java.util.UUID;
 
 import com.app.personalfinancesservice.domain.portfolio.Portfolio;
 import com.app.personalfinancesservice.domain.transaction.Transaction;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -34,8 +38,9 @@ public class Budget {
 	@Column(name = "portfolio_id")
 	private UUID portfolioId;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "portfolio_id", insertable = false, updatable = false)
+	@JsonBackReference
 	private Portfolio portfolio;
 
 	@OneToMany(mappedBy = "budget", cascade = CascadeType.ALL)
@@ -45,12 +50,16 @@ public class Budget {
 
 	private String description;
 
+	@JsonFormat(pattern = "yyyy-MM-dd' 'HH:mm:ss")
 	private LocalDateTime startAt;
 
+	@JsonFormat(pattern = "yyyy-MM-dd' 'HH:mm:ss")
 	private LocalDateTime endAt;
 
+	@JsonFormat(pattern = "yyyy-MM-dd' 'HH:mm:ss")
 	private LocalDateTime createdAt;
 
+	@JsonFormat(pattern = "yyyy-MM-dd' 'HH:mm:ss")
 	private LocalDateTime updatedAt;
 
 	public Budget withCreatedAt(LocalDateTime createdAt) {

@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import com.app.personalfinancesservice.domain.budget.Budget;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -33,6 +34,7 @@ public class Portfolio {
 	private String description;
 
 	@OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL)
+	@JsonManagedReference
 	private List<Budget> budgets;
 
 	@JsonFormat(pattern = "yyyy-MM-dd' 'HH:mm:ss")

@@ -31,9 +31,10 @@ public class PortfolioService implements PortfolioServiceBase {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PortfolioService.class);
 
-	private static final String EXCEPTION_LABEL = "PORTFOLIO";
+	private static final String PORTFOLIO_LABEL = "PORTFOLIO";
 	private static final String USER_ID_LABEL = "userId";
 	private static final String PORTFOLIO_ID_LABEL = "PortfolioID";
+
 	private final PortfolioRepository repository;
 
 	public PortfolioService(PortfolioRepository repository) {
@@ -45,14 +46,14 @@ public class PortfolioService implements PortfolioServiceBase {
 
 		//Validate UserID
 		if (request.getUserId() == null) {
-			throw new MissingIdException(EXCEPTION_LABEL, USER_ID_LABEL);
+			throw new MissingIdException(PORTFOLIO_LABEL, USER_ID_LABEL);
 		}
 		//Proceed to save the portfolio
 		Portfolio portfolio;
 		try {
 			portfolio = repository.save(PortfolioConverter.convert(request));
 		} catch (Exception e) {
-			throw new CreateNewPortfolioException(EXCEPTION_LABEL, e.getMessage());
+			throw new CreateNewPortfolioException(PORTFOLIO_LABEL, e.getMessage());
 		}
 
 		return new CreatePortfolioResponse().withPortfolio(portfolio);
@@ -63,8 +64,8 @@ public class PortfolioService implements PortfolioServiceBase {
 		try {
 			request.withUserId(UUID.fromString(userId));
 		} catch (IllegalArgumentException e) {
-			LOGGER.error(EXCEPTION_LABEL, e);
-			throw new InvalidIdException(EXCEPTION_LABEL, USER_ID_LABEL, userId);
+			LOGGER.error(PORTFOLIO_LABEL, e);
+			throw new InvalidIdException(PORTFOLIO_LABEL, USER_ID_LABEL, userId);
 		}
 
 		return this.createPortfolio(request);
@@ -79,7 +80,7 @@ public class PortfolioService implements PortfolioServiceBase {
 					.withUserId(request.getUserId());
 			repository.delete(getPortfolio(getRequest).getPortfolio());
 		} catch (Exception e) {
-			LOGGER.error(EXCEPTION_LABEL, e);
+			LOGGER.error(PORTFOLIO_LABEL, e);
 			return new DeletePortfolioResponse().withSuccess(false);
 		}
 		return new DeletePortfolioResponse().withSuccess(true);
@@ -89,7 +90,7 @@ public class PortfolioService implements PortfolioServiceBase {
 	public GetAllPortfolioResponse getAllPortfolio(GetAllPortfolioRequest request) {
 
 		UUID userId = UUIDConverter //
-				.convert(request.getUserId(), USER_ID_LABEL, EXCEPTION_LABEL);
+				.convert(request.getUserId(), USER_ID_LABEL, PORTFOLIO_LABEL);
 
 		return new GetAllPortfolioResponse() //
 				.withPortfolios(repository.getAllByUserId(userId));
@@ -99,10 +100,10 @@ public class PortfolioService implements PortfolioServiceBase {
 	public GetPortfolioResponse getPortfolio(GetPortfolioRequest request) {
 
 		UUID id = UUIDConverter //
-				.convert(request.getPortfolioId(), PORTFOLIO_ID_LABEL, EXCEPTION_LABEL);
+				.convert(request.getPortfolioId(), PORTFOLIO_ID_LABEL, PORTFOLIO_LABEL);
 
 		UUID userId = UUIDConverter //
-				.convert(request.getUserId(), USER_ID_LABEL, EXCEPTION_LABEL);
+				.convert(request.getUserId(), USER_ID_LABEL, PORTFOLIO_LABEL);
 
 		return new GetPortfolioResponse() //
 				.withPortfolio(repository.getPortfolioByIdAndUserId(id, userId));
@@ -112,7 +113,7 @@ public class PortfolioService implements PortfolioServiceBase {
 	public UpdatePortfolioResponse updatePortfolio(UpdatePortfolioRequest request) {
 
 		if (request.getId() == null || request.getId().isEmpty()) {
-			throw new MissingIdException(EXCEPTION_LABEL, "portfolioId");
+			throw new MissingIdException(PORTFOLIO_LABEL, "portfolioId");
 		}
 
 		// if null return empty
