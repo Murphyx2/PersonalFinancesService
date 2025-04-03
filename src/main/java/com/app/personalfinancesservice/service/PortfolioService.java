@@ -24,7 +24,6 @@ import com.app.personalfinancesservice.domain.service.PortfolioServiceBase;
 import com.app.personalfinancesservice.exceptions.CreateNewPortfolioException;
 import com.app.personalfinancesservice.exceptions.InvalidIdException;
 import com.app.personalfinancesservice.exceptions.MissingIdException;
-import com.app.personalfinancesservice.exceptions.PortfolioNotFoundException;
 import com.app.personalfinancesservice.repository.PortfolioRepository;
 
 @Service
@@ -89,16 +88,11 @@ public class PortfolioService implements PortfolioServiceBase {
 	@Override
 	public GetAllPortfolioResponse getAllPortfolio(GetAllPortfolioRequest request) {
 
-		GetAllPortfolioResponse response = new GetAllPortfolioResponse();
-		UUID userId = UUIDConverter.convert(request.getUserId(), USER_ID_LABEL, EXCEPTION_LABEL);
+		UUID userId = UUIDConverter //
+				.convert(request.getUserId(), USER_ID_LABEL, EXCEPTION_LABEL);
 
-		response.withPortfolios(repository.getAllByUserId(userId));
-
-		if (response.getPortfolios() == null || response.getPortfolios().isEmpty()) {
-			throw new PortfolioNotFoundException(EXCEPTION_LABEL, USER_ID_LABEL, request.getUserId());
-		}
-
-		return response;
+		return new GetAllPortfolioResponse() //
+				.withPortfolios(repository.getAllByUserId(userId));
 	}
 
 	@Override
@@ -107,16 +101,11 @@ public class PortfolioService implements PortfolioServiceBase {
 		UUID id = UUIDConverter //
 				.convert(request.getPortfolioId(), PORTFOLIO_ID_LABEL, EXCEPTION_LABEL);
 
-		UUID userId = UUIDConverter.convert(request.getUserId(), USER_ID_LABEL, EXCEPTION_LABEL);
+		UUID userId = UUIDConverter //
+				.convert(request.getUserId(), USER_ID_LABEL, EXCEPTION_LABEL);
 
-		GetPortfolioResponse response = new GetPortfolioResponse() //
+		return new GetPortfolioResponse() //
 				.withPortfolio(repository.getPortfolioByIdAndUserId(id, userId));
-
-		if (response.getPortfolio() == null) {
-			throw new PortfolioNotFoundException(EXCEPTION_LABEL, "id", request.getPortfolioId());
-		}
-
-		return response;
 	}
 
 	@Override
@@ -126,11 +115,15 @@ public class PortfolioService implements PortfolioServiceBase {
 			throw new MissingIdException(EXCEPTION_LABEL, "portfolioId");
 		}
 
-		// if not found, an exception is expected
+		// if null return empty
 		GetPortfolioResponse oldPortfolio = getPortfolio(new GetPortfolioRequest() //
 				.withPortfolioId(request.getId())//
 				.withUserId(request.getUserId()) //
 		);
+
+		if (oldPortfolio == null) {
+			return new UpdatePortfolioResponse();
+		}
 
 		Portfolio portfolio = PortfolioConverter //
 				.convert(request, oldPortfolio.getPortfolio()) //
