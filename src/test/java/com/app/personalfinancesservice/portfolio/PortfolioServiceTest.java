@@ -13,7 +13,6 @@ import com.app.personalfinancesservice.domain.portfolio.output.GetPortfolioRespo
 import com.app.personalfinancesservice.exceptions.CreateNewPortfolioException;
 import com.app.personalfinancesservice.exceptions.InvalidIdException;
 import com.app.personalfinancesservice.exceptions.MissingIdException;
-import com.app.personalfinancesservice.exceptions.PortfolioNotFoundException;
 import com.app.personalfinancesservice.repository.PortfolioRepository;
 import com.app.personalfinancesservice.service.PortfolioService;
 import org.junit.jupiter.api.Test;
@@ -23,6 +22,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
@@ -122,12 +122,9 @@ class PortfolioServiceTest {
 
 		when(portfolioRepository.getPortfolioByIdAndUserId(any(UUID.class), any(UUID.class))).thenReturn(null);
 
-		PortfolioNotFoundException notFoundException = assertThrows(PortfolioNotFoundException.class, () -> portfolioService.getPortfolio(request));
+		GetPortfolioResponse response = portfolioService.getPortfolio(request);
 
-		// Do I really need to do that?
-		assertEquals(String.format("Portfolio from %s %s not found", "id", unknownPortfolioId.toString()), notFoundException.getMessage());
-		assertEquals("PORTFOLIO", notFoundException.getLocation());
-		assertEquals(unknownPortfolioId.toString(), notFoundException.getFieldValue());
+		assertNull(response.getPortfolio());
 	}
 
 	@Test
