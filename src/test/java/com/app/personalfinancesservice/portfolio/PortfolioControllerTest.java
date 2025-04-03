@@ -51,6 +51,7 @@ class PortfolioControllerTest {
 	private static final String EXCEPTION_LABEL = "PORTFOLIO";
 	private static final String PORTFOLIOID_LABEL = "portfolioId";
 	private static final String USERID_LABEL = "userId";
+
 	@Autowired
 	private MockMvc mockMvc;
 	@MockitoBean
