@@ -1,11 +1,16 @@
 package com.app.personalfinancesservice.service;
 
+import java.util.UUID;
+
 import org.springframework.stereotype.Service;
 
 import com.app.personalfinancesservice.converters.BudgetConverter;
+import com.app.personalfinancesservice.converters.UUIDConverter;
 import com.app.personalfinancesservice.domain.budget.Budget;
 import com.app.personalfinancesservice.domain.budget.input.CreateBudgetRequest;
+import com.app.personalfinancesservice.domain.budget.input.GetBudgetRequest;
 import com.app.personalfinancesservice.domain.budget.output.CreateBudgetResponse;
+import com.app.personalfinancesservice.domain.budget.output.GetBudgetResponse;
 import com.app.personalfinancesservice.domain.portfolio.Portfolio;
 import com.app.personalfinancesservice.domain.portfolio.input.GetPortfolioRequest;
 import com.app.personalfinancesservice.domain.service.BudgetServiceBase;
@@ -44,5 +49,26 @@ public class BudgetService implements BudgetServiceBase {
 
 		return new CreateBudgetResponse() //
 				.withBudget(budgetRepository.save(requestBudget));
+	}
+
+	/***
+	 * It can return one or several budgets
+	 *
+	 * @param request
+	 * @return GetBudgetResponse
+	 */
+	@Override
+	public GetBudgetResponse getBudget(GetBudgetRequest request) {
+
+		final UUID userId = UUIDConverter //
+				.convert(request.getUserId(), "userId", BUDGET_LABEL);
+		// fetch old
+		if (request.getId() == null) {
+			return new GetBudgetResponse().withBudget(budgetRepository.getAllByUserId(userId));
+		} else {
+			final UUID budgetId = UUIDConverter //
+					.convert(request.getId(), "budgetId", BUDGET_LABEL);
+			return new GetBudgetResponse().withBudget(budgetRepository.getByIdAndUserId(budgetId, userId));
+		}
 	}
 }
