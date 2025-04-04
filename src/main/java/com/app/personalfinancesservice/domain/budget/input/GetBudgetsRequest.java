@@ -9,17 +9,17 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetBudgetRequest {
+public class GetBudgetsRequest {
 
 	private String id;
 	private String userId;
 
-	public GetBudgetRequest withId(String id) {
+	public GetBudgetsRequest withId(String id) {
 		this.setId(id);
 		return this;
 	}
 
-	public GetBudgetRequest withUserId(String userId) {
+	public GetBudgetsRequest withUserId(String userId) {
 		this.setUserId(userId);
 		return this;
 	}

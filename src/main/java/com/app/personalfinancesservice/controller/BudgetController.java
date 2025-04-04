@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.personalfinancesservice.domain.budget.input.CreateBudgetRequest;
-import com.app.personalfinancesservice.domain.budget.input.GetBudgetRequest;
+import com.app.personalfinancesservice.domain.budget.input.GetBudgetsRequest;
 import com.app.personalfinancesservice.domain.budget.output.CreateBudgetResponse;
-import com.app.personalfinancesservice.domain.budget.output.GetBudgetResponse;
+import com.app.personalfinancesservice.domain.budget.output.GetBudgetsResponse;
 import com.app.personalfinancesservice.domain.http.HttpRoutes;
 import com.app.personalfinancesservice.service.BudgetService;
 
@@ -36,24 +36,24 @@ public class BudgetController {
 	}
 
 	@GetMapping(path = "/{id}")
-	public ResponseEntity<GetBudgetResponse> getBudget(@RequestHeader("X-User-id") String userId //
+	public ResponseEntity<GetBudgetsResponse> getBudget(@RequestHeader("X-User-id") String userId //
 			, @PathVariable String id) {
 
-		GetBudgetRequest request = new GetBudgetRequest() //
+		GetBudgetsRequest request = new GetBudgetsRequest() //
 				.withId(id) //
 				.withUserId(userId);
 
-		return ResponseEntity.ok(budgetService.getBudget(request));
+		return ResponseEntity.ok(budgetService.getBudgets(request));
 	}
 
 	// Fetch all budgets
 	@GetMapping(path = "/")
-	public ResponseEntity<GetBudgetResponse> getBudget(@RequestHeader("X-User-id") String userId) {
+	public ResponseEntity<GetBudgetsResponse> getBudgets(@RequestHeader("X-User-id") String userId) {
 
-		GetBudgetRequest request = new GetBudgetRequest() //
+		GetBudgetsRequest request = new GetBudgetsRequest() //
 				.withUserId(userId);
 
-		return ResponseEntity.ok(budgetService.getBudget(request));
+		return ResponseEntity.ok(budgetService.getBudgets(request));
 	}
 
 }

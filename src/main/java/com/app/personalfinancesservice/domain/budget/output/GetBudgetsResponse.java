@@ -12,12 +12,12 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetBudgetResponse {
+public class GetBudgetsResponse {
 
-	private List<Budget> budget;
+	private List<Budget> budgets;
 
-	public GetBudgetResponse withBudget(List<Budget> budget) {
-		this.setBudget(budget);
+	public GetBudgetsResponse withBudgets(List<Budget> budgets) {
+		this.setBudgets(budgets);
 		return this;
 	}
 }
