@@ -83,7 +83,7 @@ public class BudgetService implements BudgetServiceBase {
 		Budget oldBudget = getBudgets(requestBudget).getBudgets().getFirst();
 
 		if (oldBudget == null) {
-			throw new BudgetNotFoundException(BUDGET_LABEL, "id", request.getId());
+			throw new BudgetNotFoundException(BUDGET_LABEL, "budgetId", request.getId());
 		}
 
 		Budget updatedBudget = budgetRepository.save(BudgetConverter.convert(request, oldBudget));
