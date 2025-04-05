@@ -1,5 +1,6 @@
 package com.app.personalfinancesservice.service;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -8,9 +9,11 @@ import com.app.personalfinancesservice.converters.BudgetConverter;
 import com.app.personalfinancesservice.converters.UUIDConverter;
 import com.app.personalfinancesservice.domain.budget.Budget;
 import com.app.personalfinancesservice.domain.budget.input.CreateBudgetRequest;
+import com.app.personalfinancesservice.domain.budget.input.DeleteBudgetRequest;
 import com.app.personalfinancesservice.domain.budget.input.GetBudgetsRequest;
 import com.app.personalfinancesservice.domain.budget.input.UpdateBudgetRequest;
 import com.app.personalfinancesservice.domain.budget.output.CreateBudgetResponse;
+import com.app.personalfinancesservice.domain.budget.output.DeleteBudgetResponse;
 import com.app.personalfinancesservice.domain.budget.output.GetBudgetsResponse;
 import com.app.personalfinancesservice.domain.budget.output.UpdateBudgetResponse;
 import com.app.personalfinancesservice.domain.portfolio.Portfolio;
@@ -52,6 +55,23 @@ public class BudgetService implements BudgetServiceBase {
 
 		return new CreateBudgetResponse() //
 				.withBudget(budgetRepository.save(requestBudget));
+	}
+
+	@Override
+	public DeleteBudgetResponse deleteBudget(DeleteBudgetRequest request) {
+
+		GetBudgetsRequest requestBudget = new GetBudgetsRequest().withId(request.getId()) //
+				.withUserId(request.getUserId()) //
+				;
+
+		List<Budget> getResponse = getBudgets(requestBudget).getBudgets();
+		if (getResponse == null || getResponse.isEmpty()) {
+			return new DeleteBudgetResponse().withSuccess(false);
+		}
+
+		budgetRepository.delete(getResponse.getFirst());
+
+		return new DeleteBudgetResponse().withSuccess(true);
 	}
 
 	/***

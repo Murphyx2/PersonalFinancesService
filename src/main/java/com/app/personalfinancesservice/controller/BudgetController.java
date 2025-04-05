@@ -1,6 +1,7 @@
 package com.app.personalfinancesservice.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,9 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.personalfinancesservice.domain.budget.input.CreateBudgetRequest;
+import com.app.personalfinancesservice.domain.budget.input.DeleteBudgetRequest;
 import com.app.personalfinancesservice.domain.budget.input.GetBudgetsRequest;
 import com.app.personalfinancesservice.domain.budget.input.UpdateBudgetRequest;
 import com.app.personalfinancesservice.domain.budget.output.CreateBudgetResponse;
+import com.app.personalfinancesservice.domain.budget.output.DeleteBudgetResponse;
 import com.app.personalfinancesservice.domain.budget.output.GetBudgetsResponse;
 import com.app.personalfinancesservice.domain.budget.output.UpdateBudgetResponse;
 import com.app.personalfinancesservice.domain.http.HttpRoutes;
@@ -36,6 +39,15 @@ public class BudgetController {
 		request.withUserId(userId);
 
 		return ResponseEntity.ok(budgetService.createBudget(request));
+	}
+
+	@DeleteMapping(path = "/{id}")
+	public ResponseEntity<DeleteBudgetResponse> deleteBudget(@RequestHeader("X-User-id") String userId, //
+			@PathVariable String id) {
+
+		DeleteBudgetRequest request = new DeleteBudgetRequest().withId(id).withUserId(userId);
+
+		return ResponseEntity.ok(budgetService.deleteBudget(request));
 	}
 
 	@GetMapping(path = "/{id}")
