@@ -9,11 +9,14 @@ import com.app.personalfinancesservice.converters.UUIDConverter;
 import com.app.personalfinancesservice.domain.budget.Budget;
 import com.app.personalfinancesservice.domain.budget.input.CreateBudgetRequest;
 import com.app.personalfinancesservice.domain.budget.input.GetBudgetsRequest;
+import com.app.personalfinancesservice.domain.budget.input.UpdateBudgetRequest;
 import com.app.personalfinancesservice.domain.budget.output.CreateBudgetResponse;
 import com.app.personalfinancesservice.domain.budget.output.GetBudgetsResponse;
+import com.app.personalfinancesservice.domain.budget.output.UpdateBudgetResponse;
 import com.app.personalfinancesservice.domain.portfolio.Portfolio;
 import com.app.personalfinancesservice.domain.portfolio.input.GetPortfolioRequest;
 import com.app.personalfinancesservice.domain.service.BudgetServiceBase;
+import com.app.personalfinancesservice.exceptions.BudgetNotFoundException;
 import com.app.personalfinancesservice.exceptions.PortfolioNotFoundException;
 import com.app.personalfinancesservice.repository.BudgetRepository;
 
@@ -53,7 +56,6 @@ public class BudgetService implements BudgetServiceBase {
 
 	/***
 	 * It can return one or several budgets
-	 *
 	 * @return GetBudgetResponse
 	 */
 	@Override
@@ -69,5 +71,23 @@ public class BudgetService implements BudgetServiceBase {
 					.convert(request.getId(), "budgetId", BUDGET_LABEL);
 			return new GetBudgetsResponse().withBudgets(budgetRepository.getByIdAndUserId(budgetId, userId));
 		}
+	}
+
+	@Override
+	public UpdateBudgetResponse updateBudget(UpdateBudgetRequest request) {
+
+		GetBudgetsRequest requestBudget = new GetBudgetsRequest() //
+				.withId(request.getId()) //
+				.withUserId(request.getUserId());
+
+		Budget oldBudget = getBudgets(requestBudget).getBudgets().getFirst();
+
+		if (oldBudget == null) {
+			throw new BudgetNotFoundException(BUDGET_LABEL, "id", request.getId());
+		}
+
+		Budget updatedBudget = budgetRepository.save(BudgetConverter.convert(request, oldBudget));
+
+		return new UpdateBudgetResponse().withBudget(updatedBudget);
 	}
 }
