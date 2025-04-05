@@ -15,8 +15,8 @@ public class BudgetConverter {
 				.withPortfolioId(UUIDConverter.convert(request.getPortfolioId(), "portfolioId", BUDGET_LABEL)) //
 				.withName(request.getName()) //
 				.withDescription(request.getDescription()) //
-				.withStartAt(request.getStartDate()) //
-				.withEndAt(request.getEndDate()) //
+				.withStartAt(request.getStartAt()) //
+				.withEndAt(request.getEndAt()) //
 				.withCreatedAt(LocalDateTime.now()) //
 				;
 	}

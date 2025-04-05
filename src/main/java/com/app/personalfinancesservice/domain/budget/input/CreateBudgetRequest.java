@@ -18,10 +18,10 @@ public class CreateBudgetRequest {
 	private String description;
 
 	@JsonFormat(pattern = "yyyy-MM-dd' 'HH:mm:ss")
-	private LocalDateTime startDate;
+	private LocalDateTime startAt;
 
 	@JsonFormat(pattern = "yyyy-MM-dd' 'HH:mm:ss")
-	private LocalDateTime endDate;
+	private LocalDateTime endAt;
 
 	public CreateBudgetRequest withUserId(String userId) {
 		this.setUserId(userId);
@@ -43,13 +43,13 @@ public class CreateBudgetRequest {
 		return this;
 	}
 
-	public CreateBudgetRequest withStartDate(LocalDateTime startDate) {
-		this.setStartDate(startDate);
+	public CreateBudgetRequest withStartAt(LocalDateTime startDate) {
+		this.setStartAt(startDate);
 		return this;
 	}
 
-	public CreateBudgetRequest withEndDate(LocalDateTime endDate) {
-		this.setEndDate(endDate);
+	public CreateBudgetRequest withEndAt(LocalDateTime endDate) {
+		this.setEndAt(endDate);
 		return this;
 	}
 }
