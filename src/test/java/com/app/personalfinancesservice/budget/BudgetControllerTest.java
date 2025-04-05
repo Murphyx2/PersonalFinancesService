@@ -13,12 +13,16 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.app.personalfinancesservice.controller.BudgetController;
+import com.app.personalfinancesservice.converters.BudgetConverter;
 import com.app.personalfinancesservice.domain.budget.Budget;
 import com.app.personalfinancesservice.domain.budget.input.CreateBudgetRequest;
 import com.app.personalfinancesservice.domain.budget.input.GetBudgetsRequest;
+import com.app.personalfinancesservice.domain.budget.input.UpdateBudgetRequest;
 import com.app.personalfinancesservice.domain.budget.output.CreateBudgetResponse;
 import com.app.personalfinancesservice.domain.budget.output.GetBudgetsResponse;
+import com.app.personalfinancesservice.domain.budget.output.UpdateBudgetResponse;
 import com.app.personalfinancesservice.domain.http.HttpRoutes;
+import com.app.personalfinancesservice.exceptions.BudgetNotFoundException;
 import com.app.personalfinancesservice.exceptions.InvalidIdException;
 import com.app.personalfinancesservice.exceptions.PortfolioNotFoundException;
 import com.app.personalfinancesservice.service.BudgetService;
@@ -29,6 +33,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -42,8 +47,8 @@ class BudgetControllerTest {
 			    "portfolioId":"ba53ef5a-677f-4b0b-beb4-5a2b4cffe7f0",
 			    "name":"Budget 3",
 			    "description":"No Portfolio id test",
-			    "startDate":"2025-04-01 00:00:00",
-			    "endDate":"2025-05-30 00:00:00"
+			    "startAt":"2025-04-01 00:00:00",
+			    "endAt":"2025-05-30 00:00:00"
 			}
 			""";
 
@@ -198,6 +203,78 @@ class BudgetControllerTest {
 				.andExpect(jsonPath("$.budgets[1].description").value(budget2.getDescription())) //
 				.andExpect(jsonPath("$.budgets[1].portfolioId").value(budget2.getPortfolioId().toString())) //
 		;
+	}
 
+	@Test
+	void updateBudgetNotBudgetFound() throws Exception {
+
+		UUID invalidBudgetId = UUID.randomUUID();
+
+		when(budgetService.updateBudget(any(UpdateBudgetRequest.class))) //
+				.thenThrow(new BudgetNotFoundException(BUDGET_LABEL, "budgetId", invalidBudgetId.toString()));
+
+		mockMvc.perform(put(HttpRoutes.BUDGET) //
+						.header("X-User-id", "ba53ef5a-677f-4b0b-beb4-5a2b4cffe7f0") //
+						.contentType(MediaType.APPLICATION_JSON) //
+						.content(REQUEST_BODY) //
+				) //
+				.andExpect(status().isBadRequest()) //
+				.andExpect(jsonPath("$.error").value(BUDGET_LABEL)) //
+				.andExpect(jsonPath("$.message")//
+						.value(String.format("Budget from %s %s not found", //
+								"budgetId",  //
+								invalidBudgetId.toString()) //
+						)) //
+		;
+	}
+
+	@Test
+	void updateBudgetSuccess() throws Exception {
+
+		UUID budgetId = UUID.randomUUID();
+		UUID userId = UUID.randomUUID();
+		UUID portfolioId = UUID.randomUUID();
+
+		UpdateBudgetRequest request = new UpdateBudgetRequest() //
+				.withId(budgetId.toString()) //
+				.withUserId(userId.toString()) //
+				.withName("Updated Budget name") //
+				.withDescription("Updated Test Description") //
+				.withStartAt(LocalDateTime.parse("2025-04-01T00:00:00")) //
+				.withEndAt(LocalDateTime.parse("2025-05-01T00:00:00")) //
+				;
+
+		Budget oldBudget = new Budget() //
+				.withId(budgetId) //
+				.withUserId(userId) //
+				.withPortfolioId(portfolioId) //
+				.withName("Test Budget") //
+				.withDescription("Test Description") //
+				.withCreatedAt(LocalDateTime.parse("2025-04-03T00:00:00")) //
+				;
+
+		Budget updateBudget = BudgetConverter.convert(request, oldBudget);
+
+		when(budgetService.updateBudget(any(UpdateBudgetRequest.class))) //
+				.thenReturn(new UpdateBudgetResponse().withBudget(updateBudget));
+
+		mockMvc.perform(put(HttpRoutes.BUDGET) //
+						.header("X-User-id", userId.toString()) //
+						.contentType(MediaType.APPLICATION_JSON) //
+						.content(REQUEST_BODY) //
+				) //
+				.andExpect(status().isOk()) //
+				.andExpect(jsonPath("$.budget.id").value(request.getId())) //
+				.andExpect(jsonPath("$.budget.userId").value(request.getUserId())) //
+				.andExpect(jsonPath("$.budget.portfolioId").value(portfolioId.toString())) //
+				.andExpect(jsonPath("$.budget.name").value(request.getName())) //
+				.andExpect(jsonPath("$.budget.description").value(request.getDescription())) //
+				.andExpect(jsonPath("$.budget.createdAt") //
+						.value(oldBudget.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))) //
+				.andExpect(jsonPath("$.budget.startAt") //
+						.value(request.getStartAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))) //
+				.andExpect(jsonPath("$.budget.endAt") //
+						.value(request.getEndAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))) //
+		;
 	}
 }

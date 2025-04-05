@@ -4,24 +4,40 @@ import java.time.LocalDateTime;
 
 import com.app.personalfinancesservice.domain.budget.Budget;
 import com.app.personalfinancesservice.domain.budget.input.CreateBudgetRequest;
+import com.app.personalfinancesservice.domain.budget.input.UpdateBudgetRequest;
 
 public class BudgetConverter {
 
 	private static final String BUDGET_LABEL = "BUDGET";
 
 	public static Budget convert(CreateBudgetRequest request) {
-		return new Budget()
-				.withUserId(UUIDConverter.convert(request.getUserId(), "userId", BUDGET_LABEL)) //
+		return new Budget().withUserId(UUIDConverter.convert(request.getUserId(), "userId", BUDGET_LABEL)) //
 				.withPortfolioId(UUIDConverter.convert(request.getPortfolioId(), "portfolioId", BUDGET_LABEL)) //
 				.withName(request.getName()) //
 				.withDescription(request.getDescription()) //
-				.withStartAt(request.getStartDate()) //
-				.withEndAt(request.getEndDate()) //
+				.withStartAt(request.getStartAt()) //
+				.withEndAt(request.getEndAt()) //
 				.withCreatedAt(LocalDateTime.now()) //
 				;
 	}
 
-	private BudgetConverter(){
+	public static Budget convert(UpdateBudgetRequest request, Budget oldBudget) {
+		return new Budget() //
+				.withName(request.getName()) //
+				.withDescription(request.getDescription()) //
+				.withStartAt(request.getStartAt()) //
+				.withEndAt(request.getEndAt()) //
+				.withId(oldBudget.getId()) //
+				.withUserId(oldBudget.getUserId()) //
+				.withPortfolioId(oldBudget.getPortfolioId()) //
+				.withTransactions(oldBudget.getTransactions()) //
+				.withCreatedAt(oldBudget.getCreatedAt()) //
+				.withUpdatedAt(LocalDateTime.now()) //
+				;
+
+	}
+
+	private BudgetConverter() {
 		// Empty on purpose
 	}
 }

@@ -4,16 +4,20 @@ import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateBudgetRequest {
+public class UpdateBudgetRequest {
+
+	private String id;
 
 	private String userId;
-	private String portfolioId;
+
 	private String name;
 	private String description;
 
@@ -23,33 +27,33 @@ public class CreateBudgetRequest {
 	@JsonFormat(pattern = "yyyy-MM-dd' 'HH:mm:ss")
 	private LocalDateTime endAt;
 
-	public CreateBudgetRequest withUserId(String userId) {
+	public UpdateBudgetRequest withId(String id) {
+		this.setId(id);
+		return this;
+	}
+
+	public UpdateBudgetRequest withUserId(String userId) {
 		this.setUserId(userId);
 		return this;
 	}
 
-	public CreateBudgetRequest withPortfolioId(String portfolioId) {
-		this.setPortfolioId(portfolioId);
-		return this;
-	}
-
-	public CreateBudgetRequest withName(String name) {
+	public UpdateBudgetRequest withName(String name) {
 		this.setName(name);
 		return this;
 	}
 
-	public CreateBudgetRequest withDescription(String description) {
+	public UpdateBudgetRequest withDescription(String description) {
 		this.setDescription(description);
 		return this;
 	}
 
-	public CreateBudgetRequest withStartAt(LocalDateTime startDate) {
-		this.setStartAt(startDate);
+	public UpdateBudgetRequest withStartAt(LocalDateTime startAt) {
+		this.setStartAt(startAt);
 		return this;
 	}
 
-	public CreateBudgetRequest withEndAt(LocalDateTime endDate) {
-		this.setEndAt(endDate);
+	public UpdateBudgetRequest withEndAt(LocalDateTime endAt) {
+		this.setEndAt(endAt);
 		return this;
 	}
 }
