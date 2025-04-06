@@ -9,17 +9,18 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.app.personalfinancesservice.domain.filter.SortBy;
+import com.app.personalfinancesservice.domain.filter.SortDirection;
 import com.app.personalfinancesservice.domain.http.HttpRoutes;
 import com.app.personalfinancesservice.domain.portfolio.input.CreatePortfolioRequest;
 import com.app.personalfinancesservice.domain.portfolio.input.DeletePortfolioRequest;
-import com.app.personalfinancesservice.domain.portfolio.input.GetAllPortfolioRequest;
 import com.app.personalfinancesservice.domain.portfolio.input.GetPortfolioRequest;
 import com.app.personalfinancesservice.domain.portfolio.input.UpdatePortfolioRequest;
 import com.app.personalfinancesservice.domain.portfolio.output.CreatePortfolioResponse;
 import com.app.personalfinancesservice.domain.portfolio.output.DeletePortfolioResponse;
-import com.app.personalfinancesservice.domain.portfolio.output.GetAllPortfolioResponse;
 import com.app.personalfinancesservice.domain.portfolio.output.GetPortfolioResponse;
 import com.app.personalfinancesservice.domain.portfolio.output.UpdatePortfolioResponse;
 import com.app.personalfinancesservice.service.PortfolioService;
@@ -52,17 +53,31 @@ public class PortfolioController {
 
 	}
 
-	@GetMapping
-	public ResponseEntity<GetAllPortfolioResponse> getAllPortfolio(@RequestHeader("X-User-id") String userId) {
-		return ResponseEntity //
-				.ok(portfolioService.getAllPortfolio(new GetAllPortfolioRequest().withUserId(userId)));
-	}
-
 	@GetMapping("/{id}")
 	public ResponseEntity<GetPortfolioResponse> getPortfolio(@RequestHeader("X-User-id") String userId, //
-			@PathVariable String id) {
+			@RequestParam(required = false, defaultValue = "NAME") SortBy sortBy, @RequestParam(required = false, defaultValue = "ASC") SortDirection sortDirection, @PathVariable String id) {
+
+		GetPortfolioRequest request = new GetPortfolioRequest() //
+				.withPortfolioId(id) //
+				.withUserId(userId) //
+				.withSortBy(sortBy) //
+				.withSortDirection(sortDirection);
+
 		return ResponseEntity //
-				.ok(portfolioService.getPortfolio(new GetPortfolioRequest().withPortfolioId(id).withUserId(userId)));
+				.ok(portfolioService.getPortfolios(request));
+	}
+
+	@GetMapping("/")
+	public ResponseEntity<GetPortfolioResponse> getPortfolios(@RequestHeader("X-User-id") String userId, //
+			@RequestParam(required = false, defaultValue = "CREATED_AT") SortBy sortBy, @RequestParam(required = false, defaultValue = "ASC") SortDirection sortDirection) {
+
+		GetPortfolioRequest request = new GetPortfolioRequest() //
+				.withUserId(userId) //
+				.withSortBy(sortBy) //
+				.withSortDirection(sortDirection);
+
+		return ResponseEntity //
+				.ok(portfolioService.getPortfolios(request));
 	}
 
 	@PutMapping
