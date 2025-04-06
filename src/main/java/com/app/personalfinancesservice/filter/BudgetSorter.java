@@ -7,9 +7,9 @@ import com.app.personalfinancesservice.domain.budget.Budget;
 import com.app.personalfinancesservice.domain.filter.SortBy;
 import com.app.personalfinancesservice.domain.filter.SortDirection;
 
-public class BudgetFilter {
+public class BudgetSorter {
 
-	public static List<Budget> sortByFilter(final List<Budget> budgets, SortBy sortBy, SortDirection direction) {
+	public static List<Budget> sort(final List<Budget> budgets, SortBy sortBy, SortDirection direction) {
 
 		if (budgets == null || budgets.isEmpty()) {
 			return budgets;
@@ -25,7 +25,7 @@ public class BudgetFilter {
 		return budgets;
 	}
 
-	public static Comparator<Budget> getComparator(SortBy sortBy) {
+	private static Comparator<Budget> getComparator(SortBy sortBy) {
 
 		return switch (sortBy) {
 			case SortBy.NAME -> Comparator.comparing(Budget::getName);
@@ -35,7 +35,7 @@ public class BudgetFilter {
 		};
 	}
 
-	private BudgetFilter() {
+	private BudgetSorter() {
 		// Empty on Purpose
 	}
 

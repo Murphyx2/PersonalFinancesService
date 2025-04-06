@@ -21,7 +21,7 @@ import com.app.personalfinancesservice.domain.portfolio.input.GetPortfolioReques
 import com.app.personalfinancesservice.domain.service.BudgetServiceBase;
 import com.app.personalfinancesservice.exceptions.BudgetNotFoundException;
 import com.app.personalfinancesservice.exceptions.PortfolioNotFoundException;
-import com.app.personalfinancesservice.filter.BudgetFilter;
+import com.app.personalfinancesservice.filter.BudgetSorter;
 import com.app.personalfinancesservice.repository.BudgetRepository;
 
 @Service
@@ -45,7 +45,8 @@ public class BudgetService implements BudgetServiceBase {
 		GetPortfolioRequest requestPortfolio = new GetPortfolioRequest() //
 				.withUserId(request.getUserId()) //
 				.withPortfolioId(request.getPortfolioId());
-		Portfolio portfolio = portfolioService.getPortfolio(requestPortfolio).getPortfolio();
+		Portfolio portfolio = portfolioService.getPortfolios(requestPortfolio) //
+				.getPortfolios().getFirst();
 
 		if (portfolio == null) {
 			throw new PortfolioNotFoundException(BUDGET_LABEL, "portfolioId", request.getPortfolioId());
@@ -97,8 +98,8 @@ public class BudgetService implements BudgetServiceBase {
 		}
 
 		//Filtering results
-		List<Budget> filteredBudgets = BudgetFilter //
-				.sortByFilter(budgets, request.getSortBy(), request.getSortDirection());
+		List<Budget> filteredBudgets = BudgetSorter //
+				.sort(budgets, request.getSortBy(), request.getSortDirection());
 
 		return new GetBudgetsResponse().withBudgets(filteredBudgets);
 	}

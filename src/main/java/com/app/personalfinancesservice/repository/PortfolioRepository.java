@@ -12,5 +12,5 @@ import com.app.personalfinancesservice.domain.portfolio.Portfolio;
 public interface PortfolioRepository extends JpaRepository<Portfolio, UUID> {
 	List<Portfolio> getAllByUserId(UUID userId);
 
-	Portfolio getPortfolioByIdAndUserId(UUID id, UUID userId);
+	List<Portfolio> getPortfolioByIdAndUserId(UUID id, UUID userId);
 }

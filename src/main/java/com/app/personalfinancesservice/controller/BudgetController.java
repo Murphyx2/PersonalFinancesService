@@ -68,11 +68,13 @@ public class BudgetController {
 
 	// Fetch all budgets
 	@GetMapping(path = "/")
-	public ResponseEntity<GetBudgetsResponse> getBudgets(@RequestHeader("X-User-id") String userId, @RequestParam(required = false, defaultValue = "NAME") SortBy sortBy, //
+	public ResponseEntity<GetBudgetsResponse> getBudgets(@RequestHeader("X-User-id") String userId, //
+			@RequestParam(required = false, defaultValue = "NAME") SortBy sortBy, //
 			@RequestParam(required = false, defaultValue = "ASC") SortDirection sortDirection) {
 
 		GetBudgetsRequest request = new GetBudgetsRequest() //
-				.withUserId(userId).withSortBy(sortBy) //
+				.withUserId(userId) //
+				.withSortBy(sortBy) //
 				.withSortDirection(sortDirection);
 
 		return ResponseEntity.ok(budgetService.getBudgets(request));

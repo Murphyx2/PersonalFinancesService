@@ -3,6 +3,7 @@ package com.app.personalfinancesservice.portfolio;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -148,7 +149,7 @@ class PortfolioControllerTest {
 		String invalidPortfolioId = "no-uuid";
 
 		// Configuration the mock to throw an exception for an Invalid ID
-		when(portfolioServiceMock.getPortfolio(any(GetPortfolioRequest.class))) //
+		when(portfolioServiceMock.getPortfolios(any(GetPortfolioRequest.class))) //
 				.thenThrow(new InvalidIdException(EXCEPTION_LABEL, PORTFOLIOID_LABEL, invalidPortfolioId));
 
 		mockMvc.perform(get(HttpRoutes.PORTFOLIO + "/{portfolioId}", invalidPortfolioId) //
@@ -165,7 +166,7 @@ class PortfolioControllerTest {
 	@Test
 	void getPortfolioMissingUserId() throws Exception {
 
-		mockMvc.perform(get(HttpRoutes.PORTFOLIO) //
+		mockMvc.perform(get(HttpRoutes.PORTFOLIO+"/") //
 						.contentType(MediaType.APPLICATION_JSON)) //
 				.andExpect(status().isBadRequest()) //
 				.andExpect(jsonPath("$.error") //
@@ -186,10 +187,13 @@ class PortfolioControllerTest {
 				.withName("New Portfolio") //
 				.withDescription("This is the description of the portfolio");
 
-		GetPortfolioResponse response = new GetPortfolioResponse() //
-				.withPortfolio(portfolio);
+		List<Portfolio> portfolios = new ArrayList<>();
+		portfolios.add(portfolio);
 
-		when(portfolioServiceMock.getPortfolio(any(GetPortfolioRequest.class))) //
+		GetPortfolioResponse response = new GetPortfolioResponse() //
+				.withPortfolios(portfolios);
+
+		when(portfolioServiceMock.getPortfolios(any(GetPortfolioRequest.class))) //
 				.thenReturn(response);
 
 		mockMvc.perform(get(HttpRoutes.PORTFOLIO + "/{portfolioId}", validPortfolioId.toString()) //
@@ -197,11 +201,12 @@ class PortfolioControllerTest {
 						.header("X-User-id", validUserId.toString()) //
 				) //
 				.andExpect(status().isOk()) //
-				.andExpect(jsonPath("$.portfolio").exists()) //
-				.andExpect(jsonPath("$.portfolio.id").value(portfolio.getId().toString())) //
-				.andExpect(jsonPath("$.portfolio.userId").value(portfolio.getUserId().toString())) //
-				.andExpect(jsonPath("$.portfolio.name").value(portfolio.getName())) //
-				.andExpect(jsonPath("$.portfolio.description").value(portfolio.getDescription())) //
+				.andExpect(jsonPath("$.portfolios").exists()) //
+				.andExpect(jsonPath("$.portfolios").isArray()) //
+				.andExpect(jsonPath("$.portfolios[0].id").value(portfolio.getId().toString())) //
+				.andExpect(jsonPath("$.portfolios[0].userId").value(portfolio.getUserId().toString())) //
+				.andExpect(jsonPath("$.portfolios[0].name").value(portfolio.getName())) //
+				.andExpect(jsonPath("$.portfolios[0].description").value(portfolio.getDescription())) //
 		;
 	}
 

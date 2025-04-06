@@ -2,9 +2,12 @@ package com.app.personalfinancesservice.portfolio;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import com.app.personalfinancesservice.converters.PortfolioConverter;
+import com.app.personalfinancesservice.domain.filter.SortBy;
+import com.app.personalfinancesservice.domain.filter.SortDirection;
 import com.app.personalfinancesservice.domain.portfolio.Portfolio;
 import com.app.personalfinancesservice.domain.portfolio.input.CreatePortfolioRequest;
 import com.app.personalfinancesservice.domain.portfolio.input.GetPortfolioRequest;
@@ -112,7 +115,7 @@ class PortfolioServiceTest {
 	}
 
 	@Test
-	void getPortfolioNotFound() {
+	void getPortfoliosNotFound() {
 		UUID validUserId = UUID.randomUUID();
 		UUID unknownPortfolioId = UUID.randomUUID();
 
@@ -122,13 +125,13 @@ class PortfolioServiceTest {
 
 		when(portfolioRepository.getPortfolioByIdAndUserId(any(UUID.class), any(UUID.class))).thenReturn(null);
 
-		GetPortfolioResponse response = portfolioService.getPortfolio(request);
+		GetPortfolioResponse response = portfolioService.getPortfolios(request);
 
-		assertNull(response.getPortfolio());
+		assertNull(response.getPortfolios());
 	}
 
 	@Test
-	void getPortfolioSuccess() {
+	void getPortfoliosSuccess() {
 		UUID validUserId = UUID.randomUUID();
 		UUID validPortfolioId = UUID.randomUUID();
 
@@ -139,17 +142,22 @@ class PortfolioServiceTest {
 				.withDescription("Test description portfolio") //
 				.withBudgets(new ArrayList<>()).withCreated(LocalDateTime.now());
 
+		List<Portfolio> portfolios = new ArrayList<>();
+		portfolios.add(portfolio);
+
 		GetPortfolioRequest request = new GetPortfolioRequest() //
 				.withPortfolioId(validPortfolioId.toString()) //
-				.withUserId(validUserId.toString());
+				.withUserId(validUserId.toString()) //
+				.withSortBy(SortBy.CREATED_AT) //
+				.withSortDirection(SortDirection.ASC);
 
-		when(portfolioRepository.getPortfolioByIdAndUserId(any(UUID.class), any(UUID.class))).thenReturn(portfolio);
+		when(portfolioRepository.getPortfolioByIdAndUserId(any(UUID.class), any(UUID.class))).thenReturn(portfolios);
 
-		GetPortfolioResponse response = portfolioService.getPortfolio(request);
+		GetPortfolioResponse response = portfolioService.getPortfolios(request);
 
-		assertEquals(portfolio.getId(), response.getPortfolio().getId());
-		assertEquals(portfolio.getName(), response.getPortfolio().getName());
-		assertEquals(portfolio.getDescription(), response.getPortfolio().getDescription());
-		assertEquals(portfolio.getCreated(), response.getPortfolio().getCreated());
+		assertEquals(portfolio.getId(), response.getPortfolios().getFirst().getId());
+		assertEquals(portfolio.getName(), response.getPortfolios().getFirst().getName());
+		assertEquals(portfolio.getDescription(), response.getPortfolios().getFirst().getDescription());
+		assertEquals(portfolio.getCreated(), response.getPortfolios().getFirst().getCreated());
 	}
 }
