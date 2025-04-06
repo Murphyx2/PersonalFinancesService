@@ -32,7 +32,6 @@ public class BudgetFilter {
 			case SortBy.START_AT -> Comparator.comparing(Budget::getStartAt);
 			case SortBy.END_AT -> Comparator.comparing(Budget::getEndAt);
 			case SortBy.CREATED_AT -> Comparator.comparing(Budget::getCreatedAt);
-			default -> Comparator.comparing(Budget::getId);
 		};
 	}
 
