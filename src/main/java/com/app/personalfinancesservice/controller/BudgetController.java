@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.personalfinancesservice.domain.budget.input.CreateBudgetRequest;
@@ -19,6 +20,8 @@ import com.app.personalfinancesservice.domain.budget.output.CreateBudgetResponse
 import com.app.personalfinancesservice.domain.budget.output.DeleteBudgetResponse;
 import com.app.personalfinancesservice.domain.budget.output.GetBudgetsResponse;
 import com.app.personalfinancesservice.domain.budget.output.UpdateBudgetResponse;
+import com.app.personalfinancesservice.domain.filter.SortBy;
+import com.app.personalfinancesservice.domain.filter.SortDirection;
 import com.app.personalfinancesservice.domain.http.HttpRoutes;
 import com.app.personalfinancesservice.service.BudgetService;
 
@@ -51,22 +54,26 @@ public class BudgetController {
 	}
 
 	@GetMapping(path = "/{id}")
-	public ResponseEntity<GetBudgetsResponse> getBudget(@RequestHeader("X-User-id") String userId //
-			, @PathVariable String id) {
+	public ResponseEntity<GetBudgetsResponse> getBudget(@RequestHeader("X-User-id") String userId, //
+			@PathVariable String id) {
 
 		GetBudgetsRequest request = new GetBudgetsRequest() //
 				.withId(id) //
-				.withUserId(userId);
+				.withUserId(userId) //
+				.withSortBy(SortBy.valueOf("NAME")) //
+				.withSortDirection(SortDirection.valueOf("ASC"));
 
 		return ResponseEntity.ok(budgetService.getBudgets(request));
 	}
 
 	// Fetch all budgets
 	@GetMapping(path = "/")
-	public ResponseEntity<GetBudgetsResponse> getBudgets(@RequestHeader("X-User-id") String userId) {
+	public ResponseEntity<GetBudgetsResponse> getBudgets(@RequestHeader("X-User-id") String userId, @RequestParam(required = false, defaultValue = "NAME") SortBy sortBy, //
+			@RequestParam(required = false, defaultValue = "ASC") SortDirection sortDirection) {
 
 		GetBudgetsRequest request = new GetBudgetsRequest() //
-				.withUserId(userId);
+				.withUserId(userId).withSortBy(sortBy) //
+				.withSortDirection(sortDirection);
 
 		return ResponseEntity.ok(budgetService.getBudgets(request));
 	}
