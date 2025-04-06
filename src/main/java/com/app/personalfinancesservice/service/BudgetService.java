@@ -21,6 +21,7 @@ import com.app.personalfinancesservice.domain.portfolio.input.GetPortfolioReques
 import com.app.personalfinancesservice.domain.service.BudgetServiceBase;
 import com.app.personalfinancesservice.exceptions.BudgetNotFoundException;
 import com.app.personalfinancesservice.exceptions.PortfolioNotFoundException;
+import com.app.personalfinancesservice.filter.BudgetFilter;
 import com.app.personalfinancesservice.repository.BudgetRepository;
 
 @Service
@@ -81,16 +82,25 @@ public class BudgetService implements BudgetServiceBase {
 	@Override
 	public GetBudgetsResponse getBudgets(GetBudgetsRequest request) {
 
+		List<Budget> budgets;
+
 		final UUID userId = UUIDConverter //
 				.convert(request.getUserId(), "userId", BUDGET_LABEL);
-		// fetch old
+
+		// fetch all budgets from Portfolio
 		if (request.getId() == null) {
-			return new GetBudgetsResponse().withBudgets(budgetRepository.getAllByUserId(userId));
+			budgets = budgetRepository.getAllByUserId(userId);
 		} else {
 			final UUID budgetId = UUIDConverter //
 					.convert(request.getId(), "budgetId", BUDGET_LABEL);
-			return new GetBudgetsResponse().withBudgets(budgetRepository.getByIdAndUserId(budgetId, userId));
+			budgets = budgetRepository.getByIdAndUserId(budgetId, userId);
 		}
+
+		//Filtering results
+		List<Budget> filteredBudgets = BudgetFilter //
+				.sortByFilter(budgets, request.getSortBy(), request.getSortDirection());
+
+		return new GetBudgetsResponse().withBudgets(filteredBudgets);
 	}
 
 	@Override
