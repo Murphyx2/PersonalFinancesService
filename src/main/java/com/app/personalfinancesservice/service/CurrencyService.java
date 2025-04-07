@@ -1,6 +1,8 @@
 package com.app.personalfinancesservice.service;
 
+import java.util.Comparator;
 import java.util.Currency;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -31,6 +33,12 @@ public class CurrencyService implements CurrencyServiceBase {
 					.collect(Collectors.toSet());
 		}
 
-		return new GetCurrencyResponse().withCurrency(currencies);
+		// Apply sorting
+		LinkedHashSet<Currency> currencySet = currencies //
+				.stream() //
+				.sorted(Comparator.comparing(Currency::getCurrencyCode)) //
+				.collect(Collectors.toCollection(LinkedHashSet::new));
+
+		return new GetCurrencyResponse().withCurrency(currencySet);
 	}
 }
