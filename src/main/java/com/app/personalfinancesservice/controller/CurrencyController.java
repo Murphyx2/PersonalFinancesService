@@ -15,7 +15,7 @@ import com.app.personalfinancesservice.service.CurrencyService;
 @RequestMapping(HttpRoutes.CURRENCY)
 public class CurrencyController {
 
-	CurrencyService currencyService;
+	private final CurrencyService currencyService;
 
 	public CurrencyController(CurrencyService currencyService) {
 		this.currencyService = currencyService;

@@ -29,7 +29,7 @@ import com.app.personalfinancesservice.service.BudgetService;
 @RequestMapping(HttpRoutes.BUDGET)
 public class BudgetController {
 
-	BudgetService budgetService;
+	private final BudgetService budgetService;
 
 	BudgetController(BudgetService budgetService) {
 		this.budgetService = budgetService;
