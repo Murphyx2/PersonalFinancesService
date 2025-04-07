@@ -27,6 +27,14 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
 	}
 
+	@ExceptionHandler(CreateNewItemException.class)
+	public ResponseEntity<Map<String, String>> handledCreateNewCategoryException(CreateNewItemException ex) {
+		Map<String, String> error = new HashMap<>();
+		error.put(ERROR_KEY_NAME, ex.getFieldName());
+		error.put(MESSAGE_LABEL, ex.getMessage());
+		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+	}
+
 	// At the moment, Only log the general exceptions.
 	// As a rule, The other exception will log before being called.
 	@ExceptionHandler(Exception.class)
