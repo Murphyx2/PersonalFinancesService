@@ -3,9 +3,7 @@ package com.app.personalfinancesservice.domain.transaction;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import com.app.personalfinancesservice.domain.Currency.Currency;
 import com.app.personalfinancesservice.domain.budget.Budget;
-import com.app.personalfinancesservice.domain.transaction.transactiontype.TransactionType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,15 +11,14 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Data
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
 public class Transaction {
 
 	@Id
@@ -37,12 +34,8 @@ public class Transaction {
 	@JoinColumn(name = "budget_id", referencedColumnName = "id", insertable = false, updatable = false)
 	private Budget budget;
 
-	@OneToOne
-	@JoinColumn(name = "currency_id", referencedColumnName = "id", nullable = false)
-	private Currency currency;
+	private String currencyCode;
 
-	@OneToOne
-	@JoinColumn(name = "transaction_type_id", referencedColumnName = "id", nullable = false)
 	private TransactionType transactionType;
 
 	private String name;
@@ -68,8 +61,8 @@ public class Transaction {
 		return this;
 	}
 
-	public Transaction withCurrency(Currency currency) {
-		this.setCurrency(currency);
+	public Transaction withCurrencyCode(String currencyCode) {
+		this.setCurrencyCode(currencyCode);
 		return this;
 	}
 

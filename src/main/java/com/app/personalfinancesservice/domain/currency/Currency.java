@@ -1,4 +1,4 @@
-package com.app.personalfinancesservice.domain.Currency;
+package com.app.personalfinancesservice.domain.currency;
 
 import java.util.UUID;
 
@@ -10,7 +10,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
