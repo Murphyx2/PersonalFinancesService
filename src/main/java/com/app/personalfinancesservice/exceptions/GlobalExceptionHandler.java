@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -75,6 +76,17 @@ public class GlobalExceptionHandler {
 		Map<String, String> error = new HashMap<>();
 		error.put(ERROR_KEY_NAME, ex.getLocation());
 		error.put(MESSAGE_LABEL, ex.getMessage());
+		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+	}
+
+	// There is a better way to deal with this
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ResponseEntity<Map<String, String>> handledMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+		Map<String, String> error = new HashMap<>();
+		error.put(ERROR_KEY_NAME, ex.getObjectName());
+		error.put(MESSAGE_LABEL, String.format("%s %s",
+				ex.getFieldError()!= null ? ex.getFieldError().getField() : "",
+				ex.getAllErrors().getFirst().getDefaultMessage()));
 		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
 	}
 

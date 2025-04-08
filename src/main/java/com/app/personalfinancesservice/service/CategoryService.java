@@ -24,6 +24,14 @@ public class CategoryService implements CategoryServiceBase {
 	public CreateCategoryResponse createCategory(CreateCategoryRequest request) {
 
 		Category result;
+
+		//Check if there is a category with the same name transaction type
+		//TODO: Add Missing validation, Check by name and type if It already exists.
+
+		if(categoryExists(request)){
+			return new CreateCategoryResponse();
+		}
+
 		try {
 			result = categoryRepository.save(CategoryConverter.convert(request));
 		} catch (Exception e) {
@@ -31,5 +39,10 @@ public class CategoryService implements CategoryServiceBase {
 		}
 
 		return new CreateCategoryResponse().withCategory(result);
+	}
+
+	private boolean categoryExists(CreateCategoryRequest request) {
+		//TODO: To be implemented.
+		return false;
 	}
 }

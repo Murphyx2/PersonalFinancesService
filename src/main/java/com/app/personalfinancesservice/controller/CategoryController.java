@@ -11,6 +11,7 @@ import com.app.personalfinancesservice.domain.category.input.CreateCategoryReque
 import com.app.personalfinancesservice.domain.category.output.CreateCategoryResponse;
 import com.app.personalfinancesservice.domain.http.HttpRoutes;
 import com.app.personalfinancesservice.service.CategoryService;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping(HttpRoutes.CATEGORY)
@@ -24,7 +25,7 @@ public class CategoryController {
 
 	@PostMapping
 	public ResponseEntity<CreateCategoryResponse> createCategory(@RequestHeader("X-User-id") String userId, //
-			@RequestBody CreateCategoryRequest request) {
+			@Valid @RequestBody CreateCategoryRequest request) {
 
 		request.withUserId(userId);
 
