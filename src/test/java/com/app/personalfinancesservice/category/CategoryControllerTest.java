@@ -101,7 +101,7 @@ class CategoryControllerTest {
 						.header("X-User-id", userId.toString()).content(REQUEST_BODY) //
 				).andExpect(status().isOk()) //
 				.andExpect(jsonPath("$.category").exists()) //
-				.andExpect(jsonPath("$.category.name").value(request.getName())) //
+				.andExpect(jsonPath("$.category.name").value(request.getName().toUpperCase())) //
 				.andExpect(jsonPath("$.category.transactionType").value(request.getTransactionType().toString())) //
 				.andExpect(jsonPath("$.category.userId").value(userId.toString())) //
 				.andExpect(jsonPath("$.category.createdAt").exists()) //

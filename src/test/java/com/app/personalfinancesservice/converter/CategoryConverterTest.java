@@ -25,7 +25,7 @@ class CategoryConverterTest {
 
 		Category convertedCategory = CategoryConverter.convert(request);
 
-		assertEquals(request.getName(), convertedCategory.getName());
+		assertEquals(request.getName().toUpperCase(), convertedCategory.getName());
 		assertEquals(request.getUserId(), convertedCategory.getUserId().toString());
 		assertEquals(request.getTransactionType(), convertedCategory.getTransactionType());
 		assertNotNull(convertedCategory.getCreatedAt());
