@@ -5,6 +5,7 @@ Service to handle personal finances.
 ## Table of Contents
 
 - [Introduction](#introduction)
+- [Database Structure](#database-structure)
 - [Features](#features)
 - [Technologies Used](#technologies-used)
 - [Installation](#installation)
@@ -17,6 +18,10 @@ Service to handle personal finances.
 ## Introduction
 
 PersonalFinancesService is a Java-based service designed to help users manage their personal finances effectively. This service provides functionalities to track expenses, manage budgets, and generate financial reports.
+
+## Database Structure
+The main means of persistency is a Postgresql database, below you'll find the structure implemented in the project.
+![Entity-relationship diagram drawio](https://github.com/user-attachments/assets/76e5475d-6d3a-41a9-bb45-9dd0c7c4e633)
 
 ## Features
 
@@ -35,8 +40,10 @@ PersonalFinancesService is a Java-based service designed to help users manage th
 
 ### Prerequisites
 
-- Java 11 or higher
-- Docker (optional, for containerization)
+- Java 17 or higher
+- Sprint Boot 3.4.4
+- Postgresql
+- Docker (optional, but recommended)
 
 ### Steps
 
