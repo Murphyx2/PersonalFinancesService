@@ -16,7 +16,7 @@ public class CategoryConverter {
 		UUID userId = UUIDConverter.convert(request.getUserId(), USER_ID_LABEL, CATEGORY_LABEL);
 
 		return new Category() //
-				.withName(request.getName()) //
+				.withName(request.getName().toUpperCase()) //
 				.withUserId(userId) //
 				.withTransactionType(request.getTransactionType()) //
 				.withCreatedAt(LocalDateTime.now());

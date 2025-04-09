@@ -1,13 +1,22 @@
 package com.app.personalfinancesservice.service;
 
+import java.util.List;
+import java.util.UUID;
+
 import org.springframework.stereotype.Service;
 
 import com.app.personalfinancesservice.converters.CategoryConverter;
+import com.app.personalfinancesservice.converters.UUIDConverter;
 import com.app.personalfinancesservice.domain.category.Category;
 import com.app.personalfinancesservice.domain.category.input.CreateCategoryRequest;
+import com.app.personalfinancesservice.domain.category.input.GetCategoryRequest;
 import com.app.personalfinancesservice.domain.category.output.CreateCategoryResponse;
+import com.app.personalfinancesservice.domain.category.output.GetCategoryResponse;
+import com.app.personalfinancesservice.domain.filter.SortBy;
 import com.app.personalfinancesservice.domain.service.CategoryServiceBase;
 import com.app.personalfinancesservice.exceptions.CreateNewItemException;
+import com.app.personalfinancesservice.filter.CategoryFilter;
+import com.app.personalfinancesservice.filter.CategorySorter;
 import com.app.personalfinancesservice.repository.CategoryRepository;
 
 @Service
@@ -20,29 +29,54 @@ public class CategoryService implements CategoryServiceBase {
 		this.categoryRepository = categoryRepository;
 	}
 
+	private boolean categoryExists(CreateCategoryRequest request) {
+		GetCategoryRequest getRequest = new GetCategoryRequest() //
+				.withUserId(request.getUserId()) //
+				.withTransactionType(request.getTransactionType()) //
+				.withSortBy(SortBy.NAME);
+
+		return !getCategory(getRequest).getCategory().isEmpty();
+	}
+
 	@Override
 	public CreateCategoryResponse createCategory(CreateCategoryRequest request) {
 
 		Category result;
 
-		//Check if there is a category with the same name transaction type
-		//TODO: Add Missing validation, Check by name and type if It already exists.
-
-		if(categoryExists(request)){
-			return new CreateCategoryResponse();
+		if (categoryExists(request)) {
+			throw new CreateNewItemException("category", //
+					String.format("Category: %s already exists", request.getName()) //
+					, CATEGORY_LABEL);
 		}
 
 		try {
 			result = categoryRepository.save(CategoryConverter.convert(request));
 		} catch (Exception e) {
-			throw new CreateNewItemException("CREATE_NEW", "", CATEGORY_LABEL);
+			throw new CreateNewItemException("new category",  //
+					String.format("Could not save %s", request.getName()) //
+					, CATEGORY_LABEL);
 		}
 
 		return new CreateCategoryResponse().withCategory(result);
 	}
 
-	private boolean categoryExists(CreateCategoryRequest request) {
-		//TODO: To be implemented.
-		return false;
+	@Override
+	public GetCategoryResponse getCategory(GetCategoryRequest request) {
+
+		List<Category> result;
+		UUID userId = UUIDConverter.convert(request.getUserId(), "userId", CATEGORY_LABEL);
+
+		if (request.getId() == null || request.getId().isEmpty()) {
+			List<Category> categories = categoryRepository.getCategoriesByUserId(userId);
+			// Filter results
+			List<Category> filteredCategories = CategoryFilter.filterByTransactionType(categories, request.getTransactionType());
+			// Sort the results
+			result = CategorySorter.sort(filteredCategories, request.getSortBy(), request.getSortDirection());
+		} else {
+			UUID categoryId = UUIDConverter.convert(request.getId(), "categoryId", CATEGORY_LABEL);
+			result = categoryRepository.getCategoriesByIdAndUserId(categoryId, userId);
+		}
+
+		return new GetCategoryResponse().withCategory(result);
 	}
 }
