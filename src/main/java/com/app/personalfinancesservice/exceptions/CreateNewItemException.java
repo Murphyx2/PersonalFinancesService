@@ -8,9 +8,8 @@ public class CreateNewItemException extends RuntimeException {
 	private final String fieldValue;
 	private final String location;
 
-
 	public CreateNewItemException(String fieldName, String fieldValue, String location) {
-		super(String.format("Error creating %s", location));
+		super(String.format("Error creating %s, %s", fieldName, fieldValue));
 		this.fieldName = fieldName;
 		this.fieldValue = fieldValue;
 		this.location = location;

@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import com.app.personalfinancesservice.domain.transaction.TransactionType;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -25,6 +26,7 @@ public class Category {
 
 	private UUID userId;
 
+	@Column(nullable = false, unique = true)
 	private String name;
 
 	private TransactionType transactionType;

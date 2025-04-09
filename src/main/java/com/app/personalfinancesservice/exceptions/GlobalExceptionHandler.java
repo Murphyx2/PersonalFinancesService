@@ -20,16 +20,24 @@ public class GlobalExceptionHandler {
 	private static final String ERROR_KEY_NAME = "error";
 	private static final String MESSAGE_LABEL = "message";
 
-	@ExceptionHandler(CreateNewPortfolioException.class)
-	public ResponseEntity<Map<String, String>> handledCreateNewPortfolioException(CreateNewPortfolioException ex) {
+	@ExceptionHandler(BudgetNotFoundException.class)
+	public ResponseEntity<Map<String, String>> handledBudgetNotFoundException(BudgetNotFoundException ex) {
 		Map<String, String> error = new HashMap<>();
-		error.put(ERROR_KEY_NAME, ex.getFieldName());
+		error.put(ERROR_KEY_NAME, ex.getLocation());
 		error.put(MESSAGE_LABEL, ex.getMessage());
 		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
 	}
 
 	@ExceptionHandler(CreateNewItemException.class)
 	public ResponseEntity<Map<String, String>> handledCreateNewCategoryException(CreateNewItemException ex) {
+		Map<String, String> error = new HashMap<>();
+		error.put(ERROR_KEY_NAME, ex.getLocation());
+		error.put(MESSAGE_LABEL, ex.getMessage());
+		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+	}
+
+	@ExceptionHandler(CreateNewPortfolioException.class)
+	public ResponseEntity<Map<String, String>> handledCreateNewPortfolioException(CreateNewPortfolioException ex) {
 		Map<String, String> error = new HashMap<>();
 		error.put(ERROR_KEY_NAME, ex.getFieldName());
 		error.put(MESSAGE_LABEL, ex.getMessage());
@@ -55,6 +63,15 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
 	}
 
+	// There is a better way to deal with this
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ResponseEntity<Map<String, String>> handledMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+		Map<String, String> error = new HashMap<>();
+		error.put(ERROR_KEY_NAME, ex.getObjectName());
+		error.put(MESSAGE_LABEL, String.format("%s %s", ex.getFieldError() != null ? ex.getFieldError().getField() : "", ex.getAllErrors().getFirst().getDefaultMessage()));
+		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+	}
+
 	@ExceptionHandler(MissingIdException.class)
 	public ResponseEntity<Map<String, String>> handledMissingIdException(MissingIdException ex) {
 		Map<String, String> error = new HashMap<>();
@@ -68,25 +85,6 @@ public class GlobalExceptionHandler {
 		Map<String, String> error = new HashMap<>();
 		error.put(ERROR_KEY_NAME, ex.getLocation());
 		error.put(MESSAGE_LABEL, ex.getMessage());
-		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
-	}
-
-	@ExceptionHandler(BudgetNotFoundException.class)
-	public ResponseEntity<Map<String, String>> handledBudgetNotFoundException(BudgetNotFoundException ex) {
-		Map<String, String> error = new HashMap<>();
-		error.put(ERROR_KEY_NAME, ex.getLocation());
-		error.put(MESSAGE_LABEL, ex.getMessage());
-		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
-	}
-
-	// There is a better way to deal with this
-	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public ResponseEntity<Map<String, String>> handledMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
-		Map<String, String> error = new HashMap<>();
-		error.put(ERROR_KEY_NAME, ex.getObjectName());
-		error.put(MESSAGE_LABEL, String.format("%s %s",
-				ex.getFieldError()!= null ? ex.getFieldError().getField() : "",
-				ex.getAllErrors().getFirst().getDefaultMessage()));
 		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
 	}
 
