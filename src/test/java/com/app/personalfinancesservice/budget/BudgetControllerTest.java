@@ -22,9 +22,8 @@ import com.app.personalfinancesservice.domain.budget.output.CreateBudgetResponse
 import com.app.personalfinancesservice.domain.budget.output.GetBudgetsResponse;
 import com.app.personalfinancesservice.domain.budget.output.UpdateBudgetResponse;
 import com.app.personalfinancesservice.domain.http.HttpRoutes;
-import com.app.personalfinancesservice.exceptions.BudgetNotFoundException;
 import com.app.personalfinancesservice.exceptions.InvalidIdException;
-import com.app.personalfinancesservice.exceptions.PortfolioNotFoundException;
+import com.app.personalfinancesservice.exceptions.NotFoundException;
 import com.app.personalfinancesservice.service.BudgetService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -81,7 +80,7 @@ class BudgetControllerTest {
 	void createBudgetPortfolioNotFoundTest() throws Exception {
 
 		when(budgetService.createBudget(any(CreateBudgetRequest.class))) //
-				.thenThrow(new PortfolioNotFoundException(PORTFOLIO_LABEL, "portfolioId", "ba53ef5a-677f-4b0b-beb4-5a2b4cffe7f1"));
+				.thenThrow(new NotFoundException(PORTFOLIO_LABEL, "portfolioId", "ba53ef5a-677f-4b0b-beb4-5a2b4cffe7f1"));
 
 		mockMvc.perform(post(HttpRoutes.BUDGET) //
 						.header("X-User-id", "ba53ef5a-677f-4b0b-beb4-5a2b4cffe7f0") //
@@ -91,7 +90,7 @@ class BudgetControllerTest {
 				.andExpect(status().isBadRequest()) //
 				.andExpect(jsonPath("$.error").value(PORTFOLIO_LABEL)) //
 				.andExpect(jsonPath("$.message")//
-						.value(String.format("Portfolio from %s %s not found", //
+						.value(String.format("Error %s of value %s could not be found", //
 								"portfolioId",  //
 								"ba53ef5a-677f-4b0b-beb4-5a2b4cffe7f1") //
 						)) //
@@ -211,7 +210,7 @@ class BudgetControllerTest {
 		UUID invalidBudgetId = UUID.randomUUID();
 
 		when(budgetService.updateBudget(any(UpdateBudgetRequest.class))) //
-				.thenThrow(new BudgetNotFoundException(BUDGET_LABEL, "budgetId", invalidBudgetId.toString()));
+				.thenThrow(new NotFoundException(BUDGET_LABEL, "budgetId", invalidBudgetId.toString()));
 
 		mockMvc.perform(put(HttpRoutes.BUDGET) //
 						.header("X-User-id", "ba53ef5a-677f-4b0b-beb4-5a2b4cffe7f0") //
@@ -221,7 +220,7 @@ class BudgetControllerTest {
 				.andExpect(status().isBadRequest()) //
 				.andExpect(jsonPath("$.error").value(BUDGET_LABEL)) //
 				.andExpect(jsonPath("$.message")//
-						.value(String.format("Budget from %s %s not found", //
+						.value(String.format("Error %s of value %s could not be found", //
 								"budgetId",  //
 								invalidBudgetId.toString()) //
 						)) //

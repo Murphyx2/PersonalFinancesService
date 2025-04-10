@@ -20,26 +20,10 @@ public class GlobalExceptionHandler {
 	private static final String ERROR_KEY_NAME = "error";
 	private static final String MESSAGE_LABEL = "message";
 
-	@ExceptionHandler(BudgetNotFoundException.class)
-	public ResponseEntity<Map<String, String>> handledBudgetNotFoundException(BudgetNotFoundException ex) {
-		Map<String, String> error = new HashMap<>();
-		error.put(ERROR_KEY_NAME, ex.getLocation());
-		error.put(MESSAGE_LABEL, ex.getMessage());
-		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
-	}
-
 	@ExceptionHandler(CreateNewItemException.class)
-	public ResponseEntity<Map<String, String>> handledCreateNewCategoryException(CreateNewItemException ex) {
+	public ResponseEntity<Map<String, String>> handledCreateNewItemException(CreateNewItemException ex) {
 		Map<String, String> error = new HashMap<>();
 		error.put(ERROR_KEY_NAME, ex.getLocation());
-		error.put(MESSAGE_LABEL, ex.getMessage());
-		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
-	}
-
-	@ExceptionHandler(CreateNewPortfolioException.class)
-	public ResponseEntity<Map<String, String>> handledCreateNewPortfolioException(CreateNewPortfolioException ex) {
-		Map<String, String> error = new HashMap<>();
-		error.put(ERROR_KEY_NAME, ex.getFieldName());
 		error.put(MESSAGE_LABEL, ex.getMessage());
 		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
 	}
@@ -80,14 +64,6 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
 	}
 
-	@ExceptionHandler(PortfolioNotFoundException.class)
-	public ResponseEntity<Map<String, String>> handledPortfolioNotFoundException(PortfolioNotFoundException ex) {
-		Map<String, String> error = new HashMap<>();
-		error.put(ERROR_KEY_NAME, ex.getLocation());
-		error.put(MESSAGE_LABEL, ex.getMessage());
-		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
-	}
-
 	@ExceptionHandler(NotFoundException.class)
 	public ResponseEntity<Map<String, String>> handledNotFoundException(NotFoundException ex) {
 		Map<String, String> error = new HashMap<>();
@@ -95,5 +71,6 @@ public class GlobalExceptionHandler {
 		error.put(MESSAGE_LABEL, ex.getMessage());
 		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
 	}
+
 
 }
