@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -19,10 +20,10 @@ public class GlobalExceptionHandler {
 	private static final String ERROR_KEY_NAME = "error";
 	private static final String MESSAGE_LABEL = "message";
 
-	@ExceptionHandler(CreateNewPortfolioException.class)
-	public ResponseEntity<Map<String, String>> handledCreateNewPortfolioException(CreateNewPortfolioException ex) {
+	@ExceptionHandler(CreateNewItemException.class)
+	public ResponseEntity<Map<String, String>> handledCreateNewItemException(CreateNewItemException ex) {
 		Map<String, String> error = new HashMap<>();
-		error.put(ERROR_KEY_NAME, ex.getFieldName());
+		error.put(ERROR_KEY_NAME, ex.getLocation());
 		error.put(MESSAGE_LABEL, ex.getMessage());
 		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
 	}
@@ -46,6 +47,15 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
 	}
 
+	// There is a better way to deal with this
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ResponseEntity<Map<String, String>> handledMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+		Map<String, String> error = new HashMap<>();
+		error.put(ERROR_KEY_NAME, ex.getObjectName());
+		error.put(MESSAGE_LABEL, String.format("%s %s", ex.getFieldError() != null ? ex.getFieldError().getField() : "", ex.getAllErrors().getFirst().getDefaultMessage()));
+		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+	}
+
 	@ExceptionHandler(MissingIdException.class)
 	public ResponseEntity<Map<String, String>> handledMissingIdException(MissingIdException ex) {
 		Map<String, String> error = new HashMap<>();
@@ -54,20 +64,13 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
 	}
 
-	@ExceptionHandler(PortfolioNotFoundException.class)
-	public ResponseEntity<Map<String, String>> handledPortfolioNotFoundException(PortfolioNotFoundException ex) {
+	@ExceptionHandler(NotFoundException.class)
+	public ResponseEntity<Map<String, String>> handledNotFoundException(NotFoundException ex) {
 		Map<String, String> error = new HashMap<>();
 		error.put(ERROR_KEY_NAME, ex.getLocation());
 		error.put(MESSAGE_LABEL, ex.getMessage());
 		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
 	}
 
-	@ExceptionHandler(BudgetNotFoundException.class)
-	public ResponseEntity<Map<String, String>> handledBudgetNotFoundException(BudgetNotFoundException ex) {
-		Map<String, String> error = new HashMap<>();
-		error.put(ERROR_KEY_NAME, ex.getLocation());
-		error.put(MESSAGE_LABEL, ex.getMessage());
-		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
-	}
 
 }

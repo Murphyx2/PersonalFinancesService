@@ -13,7 +13,7 @@ import com.app.personalfinancesservice.domain.portfolio.input.CreatePortfolioReq
 import com.app.personalfinancesservice.domain.portfolio.input.GetPortfolioRequest;
 import com.app.personalfinancesservice.domain.portfolio.output.CreatePortfolioResponse;
 import com.app.personalfinancesservice.domain.portfolio.output.GetPortfolioResponse;
-import com.app.personalfinancesservice.exceptions.CreateNewPortfolioException;
+import com.app.personalfinancesservice.exceptions.CreateNewItemException;
 import com.app.personalfinancesservice.exceptions.InvalidIdException;
 import com.app.personalfinancesservice.exceptions.MissingIdException;
 import com.app.personalfinancesservice.repository.PortfolioRepository;
@@ -62,13 +62,13 @@ class PortfolioServiceTest {
 
 		when(portfolioRepository.save(any(Portfolio.class))).thenThrow(new RuntimeException("Database error"));
 
-		CreateNewPortfolioException exception = assertThrows(CreateNewPortfolioException.class, () -> {
+		CreateNewItemException exception = assertThrows(CreateNewItemException.class, () -> {
 			portfolioService.createPortfolio(validUserId, request);
 		});
 
-		assertEquals("Error creating portfolio", exception.getMessage());
-		assertEquals("PORTFOLIO", exception.getFieldName());
-		assertEquals("Database error", exception.getFieldValue());
+		assertEquals(String.format("Error creating %s, %s", "Portfolio", null), exception.getMessage());
+		assertEquals("Portfolio", exception.getFieldName());
+		assertNull(exception.getFieldValue());
 	}
 
 	@Test

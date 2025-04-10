@@ -19,8 +19,7 @@ import com.app.personalfinancesservice.domain.budget.output.UpdateBudgetResponse
 import com.app.personalfinancesservice.domain.portfolio.Portfolio;
 import com.app.personalfinancesservice.domain.portfolio.input.GetPortfolioRequest;
 import com.app.personalfinancesservice.domain.service.BudgetServiceBase;
-import com.app.personalfinancesservice.exceptions.BudgetNotFoundException;
-import com.app.personalfinancesservice.exceptions.PortfolioNotFoundException;
+import com.app.personalfinancesservice.exceptions.NotFoundException;
 import com.app.personalfinancesservice.filter.BudgetSorter;
 import com.app.personalfinancesservice.repository.BudgetRepository;
 
@@ -49,7 +48,7 @@ public class BudgetService implements BudgetServiceBase {
 				.getPortfolios().getFirst();
 
 		if (portfolio == null) {
-			throw new PortfolioNotFoundException(BUDGET_LABEL, "portfolioId", request.getPortfolioId());
+			throw new NotFoundException(BUDGET_LABEL, "portfolio", request.getPortfolioId());
 		}
 
 		// Convert request to budget and save it
@@ -114,7 +113,7 @@ public class BudgetService implements BudgetServiceBase {
 		Budget oldBudget = getBudgets(requestBudget).getBudgets().getFirst();
 
 		if (oldBudget == null) {
-			throw new BudgetNotFoundException(BUDGET_LABEL, "budgetId", request.getId());
+			throw new NotFoundException(BUDGET_LABEL, "budget", request.getId());
 		}
 
 		Budget updatedBudget = budgetRepository.save(BudgetConverter.convert(request, oldBudget));
