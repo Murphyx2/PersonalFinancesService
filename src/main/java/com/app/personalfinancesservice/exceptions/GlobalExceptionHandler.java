@@ -88,4 +88,12 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
 	}
 
+	@ExceptionHandler(NotFoundException.class)
+	public ResponseEntity<Map<String, String>> handledNotFoundException(NotFoundException ex) {
+		Map<String, String> error = new HashMap<>();
+		error.put(ERROR_KEY_NAME, ex.getLocation());
+		error.put(MESSAGE_LABEL, ex.getMessage());
+		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+	}
+
 }

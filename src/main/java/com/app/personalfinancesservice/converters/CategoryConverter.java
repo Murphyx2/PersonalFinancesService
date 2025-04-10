@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import com.app.personalfinancesservice.domain.category.Category;
 import com.app.personalfinancesservice.domain.category.input.CreateCategoryRequest;
+import com.app.personalfinancesservice.domain.category.input.UpdateCategoryRequest;
 
 public class CategoryConverter {
 
@@ -20,6 +21,14 @@ public class CategoryConverter {
 				.withUserId(userId) //
 				.withTransactionType(request.getTransactionType()) //
 				.withCreatedAt(LocalDateTime.now());
+	}
+
+	public static Category convert(Category oldCategory, UpdateCategoryRequest request) {
+
+		return oldCategory //
+				.withName(request.getName().toUpperCase()) //
+				.withTransactionType(request.getTransactionType());
+
 	}
 
 	private CategoryConverter() {
