@@ -10,6 +10,7 @@ import com.app.personalfinancesservice.domain.category.Category;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, UUID> {
+
 	List<Category> getCategoriesByIdAndUserId(UUID id, UUID userId);
 
 	List<Category> getCategoriesByUserId(UUID userId);

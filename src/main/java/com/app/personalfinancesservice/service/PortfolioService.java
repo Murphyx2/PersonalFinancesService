@@ -20,7 +20,7 @@ import com.app.personalfinancesservice.domain.portfolio.output.DeletePortfolioRe
 import com.app.personalfinancesservice.domain.portfolio.output.GetPortfolioResponse;
 import com.app.personalfinancesservice.domain.portfolio.output.UpdatePortfolioResponse;
 import com.app.personalfinancesservice.domain.service.PortfolioServiceBase;
-import com.app.personalfinancesservice.exceptions.CreateNewPortfolioException;
+import com.app.personalfinancesservice.exceptions.CreateNewItemException;
 import com.app.personalfinancesservice.exceptions.InvalidIdException;
 import com.app.personalfinancesservice.exceptions.MissingIdException;
 import com.app.personalfinancesservice.filter.PortfolioSorter;
@@ -53,7 +53,7 @@ public class PortfolioService implements PortfolioServiceBase {
 		try {
 			portfolio = repository.save(PortfolioConverter.convert(request));
 		} catch (Exception e) {
-			throw new CreateNewPortfolioException(PORTFOLIO_LABEL, e.getMessage());
+			throw new CreateNewItemException("Portfolio", request.getName(), PORTFOLIO_LABEL);
 		}
 
 		return new CreatePortfolioResponse().withPortfolio(portfolio);
