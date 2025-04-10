@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,8 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.app.personalfinancesservice.domain.category.input.CreateCategoryRequest;
 import com.app.personalfinancesservice.domain.category.input.GetCategoryRequest;
+import com.app.personalfinancesservice.domain.category.input.UpdateCategoryRequest;
 import com.app.personalfinancesservice.domain.category.output.CreateCategoryResponse;
 import com.app.personalfinancesservice.domain.category.output.GetCategoryResponse;
+import com.app.personalfinancesservice.domain.category.output.UpdateCategoryResponse;
 import com.app.personalfinancesservice.domain.filter.SortBy;
 import com.app.personalfinancesservice.domain.filter.SortDirection;
 import com.app.personalfinancesservice.domain.http.HttpRoutes;
@@ -62,5 +65,14 @@ public class CategoryController {
 				.withSortDirection(sortDirection) //
 				.withTransactionType(transactionType);
 		return ResponseEntity.ok(categoryService.getCategory(request));
+	}
+
+	@PutMapping()
+	public ResponseEntity<UpdateCategoryResponse> updateCategory(@RequestHeader("X-User-id") String userId, //
+			@Valid @RequestBody UpdateCategoryRequest request) {
+
+		request.withUserId(userId);
+
+		return ResponseEntity.ok(categoryService.updateCategory(request));
 	}
 }

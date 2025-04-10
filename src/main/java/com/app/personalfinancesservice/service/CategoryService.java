@@ -10,11 +10,14 @@ import com.app.personalfinancesservice.converters.UUIDConverter;
 import com.app.personalfinancesservice.domain.category.Category;
 import com.app.personalfinancesservice.domain.category.input.CreateCategoryRequest;
 import com.app.personalfinancesservice.domain.category.input.GetCategoryRequest;
+import com.app.personalfinancesservice.domain.category.input.UpdateCategoryRequest;
 import com.app.personalfinancesservice.domain.category.output.CreateCategoryResponse;
 import com.app.personalfinancesservice.domain.category.output.GetCategoryResponse;
+import com.app.personalfinancesservice.domain.category.output.UpdateCategoryResponse;
 import com.app.personalfinancesservice.domain.filter.SortBy;
 import com.app.personalfinancesservice.domain.service.CategoryServiceBase;
 import com.app.personalfinancesservice.exceptions.CreateNewItemException;
+import com.app.personalfinancesservice.exceptions.NotFoundException;
 import com.app.personalfinancesservice.filter.CategoryFilter;
 import com.app.personalfinancesservice.filter.CategorySorter;
 import com.app.personalfinancesservice.repository.CategoryRepository;
@@ -78,5 +81,21 @@ public class CategoryService implements CategoryServiceBase {
 		}
 
 		return new GetCategoryResponse().withCategory(result);
+	}
+
+	@Override
+	public UpdateCategoryResponse updateCategory(UpdateCategoryRequest request) {
+
+		GetCategoryRequest getRequest = new GetCategoryRequest() //
+				.withId(request.getId()) //
+				.withUserId(request.getUserId());
+		List<Category> oldCategory = getCategory(getRequest).getCategory();
+		if (oldCategory.isEmpty()) {
+			throw new NotFoundException(CATEGORY_LABEL, "category", request.getId());
+		}
+
+		Category result = categoryRepository.save(CategoryConverter.convert(oldCategory.getFirst(), request));
+
+		return new UpdateCategoryResponse().withCategory(result);
 	}
 }
