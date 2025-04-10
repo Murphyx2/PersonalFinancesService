@@ -9,9 +9,11 @@ import com.app.personalfinancesservice.converters.CategoryConverter;
 import com.app.personalfinancesservice.converters.UUIDConverter;
 import com.app.personalfinancesservice.domain.category.Category;
 import com.app.personalfinancesservice.domain.category.input.CreateCategoryRequest;
+import com.app.personalfinancesservice.domain.category.input.DeleteCategoryRequest;
 import com.app.personalfinancesservice.domain.category.input.GetCategoryRequest;
 import com.app.personalfinancesservice.domain.category.input.UpdateCategoryRequest;
 import com.app.personalfinancesservice.domain.category.output.CreateCategoryResponse;
+import com.app.personalfinancesservice.domain.category.output.DeleteCategoryResponse;
 import com.app.personalfinancesservice.domain.category.output.GetCategoryResponse;
 import com.app.personalfinancesservice.domain.category.output.UpdateCategoryResponse;
 import com.app.personalfinancesservice.domain.filter.SortBy;
@@ -33,12 +35,21 @@ public class CategoryService implements CategoryServiceBase {
 	}
 
 	private boolean categoryExists(CreateCategoryRequest request) {
+
 		GetCategoryRequest getRequest = new GetCategoryRequest() //
 				.withUserId(request.getUserId()) //
 				.withTransactionType(request.getTransactionType()) //
 				.withSortBy(SortBy.NAME);
 
-		return !getCategory(getRequest).getCategory().isEmpty();
+		List<Category> categories = getCategory(getRequest).getCategory();
+
+		if (categories.isEmpty()) {
+			return false;
+		}
+
+		return categories.stream() //
+				.anyMatch(category -> category.getName().equalsIgnoreCase(request.getName()) //
+				);
 	}
 
 	@Override
@@ -61,6 +72,24 @@ public class CategoryService implements CategoryServiceBase {
 		}
 
 		return new CreateCategoryResponse().withCategory(result);
+	}
+
+	@Override
+	public DeleteCategoryResponse deleteCategory(DeleteCategoryRequest request) {
+
+		GetCategoryRequest getRequest = new GetCategoryRequest() //
+				.withId(request.getId()) //
+				.withUserId(request.getUserId()) //
+				;
+
+		List<Category> category = getCategory(getRequest).getCategory();
+		if (category.isEmpty()) {
+			return new DeleteCategoryResponse().withSuccess(true);
+		}
+
+		categoryRepository.delete(category.getFirst());
+
+		return new DeleteCategoryResponse().withSuccess(true);
 	}
 
 	@Override
