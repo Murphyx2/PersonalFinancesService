@@ -4,8 +4,12 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import com.app.personalfinancesservice.domain.budget.Budget;
-import jakarta.persistence.Column;
+import com.app.personalfinancesservice.domain.category.Category;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -27,12 +31,15 @@ public class Transaction {
 
 	private UUID userId;
 
-	@Column(name = "budget_id")
-	private UUID budgetId;
-
-	@ManyToOne
-	@JoinColumn(name = "budget_id", referencedColumnName = "id", insertable = false, updatable = false)
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "budget_id", nullable = false)
+	@JsonBackReference
 	private Budget budget;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "category_id", nullable = false)
+	@JsonManagedReference
+	private Category category;
 
 	private String currencyCode;
 
@@ -44,7 +51,14 @@ public class Transaction {
 
 	private Double amount;
 
-	private LocalDateTime date;
+	@JsonFormat(pattern = "yyyy-MM-dd' 'HH:mm:ss")
+	private LocalDateTime transactionDate;
+
+	@JsonFormat(pattern = "yyyy-MM-dd' 'HH:mm:ss")
+	private LocalDateTime createdAt;
+
+	@JsonFormat(pattern = "yyyy-MM-dd' 'HH:mm:ss")
+	private LocalDateTime updatedAt;
 
 	public Transaction withAmount(Double amount) {
 		this.setAmount(amount);
@@ -56,18 +70,18 @@ public class Transaction {
 		return this;
 	}
 
-	public Transaction withBudgetId(UUID budgetId) {
-		this.setBudgetId(budgetId);
+	public Transaction withCategory(Category category) {
+		this.setCategory(category);
+		return this;
+	}
+
+	public Transaction withCreatedAt(LocalDateTime createdAt) {
+		this.setCreatedAt(createdAt);
 		return this;
 	}
 
 	public Transaction withCurrencyCode(String currencyCode) {
 		this.setCurrencyCode(currencyCode);
-		return this;
-	}
-
-	public Transaction withDate(LocalDateTime date) {
-		this.setDate(date);
 		return this;
 	}
 
@@ -86,8 +100,18 @@ public class Transaction {
 		return this;
 	}
 
+	public Transaction withTransactionDate(LocalDateTime transactionDate) {
+		this.setTransactionDate(transactionDate);
+		return this;
+	}
+
 	public Transaction withTransactionType(TransactionType transactionType) {
 		this.setTransactionType(transactionType);
+		return this;
+	}
+
+	public Transaction withUpdatedAt(LocalDateTime updatedAt) {
+		this.setUpdatedAt(updatedAt);
 		return this;
 	}
 

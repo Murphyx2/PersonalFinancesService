@@ -1,15 +1,22 @@
 package com.app.personalfinancesservice.domain.category;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
+import com.app.personalfinancesservice.domain.categoryplanner.CategoryPlanner;
+import com.app.personalfinancesservice.domain.transaction.Transaction;
 import com.app.personalfinancesservice.domain.transaction.TransactionType;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,6 +37,14 @@ public class Category {
 	private String name;
 
 	private TransactionType transactionType;
+
+	@OneToMany(mappedBy = "category", orphanRemoval = true)
+	@JsonManagedReference
+	private List<CategoryPlanner> categoryPlanners;
+
+	@OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
+	@JsonBackReference
+	private List<Transaction> transactions;
 
 	@JsonFormat(pattern = "yyyy-MM-dd' 'HH:mm:ss")
 	private LocalDateTime createdAt;
