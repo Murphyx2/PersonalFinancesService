@@ -27,6 +27,10 @@ public class BudgetSorter {
 
 	private static Comparator<Budget> getComparator(SortBy sortBy) {
 
+		if(sortBy == null){
+			sortBy = SortBy.CREATED_AT;
+		}
+
 		return switch (sortBy) {
 			case SortBy.NAME -> Comparator.comparing(Budget::getName);
 			case SortBy.START_AT -> Comparator.comparing(Budget::getStartAt);

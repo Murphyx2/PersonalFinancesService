@@ -39,7 +39,7 @@ public class Category {
 	private TransactionType transactionType;
 
 	@OneToMany(mappedBy = "category", orphanRemoval = true)
-	@JsonManagedReference
+	@JsonBackReference
 	private List<CategoryPlanner> categoryPlanners;
 
 	@OneToMany(mappedBy = "category", fetch = FetchType.LAZY)

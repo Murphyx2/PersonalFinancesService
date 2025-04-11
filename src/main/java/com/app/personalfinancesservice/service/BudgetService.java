@@ -97,10 +97,10 @@ public class BudgetService implements BudgetServiceBase {
 		}
 
 		//Filtering results
-		List<Budget> filteredBudgets = BudgetSorter //
+		List<Budget> sortedBudgets = BudgetSorter //
 				.sort(budgets, request.getSortBy(), request.getSortDirection());
 
-		return new GetBudgetsResponse().withBudgets(filteredBudgets);
+		return new GetBudgetsResponse().withBudgets(sortedBudgets);
 	}
 
 	@Override

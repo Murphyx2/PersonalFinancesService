@@ -8,6 +8,7 @@ public class HttpRoutes {
 	public static final String CURRENCY = API_ROOT + "/currency";
 	public static final String TRANSACTIONS = API_ROOT + "/transactions";
 	public static final String CATEGORY = API_ROOT + "/category";
+	public static final String CATEGORY_PLANNER = API_ROOT + "/category_planner";
 
 
 	private HttpRoutes() {

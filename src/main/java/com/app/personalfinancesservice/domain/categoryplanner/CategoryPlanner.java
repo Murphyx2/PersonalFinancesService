@@ -6,7 +6,8 @@ import java.util.UUID;
 import com.app.personalfinancesservice.domain.budget.Budget;
 import com.app.personalfinancesservice.domain.category.Category;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import jakarta.persistence.Column;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -28,6 +29,8 @@ public class CategoryPlanner {
 	@GeneratedValue(strategy = GenerationType.UUID)
 	private UUID id;
 
+	private UUID userId;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "budget_id", insertable = false, updatable = false)
 	@JsonBackReference
@@ -35,18 +38,16 @@ public class CategoryPlanner {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "category_id", nullable = false)
+	@JsonManagedReference
 	private Category category;
 
 	private Double plannedAmount;
 
+	@JsonFormat(pattern = "yyyy-MM-dd' 'HH:mm:ss")
 	private LocalDateTime createdAt;
 
+	@JsonFormat(pattern = "yyyy-MM-dd' 'HH:mm:ss")
 	private LocalDateTime updatedAt;
-
-	public CategoryPlanner withId(UUID id) {
-		this.setId(id);
-		return this;
-	}
 
 	public CategoryPlanner withBudget(Budget budget) {
 		this.setBudget(budget);
@@ -58,18 +59,28 @@ public class CategoryPlanner {
 		return this;
 	}
 
-	public CategoryPlanner withPlannedAmount(Double plannedAmount) {
-		this.setPlannedAmount(plannedAmount);
-		return this;
-	}
-
 	public CategoryPlanner withCreatedAt(LocalDateTime createdAt) {
 		this.setCreatedAt(createdAt);
 		return this;
 	}
 
+	public CategoryPlanner withId(UUID id) {
+		this.setId(id);
+		return this;
+	}
+
+	public CategoryPlanner withPlannedAmount(Double plannedAmount) {
+		this.setPlannedAmount(plannedAmount);
+		return this;
+	}
+
 	public CategoryPlanner withUpdatedAt(LocalDateTime updatedAt) {
 		this.setUpdatedAt(updatedAt);
+		return this;
+	}
+
+	public CategoryPlanner withUserId(UUID userId) {
+		this.setUserId(userId);
 		return this;
 	}
 }
