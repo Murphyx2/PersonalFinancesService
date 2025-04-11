@@ -1,10 +1,12 @@
 package com.app.personalfinancesservice.service;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
 import com.app.personalfinancesservice.converters.CategoryPlannerConverter;
+import com.app.personalfinancesservice.converters.UUIDConverter;
 import com.app.personalfinancesservice.domain.budget.Budget;
 import com.app.personalfinancesservice.domain.budget.input.GetBudgetsRequest;
 import com.app.personalfinancesservice.domain.category.Category;
@@ -78,7 +80,28 @@ public class CategoryPlannerServiceService implements CategoryPlannerServiceBase
 
 	@Override
 	public GetCategoryPlannerResponse getCategory(GetCategoryPlannerRequest request) {
-		return null;
+
+		List<CategoryPlanner> categoryPlanners;
+
+		UUID userId = UUIDConverter.convert(request.getUserId(), "userId", CATEGORY_PLANNER);
+
+		// Find all by user ID
+		if (request.getId() == null || request.getId().isEmpty()) {
+			categoryPlanners = categoryPlannerRepository.getCategoryPlannerByUserId(userId);
+		} else {
+			UUID id = UUIDConverter.convert(request.getId(), "categoryPlannerId", CATEGORY_PLANNER);
+			categoryPlanners = categoryPlannerRepository //
+					.getCategoryPlannerByIdAndUserId(id, userId);
+		}
+
+		if (categoryPlanners == null || categoryPlanners.isEmpty()) {
+			throw new NotFoundException(CATEGORY_PLANNER, "categoryPlanner", request.getId());
+		}
+		// Apply filter
+
+		// Apply sort
+
+		return new GetCategoryPlannerResponse().withCategoryPlanner(categoryPlanners);
 	}
 
 	@Override

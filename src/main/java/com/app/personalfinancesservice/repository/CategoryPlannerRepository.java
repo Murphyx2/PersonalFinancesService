@@ -1,5 +1,6 @@
 package com.app.personalfinancesservice.repository;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,4 +10,7 @@ import com.app.personalfinancesservice.domain.categoryplanner.CategoryPlanner;
 
 @Repository
 public interface CategoryPlannerRepository extends JpaRepository<CategoryPlanner, UUID> {
+	List<CategoryPlanner> getCategoryPlannerByIdAndUserId(UUID id, UUID userId);
+
+	List<CategoryPlanner> getCategoryPlannerByUserId(UUID userId);
 }
