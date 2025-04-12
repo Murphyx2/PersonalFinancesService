@@ -12,9 +12,9 @@ public interface CategoryPlannerServiceBase {
 
 	public CreateCategoryPlannerResponse createCategoryPlanner(CreateCategoryPlannerRequest request);
 
-	public void deleteCategory(DeleteCategoryPlannerRequest request);
+	public void deleteCategoryPlanner(DeleteCategoryPlannerRequest request);
 
-	public GetCategoryPlannerResponse getCategory(GetCategoryPlannerRequest request);
+	public GetCategoryPlannerResponse getCategoryPlanner(GetCategoryPlannerRequest request);
 
 	public UpdateCategoryPlannerResponse updateCategory(UpdateCategoryPlannerRequest request);
 }

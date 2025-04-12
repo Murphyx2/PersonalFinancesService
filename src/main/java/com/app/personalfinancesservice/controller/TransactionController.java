@@ -10,7 +10,7 @@ import com.app.personalfinancesservice.domain.transaction.output.GetTransactionT
 import com.app.personalfinancesservice.service.TransactionService;
 
 @RestController
-@RequestMapping(HttpRoutes.TRANSACTIONS)
+@RequestMapping(HttpRoutes.API_ROOT)
 public class TransactionController {
 
 	private final TransactionService transactionService;
@@ -19,7 +19,7 @@ public class TransactionController {
 		this.transactionService = transactionService;
 	}
 
-	@GetMapping(path = "/type")
+	@GetMapping(path = HttpRoutes.TRANSACTIONS + "/type")
 	public ResponseEntity<GetTransactionTypeResponse> getTransactionType() {
 
 		return ResponseEntity.ok(transactionService.getTransactionType());

@@ -74,12 +74,12 @@ public class CategoryPlannerServiceService implements CategoryPlannerServiceBase
 	}
 
 	@Override
-	public void deleteCategory(DeleteCategoryPlannerRequest request) {
-
+	public void deleteCategoryPlanner(DeleteCategoryPlannerRequest request) {
+		// Empty waiting for implementation
 	}
 
 	@Override
-	public GetCategoryPlannerResponse getCategory(GetCategoryPlannerRequest request) {
+	public GetCategoryPlannerResponse getCategoryPlanner(GetCategoryPlannerRequest request) {
 
 		List<CategoryPlanner> categoryPlanners;
 
@@ -87,7 +87,16 @@ public class CategoryPlannerServiceService implements CategoryPlannerServiceBase
 
 		// Find all by user ID
 		if (request.getId() == null || request.getId().isEmpty()) {
-			categoryPlanners = categoryPlannerRepository.getCategoryPlannerByUserId(userId);
+			// Get budget
+			List<Budget> budget = budgetService.getBudgets(new GetBudgetsRequest() //
+					.withUserId(request.getUserId()) //
+					.withId(request.getBudgetId()) //
+			).getBudgets();
+			if (budget.isEmpty()) {
+				throw new NotFoundException(CATEGORY_PLANNER, BUDGET_ID_LABEL, request.getBudgetId());
+			}
+
+			categoryPlanners = categoryPlannerRepository.getCategoryPlannerByUserIdAndBudget(userId, budget.getFirst());
 		} else {
 			UUID id = UUIDConverter.convert(request.getId(), "categoryPlannerId", CATEGORY_PLANNER);
 			categoryPlanners = categoryPlannerRepository //
@@ -103,6 +112,8 @@ public class CategoryPlannerServiceService implements CategoryPlannerServiceBase
 
 		return new GetCategoryPlannerResponse().withCategoryPlanner(categoryPlanners);
 	}
+
+
 
 	@Override
 	public UpdateCategoryPlannerResponse updateCategory(UpdateCategoryPlannerRequest request) {

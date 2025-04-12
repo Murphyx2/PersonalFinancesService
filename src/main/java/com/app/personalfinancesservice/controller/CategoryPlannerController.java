@@ -21,10 +21,8 @@ import com.app.personalfinancesservice.domain.transaction.TransactionType;
 import com.app.personalfinancesservice.service.CategoryPlannerServiceService;
 
 @RestController
-@RequestMapping(HttpRoutes.CATEGORY_PLANNER)
+@RequestMapping(HttpRoutes.API_ROOT + HttpRoutes.BUDGET)
 public class CategoryPlannerController {
-
-	private static String CATEGORY_PLANNER_ROUTE = "/category_planner";
 
 	private final CategoryPlannerServiceService categoryPlannerServiceService;
 
@@ -32,28 +30,33 @@ public class CategoryPlannerController {
 		this.categoryPlannerServiceService = categoryPlannerServiceService;
 	}
 
-	@PostMapping
+	@PostMapping("/{budgetId}" + HttpRoutes.CATEGORY_PLANNER)
 	public ResponseEntity<CreateCategoryPlannerResponse> createCategoryPlanner(@RequestHeader("X-User-id") String userId, //
+ 			@PathVariable String budgetId,
 			@RequestBody CreateCategoryPlannerRequest request) {
 
-		request.withUserId(userId);
+		request.withUserId(userId) //
+				.withBudgetId(budgetId);
 
 		return ResponseEntity.ok(categoryPlannerServiceService.createCategoryPlanner(request));
 	}
 
-	@GetMapping("/{budgetId}/{id}")
+	@GetMapping("/{budgetId}" + HttpRoutes.CATEGORY_PLANNER + "/{id}")
 	public ResponseEntity<GetCategoryPlannerResponse> getCategoryPlanner(@RequestHeader("X-User-id") String userId, //
-			@PathVariable("id") String id, @PathVariable("budgetId") String budgetId) {
+			@PathVariable("budgetId") String budgetId, //
+			@PathVariable("id") String id) {
 
 		GetCategoryPlannerRequest request = new GetCategoryPlannerRequest() //
 				.withId(id) //
-				.withUserId(userId);
+				.withUserId(userId)
+				.withBudgetId(budgetId);
 
-		return ResponseEntity.ok(categoryPlannerServiceService.getCategory(request));
+		return ResponseEntity.ok(categoryPlannerServiceService.getCategoryPlanner(request));
 	}
 
-	@GetMapping
+	@GetMapping("/{budgetId}" + HttpRoutes.CATEGORY_PLANNER)
 	public ResponseEntity<GetCategoryPlannerResponse> getCategoryPlanners(@RequestHeader("X-User-id") String userId, //
+			@PathVariable("budgetId") String budgetId, //
 			@RequestParam(required = false, defaultValue = "NAME") SortBy sortBy, //
 			@RequestParam(required = false, defaultValue = "ASC") SortDirection sortDirection, //
 			@RequestParam(required = false) TransactionType transactionType) {
@@ -61,10 +64,11 @@ public class CategoryPlannerController {
 		GetCategoryPlannerRequest request = new GetCategoryPlannerRequest() //
 				.withUserId(userId) //
 				.withSortBy(sortBy) //
+				.withBudgetId(budgetId) //
 				.withSortDirection(sortDirection) //
 				.withTransactionType(transactionType);
 
-		return ResponseEntity.ok(categoryPlannerServiceService.getCategory(request));
+		return ResponseEntity.ok(categoryPlannerServiceService.getCategoryPlanner(request));
 	}
 
 

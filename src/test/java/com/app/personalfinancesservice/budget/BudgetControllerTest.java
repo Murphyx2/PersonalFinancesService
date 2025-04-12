@@ -65,7 +65,7 @@ class BudgetControllerTest {
 		when(budgetService.createBudget(any(CreateBudgetRequest.class))) //
 				.thenThrow(new InvalidIdException(BUDGET_LABEL, "portfolioId", ""));
 
-		mockMvc.perform(post(HttpRoutes.BUDGET) //
+		mockMvc.perform(post(HttpRoutes.API_ROOT + HttpRoutes.BUDGET) //
 						.header("X-User-id", "ba53ef5a-677f-4b0b-beb4-5a2b4cffe7f0") //
 						.contentType(MediaType.APPLICATION_JSON) //
 						.content(REQUEST_BODY) //
@@ -82,7 +82,7 @@ class BudgetControllerTest {
 		when(budgetService.createBudget(any(CreateBudgetRequest.class))) //
 				.thenThrow(new NotFoundException(PORTFOLIO_LABEL, "portfolioId", "ba53ef5a-677f-4b0b-beb4-5a2b4cffe7f1"));
 
-		mockMvc.perform(post(HttpRoutes.BUDGET) //
+		mockMvc.perform(post(HttpRoutes.API_ROOT + HttpRoutes.BUDGET) //
 						.header("X-User-id", "ba53ef5a-677f-4b0b-beb4-5a2b4cffe7f0") //
 						.contentType(MediaType.APPLICATION_JSON) //
 						.content(REQUEST_BODY) //
@@ -114,7 +114,7 @@ class BudgetControllerTest {
 
 		when(budgetService.createBudget(any(CreateBudgetRequest.class))).thenReturn(response);
 
-		mockMvc.perform(post(HttpRoutes.BUDGET) //
+		mockMvc.perform(post(HttpRoutes.API_ROOT + HttpRoutes.BUDGET) //
 						.header("X-User-id", budget.getUserId()) //
 						.contentType(MediaType.APPLICATION_JSON) //
 						.content(REQUEST_BODY) //
@@ -149,7 +149,10 @@ class BudgetControllerTest {
 
 		when(budgetService.getBudgets(any(GetBudgetsRequest.class))).thenReturn(response);
 
-		mockMvc.perform(get(HttpRoutes.BUDGET + "/", budget.getId().toString()) //
+		String httpGetRoute = String.format(HttpRoutes.API_ROOT //
+				+ HttpRoutes.BUDGET + "/%s", budget.getId().toString());
+
+		mockMvc.perform(get(httpGetRoute) //
 						.header("X-User-id", userId.toString()) //
 						.contentType(MediaType.APPLICATION_JSON) //
 				).andExpect(status().isOk()) //
@@ -190,7 +193,10 @@ class BudgetControllerTest {
 
 		when(budgetService.getBudgets(any(GetBudgetsRequest.class))).thenReturn(response);
 
-		mockMvc.perform(get(HttpRoutes.BUDGET + "/") //
+		String httpGetRoute = String.format(HttpRoutes.API_ROOT + HttpRoutes.PORTFOLIO
+				+"/%s" + HttpRoutes.BUDGET, UUID.randomUUID().toString());
+
+		mockMvc.perform(get(httpGetRoute) //
 						.header("X-User-id", userId.toString()) //
 						.contentType(MediaType.APPLICATION_JSON) //
 				).andExpect(status().isOk()) //
@@ -212,7 +218,7 @@ class BudgetControllerTest {
 		when(budgetService.updateBudget(any(UpdateBudgetRequest.class))) //
 				.thenThrow(new NotFoundException(BUDGET_LABEL, "budgetId", invalidBudgetId.toString()));
 
-		mockMvc.perform(put(HttpRoutes.BUDGET) //
+		mockMvc.perform(put(HttpRoutes.API_ROOT + HttpRoutes.BUDGET) //
 						.header("X-User-id", "ba53ef5a-677f-4b0b-beb4-5a2b4cffe7f0") //
 						.contentType(MediaType.APPLICATION_JSON) //
 						.content(REQUEST_BODY) //
@@ -257,7 +263,7 @@ class BudgetControllerTest {
 		when(budgetService.updateBudget(any(UpdateBudgetRequest.class))) //
 				.thenReturn(new UpdateBudgetResponse().withBudget(updateBudget));
 
-		mockMvc.perform(put(HttpRoutes.BUDGET) //
+		mockMvc.perform(put(HttpRoutes.API_ROOT + HttpRoutes.BUDGET) //
 						.header("X-User-id", userId.toString()) //
 						.contentType(MediaType.APPLICATION_JSON) //
 						.content(REQUEST_BODY) //
