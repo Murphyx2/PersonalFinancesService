@@ -8,6 +8,7 @@ import com.app.personalfinancesservice.domain.category.Category;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -31,8 +32,11 @@ public class CategoryPlanner {
 
 	private UUID userId;
 
+	@Column(name = "budget_id", nullable = false)
+	private UUID budgetId;
+
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "budget_id", insertable = false, updatable = false)
+	@JoinColumn(name = "budget_id", nullable = false, insertable = false, updatable = false)
 	@JsonBackReference
 	private Budget budget;
 
@@ -49,8 +53,8 @@ public class CategoryPlanner {
 	@JsonFormat(pattern = "yyyy-MM-dd' 'HH:mm:ss")
 	private LocalDateTime updatedAt;
 
-	public CategoryPlanner withBudget(Budget budget) {
-		this.setBudget(budget);
+	public CategoryPlanner withBudgetId(UUID budgetId) {
+		this.setBudgetId(budgetId);
 		return this;
 	}
 

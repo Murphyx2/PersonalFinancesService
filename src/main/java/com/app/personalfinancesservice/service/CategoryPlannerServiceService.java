@@ -15,11 +15,14 @@ import com.app.personalfinancesservice.domain.categoryplanner.CategoryPlanner;
 import com.app.personalfinancesservice.domain.categoryplanner.input.CreateCategoryPlannerRequest;
 import com.app.personalfinancesservice.domain.categoryplanner.input.DeleteCategoryPlannerRequest;
 import com.app.personalfinancesservice.domain.categoryplanner.input.GetCategoryPlannerRequest;
+import com.app.personalfinancesservice.domain.categoryplanner.input.GetCategoryPlannersRequest;
 import com.app.personalfinancesservice.domain.categoryplanner.input.UpdateCategoryPlannerRequest;
 import com.app.personalfinancesservice.domain.categoryplanner.output.CreateCategoryPlannerResponse;
 import com.app.personalfinancesservice.domain.categoryplanner.output.GetCategoryPlannerResponse;
+import com.app.personalfinancesservice.domain.categoryplanner.output.GetCategoryPlannersResponse;
 import com.app.personalfinancesservice.domain.categoryplanner.output.UpdateCategoryPlannerResponse;
 import com.app.personalfinancesservice.domain.service.CategoryPlannerServiceBase;
+import com.app.personalfinancesservice.exceptions.CreateNewItemException;
 import com.app.personalfinancesservice.exceptions.NotFoundException;
 import com.app.personalfinancesservice.repository.CategoryPlannerRepository;
 
@@ -39,6 +42,10 @@ public class CategoryPlannerServiceService implements CategoryPlannerServiceBase
 		this.categoryPlannerRepository = categoryPlannerRepository;
 		this.budgetService = budgetService;
 		this.categoryService = categoryService;
+	}
+
+	public boolean categoryPlannerAlreadyExists(UUID categoryId, UUID budgetId) {
+		return categoryPlannerRepository.existsByCategory_IdAndBudgetId(categoryId, budgetId);
 	}
 
 	@Override
@@ -62,11 +69,17 @@ public class CategoryPlannerServiceService implements CategoryPlannerServiceBase
 			throw new NotFoundException(CATEGORY_PLANNER, CATEGORY_ID_LABEL, request.getBudgetId());
 		}
 
-		// TODO: Check if there is another CategoryPlanner within the same budget with the same CategoryId
+		// Check if CategoryPlanner already exists
+		if (categoryPlannerAlreadyExists(category.getFirst().getId(), budget.getFirst().getId())) {
+			String message = String.format("CategoryPlanner of name %s and type %s already exists", //
+					category.getFirst().getName(), //
+					category.getFirst().getTransactionType());
+			throw new CreateNewItemException(CATEGORY_PLANNER, message);
+		}
 
 		CategoryPlanner newCategoryPlanner = CategoryPlannerConverter //
 				.convert(request) //
-				.withBudget(budget.getFirst()) //
+				.withBudgetId(budget.getFirst().getId()) //
 				.withCategory(category.getFirst());
 
 		return new CreateCategoryPlannerResponse() //
@@ -81,39 +94,50 @@ public class CategoryPlannerServiceService implements CategoryPlannerServiceBase
 	@Override
 	public GetCategoryPlannerResponse getCategoryPlanner(GetCategoryPlannerRequest request) {
 
-		List<CategoryPlanner> categoryPlanners;
+		UUID userId = UUIDConverter //
+				.convert(request.getUserId(), "userId", CATEGORY_PLANNER);
 
-		UUID userId = UUIDConverter.convert(request.getUserId(), "userId", CATEGORY_PLANNER);
+		UUID id = UUIDConverter //
+				.convert(request.getId(), "categoryPlannerId", CATEGORY_PLANNER);
 
-		// Find all by user ID
-		if (request.getId() == null || request.getId().isEmpty()) {
-			// Get budget
-			List<Budget> budget = budgetService.getBudgets(new GetBudgetsRequest() //
-					.withUserId(request.getUserId()) //
-					.withId(request.getBudgetId()) //
-			).getBudgets();
-			if (budget.isEmpty()) {
-				throw new NotFoundException(CATEGORY_PLANNER, BUDGET_ID_LABEL, request.getBudgetId());
-			}
+		CategoryPlanner categoryPlanner = categoryPlannerRepository //
+				.getCategoryPlannerByIdAndUserId(id, userId);
 
-			categoryPlanners = categoryPlannerRepository.getCategoryPlannerByUserIdAndBudget(userId, budget.getFirst());
-		} else {
-			UUID id = UUIDConverter.convert(request.getId(), "categoryPlannerId", CATEGORY_PLANNER);
-			categoryPlanners = categoryPlannerRepository //
-					.getCategoryPlannerByIdAndUserId(id, userId);
+		if (categoryPlanner == null) {
+			throw new NotFoundException(CATEGORY_PLANNER, "categoryPlanner", request.getId());
 		}
 
+		return new GetCategoryPlannerResponse().withCategoryPlanner(categoryPlanner);
+	}
+
+	@Override
+	public GetCategoryPlannersResponse getCategoryPlanners(GetCategoryPlannersRequest request) {
+
+		UUID userId = UUIDConverter //
+				.convert(request.getUserId(), "userId", CATEGORY_PLANNER);
+
+		// Get budget
+		List<Budget> budget = budgetService.getBudgets(new GetBudgetsRequest() //
+				.withUserId(request.getUserId()) //
+				.withId(request.getBudgetId()) //
+		).getBudgets();
+
+		if (budget.isEmpty()) {
+			throw new NotFoundException(CATEGORY_PLANNER, BUDGET_ID_LABEL, request.getBudgetId());
+		}
+
+		List<CategoryPlanner> categoryPlanners = categoryPlannerRepository //
+				.getCategoryPlannerByUserIdAndBudget(userId, budget.getFirst());
+
 		if (categoryPlanners == null || categoryPlanners.isEmpty()) {
-			throw new NotFoundException(CATEGORY_PLANNER, "categoryPlanner", request.getId());
+			throw new NotFoundException(CATEGORY_PLANNER, "categoryPlanner on budgetId", request.getBudgetId());
 		}
 		// Apply filter
 
 		// Apply sort
 
-		return new GetCategoryPlannerResponse().withCategoryPlanner(categoryPlanners);
+		return new GetCategoryPlannersResponse().withCategoryPlanners(categoryPlanners);
 	}
-
-
 
 	@Override
 	public UpdateCategoryPlannerResponse updateCategory(UpdateCategoryPlannerRequest request) {

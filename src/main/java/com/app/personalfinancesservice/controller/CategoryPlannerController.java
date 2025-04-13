@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.app.personalfinancesservice.domain.categoryplanner.input.CreateCategoryPlannerRequest;
 import com.app.personalfinancesservice.domain.categoryplanner.input.GetCategoryPlannerRequest;
+import com.app.personalfinancesservice.domain.categoryplanner.input.GetCategoryPlannersRequest;
 import com.app.personalfinancesservice.domain.categoryplanner.output.CreateCategoryPlannerResponse;
 import com.app.personalfinancesservice.domain.categoryplanner.output.GetCategoryPlannerResponse;
+import com.app.personalfinancesservice.domain.categoryplanner.output.GetCategoryPlannersResponse;
 import com.app.personalfinancesservice.domain.filter.SortBy;
 import com.app.personalfinancesservice.domain.filter.SortDirection;
 import com.app.personalfinancesservice.domain.http.HttpRoutes;
@@ -30,45 +32,41 @@ public class CategoryPlannerController {
 		this.categoryPlannerServiceService = categoryPlannerServiceService;
 	}
 
-	@PostMapping("/{budgetId}" + HttpRoutes.CATEGORY_PLANNER)
+	@PostMapping(HttpRoutes.CATEGORY_PLANNER)
 	public ResponseEntity<CreateCategoryPlannerResponse> createCategoryPlanner(@RequestHeader("X-User-id") String userId, //
- 			@PathVariable String budgetId,
 			@RequestBody CreateCategoryPlannerRequest request) {
 
-		request.withUserId(userId) //
-				.withBudgetId(budgetId);
+		request.withUserId(userId);
 
 		return ResponseEntity.ok(categoryPlannerServiceService.createCategoryPlanner(request));
 	}
 
-	@GetMapping("/{budgetId}" + HttpRoutes.CATEGORY_PLANNER + "/{id}")
+	@GetMapping(HttpRoutes.CATEGORY_PLANNER + "/{id}")
 	public ResponseEntity<GetCategoryPlannerResponse> getCategoryPlanner(@RequestHeader("X-User-id") String userId, //
-			@PathVariable("budgetId") String budgetId, //
 			@PathVariable("id") String id) {
 
 		GetCategoryPlannerRequest request = new GetCategoryPlannerRequest() //
 				.withId(id) //
-				.withUserId(userId)
-				.withBudgetId(budgetId);
+				.withUserId(userId);
 
 		return ResponseEntity.ok(categoryPlannerServiceService.getCategoryPlanner(request));
 	}
 
-	@GetMapping("/{budgetId}" + HttpRoutes.CATEGORY_PLANNER)
-	public ResponseEntity<GetCategoryPlannerResponse> getCategoryPlanners(@RequestHeader("X-User-id") String userId, //
-			@PathVariable("budgetId") String budgetId, //
+	@GetMapping(HttpRoutes.CATEGORY_PLANNER)
+	public ResponseEntity<GetCategoryPlannersResponse> getCategoryPlanners(@RequestHeader("X-User-id") String userId, //
+			@RequestParam String budgetId, //
 			@RequestParam(required = false, defaultValue = "NAME") SortBy sortBy, //
 			@RequestParam(required = false, defaultValue = "ASC") SortDirection sortDirection, //
 			@RequestParam(required = false) TransactionType transactionType) {
 
-		GetCategoryPlannerRequest request = new GetCategoryPlannerRequest() //
+		GetCategoryPlannersRequest request = new GetCategoryPlannersRequest() //
 				.withUserId(userId) //
 				.withSortBy(sortBy) //
 				.withBudgetId(budgetId) //
 				.withSortDirection(sortDirection) //
 				.withTransactionType(transactionType);
 
-		return ResponseEntity.ok(categoryPlannerServiceService.getCategoryPlanner(request));
+		return ResponseEntity.ok(categoryPlannerServiceService.getCategoryPlanners(request));
 	}
 
 
