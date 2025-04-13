@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.app.personalfinancesservice.domain.categoryplanner.input.CreateCategoryPlannerRequest;
 import com.app.personalfinancesservice.domain.categoryplanner.input.GetCategoryPlannerRequest;
-import com.app.personalfinancesservice.domain.categoryplanner.input.GetCategoryPlannersRequest;
+import com.app.personalfinancesservice.domain.categoryplanner.input.GetListCategoryPlannerRequest;
 import com.app.personalfinancesservice.domain.categoryplanner.output.CreateCategoryPlannerResponse;
 import com.app.personalfinancesservice.domain.categoryplanner.output.GetCategoryPlannerResponse;
-import com.app.personalfinancesservice.domain.categoryplanner.output.GetCategoryPlannersResponse;
+import com.app.personalfinancesservice.domain.categoryplanner.output.GetListCategoryPlannerResponse;
 import com.app.personalfinancesservice.domain.filter.SortBy;
 import com.app.personalfinancesservice.domain.filter.SortDirection;
 import com.app.personalfinancesservice.domain.http.HttpRoutes;
@@ -53,22 +53,22 @@ public class CategoryPlannerController {
 	}
 
 	@GetMapping(HttpRoutes.CATEGORY_PLANNER)
-	public ResponseEntity<GetCategoryPlannersResponse> getCategoryPlanners(@RequestHeader("X-User-id") String userId, //
+	public ResponseEntity<GetListCategoryPlannerResponse> getCategoryPlanners(@RequestHeader("X-User-id") String userId, //
 			@RequestParam String budgetId, //
 			@RequestParam(required = false, defaultValue = "NAME") SortBy sortBy, //
 			@RequestParam(required = false, defaultValue = "ASC") SortDirection sortDirection, //
+			@RequestParam(required = false) String categoryName, //
 			@RequestParam(required = false) TransactionType transactionType) {
 
-		GetCategoryPlannersRequest request = new GetCategoryPlannersRequest() //
+		GetListCategoryPlannerRequest request = new GetListCategoryPlannerRequest() //
 				.withUserId(userId) //
 				.withSortBy(sortBy) //
 				.withBudgetId(budgetId) //
 				.withSortDirection(sortDirection) //
+				.withCategoryName(categoryName) //
 				.withTransactionType(transactionType);
 
-		return ResponseEntity.ok(categoryPlannerServiceService.getCategoryPlanners(request));
+		return ResponseEntity.ok(categoryPlannerServiceService.getListCategoryPlanner(request));
 	}
-
-
 
 }

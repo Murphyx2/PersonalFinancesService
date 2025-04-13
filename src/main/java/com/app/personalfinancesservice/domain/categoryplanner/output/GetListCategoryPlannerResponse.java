@@ -10,11 +10,11 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class GetCategoryPlannersResponse {
+public class GetListCategoryPlannerResponse {
 
 	private List<CategoryPlanner> categoryPlanners;
 
-	public GetCategoryPlannersResponse withCategoryPlanners(List<CategoryPlanner> categoryPlanners) {
+	public GetListCategoryPlannerResponse withCategoryPlanners(List<CategoryPlanner> categoryPlanners) {
 		this.setCategoryPlanners(categoryPlanners);
 		return this;
 	}

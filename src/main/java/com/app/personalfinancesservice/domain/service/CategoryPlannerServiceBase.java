@@ -3,11 +3,11 @@ package com.app.personalfinancesservice.domain.service;
 import com.app.personalfinancesservice.domain.categoryplanner.input.CreateCategoryPlannerRequest;
 import com.app.personalfinancesservice.domain.categoryplanner.input.DeleteCategoryPlannerRequest;
 import com.app.personalfinancesservice.domain.categoryplanner.input.GetCategoryPlannerRequest;
-import com.app.personalfinancesservice.domain.categoryplanner.input.GetCategoryPlannersRequest;
+import com.app.personalfinancesservice.domain.categoryplanner.input.GetListCategoryPlannerRequest;
 import com.app.personalfinancesservice.domain.categoryplanner.input.UpdateCategoryPlannerRequest;
 import com.app.personalfinancesservice.domain.categoryplanner.output.CreateCategoryPlannerResponse;
 import com.app.personalfinancesservice.domain.categoryplanner.output.GetCategoryPlannerResponse;
-import com.app.personalfinancesservice.domain.categoryplanner.output.GetCategoryPlannersResponse;
+import com.app.personalfinancesservice.domain.categoryplanner.output.GetListCategoryPlannerResponse;
 import com.app.personalfinancesservice.domain.categoryplanner.output.UpdateCategoryPlannerResponse;
 
 public interface CategoryPlannerServiceBase {
@@ -18,7 +18,7 @@ public interface CategoryPlannerServiceBase {
 
 	public GetCategoryPlannerResponse getCategoryPlanner(GetCategoryPlannerRequest request);
 
-	public GetCategoryPlannersResponse getCategoryPlanners(GetCategoryPlannersRequest request);
+	public GetListCategoryPlannerResponse getListCategoryPlanner(GetListCategoryPlannerRequest request);
 
 	public UpdateCategoryPlannerResponse updateCategory(UpdateCategoryPlannerRequest request);
 }

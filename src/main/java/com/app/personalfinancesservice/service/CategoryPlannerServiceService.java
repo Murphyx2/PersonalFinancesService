@@ -15,15 +15,17 @@ import com.app.personalfinancesservice.domain.categoryplanner.CategoryPlanner;
 import com.app.personalfinancesservice.domain.categoryplanner.input.CreateCategoryPlannerRequest;
 import com.app.personalfinancesservice.domain.categoryplanner.input.DeleteCategoryPlannerRequest;
 import com.app.personalfinancesservice.domain.categoryplanner.input.GetCategoryPlannerRequest;
-import com.app.personalfinancesservice.domain.categoryplanner.input.GetCategoryPlannersRequest;
+import com.app.personalfinancesservice.domain.categoryplanner.input.GetListCategoryPlannerRequest;
 import com.app.personalfinancesservice.domain.categoryplanner.input.UpdateCategoryPlannerRequest;
 import com.app.personalfinancesservice.domain.categoryplanner.output.CreateCategoryPlannerResponse;
 import com.app.personalfinancesservice.domain.categoryplanner.output.GetCategoryPlannerResponse;
-import com.app.personalfinancesservice.domain.categoryplanner.output.GetCategoryPlannersResponse;
+import com.app.personalfinancesservice.domain.categoryplanner.output.GetListCategoryPlannerResponse;
 import com.app.personalfinancesservice.domain.categoryplanner.output.UpdateCategoryPlannerResponse;
 import com.app.personalfinancesservice.domain.service.CategoryPlannerServiceBase;
 import com.app.personalfinancesservice.exceptions.CreateNewItemException;
 import com.app.personalfinancesservice.exceptions.NotFoundException;
+import com.app.personalfinancesservice.filter.CategoryPlannerFilter;
+import com.app.personalfinancesservice.filter.CategoryPlannerSorter;
 import com.app.personalfinancesservice.repository.CategoryPlannerRepository;
 
 @Service
@@ -111,7 +113,7 @@ public class CategoryPlannerServiceService implements CategoryPlannerServiceBase
 	}
 
 	@Override
-	public GetCategoryPlannersResponse getCategoryPlanners(GetCategoryPlannersRequest request) {
+	public GetListCategoryPlannerResponse getListCategoryPlanner(GetListCategoryPlannerRequest request) {
 
 		UUID userId = UUIDConverter //
 				.convert(request.getUserId(), "userId", CATEGORY_PLANNER);
@@ -133,10 +135,17 @@ public class CategoryPlannerServiceService implements CategoryPlannerServiceBase
 			throw new NotFoundException(CATEGORY_PLANNER, "categoryPlanner on budgetId", request.getBudgetId());
 		}
 		// Apply filter
+		List<CategoryPlanner> filteredCategoryPlanners = CategoryPlannerFilter //
+				.filterByTransactionType(categoryPlanners, request.getTransactionType());
+
+		filteredCategoryPlanners = CategoryPlannerFilter //
+				.filterByName(filteredCategoryPlanners, request.getCategoryName());
 
 		// Apply sort
+		List<CategoryPlanner> sortedCategoryPlanner = CategoryPlannerSorter //
+				.sort(filteredCategoryPlanners, request.getSortBy(), request.getSortDirection());
 
-		return new GetCategoryPlannersResponse().withCategoryPlanners(categoryPlanners);
+		return new GetListCategoryPlannerResponse().withCategoryPlanners(sortedCategoryPlanner);
 	}
 
 	@Override

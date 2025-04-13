@@ -10,36 +10,42 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class GetCategoryPlannersRequest {
+public class GetListCategoryPlannerRequest {
 
 	private String userId;
 	private String budgetId;
 
 	private SortBy sortBy;
 	private SortDirection sortDirection;
+	private String categoryName;
 	private TransactionType transactionType;
 
-	public GetCategoryPlannersRequest withBudgetId(String budgetId) {
+	public GetListCategoryPlannerRequest withBudgetId(String budgetId) {
 		this.setBudgetId(budgetId);
 		return this;
 	}
 
-	public GetCategoryPlannersRequest withSortBy(SortBy sortBy) {
+	public GetListCategoryPlannerRequest withCategoryName(String categoryName) {
+		this.setCategoryName(categoryName);
+		return this;
+	}
+
+	public GetListCategoryPlannerRequest withSortBy(SortBy sortBy) {
 		this.setSortBy(sortBy);
 		return this;
 	}
 
-	public GetCategoryPlannersRequest withSortDirection(SortDirection sortDirection) {
+	public GetListCategoryPlannerRequest withSortDirection(SortDirection sortDirection) {
 		this.setSortDirection(sortDirection);
 		return this;
 	}
 
-	public GetCategoryPlannersRequest withTransactionType(TransactionType transactionType) {
+	public GetListCategoryPlannerRequest withTransactionType(TransactionType transactionType) {
 		this.setTransactionType(transactionType);
 		return this;
 	}
 
-	public GetCategoryPlannersRequest withUserId(String userId) {
+	public GetListCategoryPlannerRequest withUserId(String userId) {
 		this.setUserId(userId);
 		return this;
 	}

@@ -1,5 +1,6 @@
 package com.app.personalfinancesservice.filter;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -21,8 +22,9 @@ public class BudgetSorter {
 			comparator = comparator.reversed();
 		}
 
-		budgets.sort(comparator);
-		return budgets;
+		List<Budget> sorterBudgets = new ArrayList<>(budgets);
+		sorterBudgets.sort(comparator);
+		return sorterBudgets;
 	}
 
 	private static Comparator<Budget> getComparator(SortBy sortBy) {
