@@ -74,7 +74,7 @@ class PortfolioControllerTest {
 		when(portfolioServiceMock.createPortfolio(eq(validUserId), any(CreatePortfolioRequest.class))) //
 				.thenReturn(response);
 
-		mockMvc.perform(post(HttpRoutes.PORTFOLIO) //
+		mockMvc.perform(post(HttpRoutes.API_ROOT + HttpRoutes.PORTFOLIO) //
 						.header("X-User-id", validUserId) //
 						.contentType(MediaType.APPLICATION_JSON) //
 						.content(REQUEST_BODY)) //
@@ -98,7 +98,7 @@ class PortfolioControllerTest {
 				, any(CreatePortfolioRequest.class))) //
 				.thenThrow(new InvalidIdException(exceptionLabel, USERID_LABEL, invalidUserId));
 
-		mockMvc.perform(post(HttpRoutes.PORTFOLIO) //
+		mockMvc.perform(post(HttpRoutes.API_ROOT + HttpRoutes.PORTFOLIO) //
 						.header("X-User-id", invalidUserId) //
 						.contentType(MediaType.APPLICATION_JSON) //
 						.content(REQUEST_BODY)) //
@@ -111,7 +111,7 @@ class PortfolioControllerTest {
 	@Test
 	void createPortfolioMissingUserId() throws Exception {
 
-		mockMvc.perform(post(HttpRoutes.PORTFOLIO) //
+		mockMvc.perform(post(HttpRoutes.API_ROOT + HttpRoutes.PORTFOLIO) //
 						.contentType(MediaType.APPLICATION_JSON) //
 						.content(REQUEST_BODY)) //
 				.andExpect(status().isBadRequest()) //
@@ -132,7 +132,7 @@ class PortfolioControllerTest {
 		when(portfolioServiceMock //
 				.deletePortfolio(any(DeletePortfolioRequest.class))).thenReturn(response);
 
-		mockMvc.perform(delete(HttpRoutes.PORTFOLIO + "/{portfolioId}", UUID.randomUUID().toString()) //
+		mockMvc.perform(delete(HttpRoutes.API_ROOT + HttpRoutes.PORTFOLIO + "/{portfolioId}", UUID.randomUUID().toString()) //
 						.contentType(MediaType.APPLICATION_JSON) //
 						.header("X-User-id", validUserId.toString()) //
 				) //
@@ -152,7 +152,7 @@ class PortfolioControllerTest {
 		when(portfolioServiceMock.getPortfolios(any(GetPortfolioRequest.class))) //
 				.thenThrow(new InvalidIdException(EXCEPTION_LABEL, PORTFOLIOID_LABEL, invalidPortfolioId));
 
-		mockMvc.perform(get(HttpRoutes.PORTFOLIO + "/{portfolioId}", invalidPortfolioId) //
+		mockMvc.perform(get(HttpRoutes.API_ROOT + HttpRoutes.PORTFOLIO + "/{portfolioId}", invalidPortfolioId) //
 						.contentType(MediaType.APPLICATION_JSON) //
 						.header("X-User-id", validUserId.toString())) //
 				.andExpect(status().isBadRequest()) //
@@ -166,7 +166,7 @@ class PortfolioControllerTest {
 	@Test
 	void getPortfolioMissingUserId() throws Exception {
 
-		mockMvc.perform(get(HttpRoutes.PORTFOLIO+"/") //
+		mockMvc.perform(get(HttpRoutes.API_ROOT + HttpRoutes.PORTFOLIO + "/") //
 						.contentType(MediaType.APPLICATION_JSON)) //
 				.andExpect(status().isBadRequest()) //
 				.andExpect(jsonPath("$.error") //
@@ -196,7 +196,7 @@ class PortfolioControllerTest {
 		when(portfolioServiceMock.getPortfolios(any(GetPortfolioRequest.class))) //
 				.thenReturn(response);
 
-		mockMvc.perform(get(HttpRoutes.PORTFOLIO + "/{portfolioId}", validPortfolioId.toString()) //
+		mockMvc.perform(get(HttpRoutes.API_ROOT + HttpRoutes.PORTFOLIO + "/{portfolioId}", validPortfolioId.toString()) //
 						.contentType(MediaType.APPLICATION_JSON) //
 						.header("X-User-id", validUserId.toString()) //
 				) //
@@ -218,7 +218,7 @@ class PortfolioControllerTest {
 		when(portfolioServiceMock.updatePortfolio(any(UpdatePortfolioRequest.class))) //
 				.thenThrow(new InvalidIdException(EXCEPTION_LABEL, PORTFOLIOID_LABEL, invalidPortfolioId));
 
-		mockMvc.perform(put(HttpRoutes.PORTFOLIO) //
+		mockMvc.perform(put(HttpRoutes.API_ROOT + HttpRoutes.PORTFOLIO) //
 						.contentType(MediaType.APPLICATION_JSON) //
 						.header("X-User-id", validUserId.toString()) //
 						.content(REQUEST_BODY) //
@@ -249,7 +249,7 @@ class PortfolioControllerTest {
 		when(portfolioServiceMock.updatePortfolio(any(UpdatePortfolioRequest.class))) //
 				.thenReturn(response);
 
-		mockMvc.perform(put(HttpRoutes.PORTFOLIO) //
+		mockMvc.perform(put(HttpRoutes.API_ROOT + HttpRoutes.PORTFOLIO) //
 						.contentType(MediaType.APPLICATION_JSON) //
 						.header("X-User-id", validUserId.toString()) //
 						.content(REQUEST_BODY) //

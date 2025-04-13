@@ -5,5 +5,6 @@ public enum SortBy {
 	START_AT, //
 	END_AT, //
 	CREATED_AT, //
+	TRANSACTION_TYPE, //
 	;
 }

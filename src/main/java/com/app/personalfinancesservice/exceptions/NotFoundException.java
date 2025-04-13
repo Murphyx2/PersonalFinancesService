@@ -15,4 +15,12 @@ public class NotFoundException extends RuntimeException {
 		this.location = location;
 	}
 
+	public NotFoundException(String location, String fieldValue) {
+		super(fieldValue);
+		this.fieldName = null;
+		this.fieldValue = fieldValue;
+		this.location = location;
+	}
+
+
 }

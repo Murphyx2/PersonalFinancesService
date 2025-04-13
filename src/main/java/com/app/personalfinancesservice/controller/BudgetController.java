@@ -26,16 +26,18 @@ import com.app.personalfinancesservice.domain.http.HttpRoutes;
 import com.app.personalfinancesservice.service.BudgetService;
 
 @RestController
-@RequestMapping(HttpRoutes.BUDGET)
+@RequestMapping(HttpRoutes.API_ROOT)
 public class BudgetController {
 
 	private final BudgetService budgetService;
+
+	private static final String BUDGET_ROUTE = HttpRoutes.BUDGET;
 
 	BudgetController(BudgetService budgetService) {
 		this.budgetService = budgetService;
 	}
 
-	@PostMapping
+	@PostMapping(BUDGET_ROUTE)
 	public ResponseEntity<CreateBudgetResponse> createBudget(@RequestHeader("X-User-id") String userId, //
 			@RequestBody CreateBudgetRequest request) {
 
@@ -44,7 +46,7 @@ public class BudgetController {
 		return ResponseEntity.ok(budgetService.createBudget(request));
 	}
 
-	@DeleteMapping(path = "/{id}")
+	@DeleteMapping(path = BUDGET_ROUTE + "/{id}")
 	public ResponseEntity<DeleteBudgetResponse> deleteBudget(@RequestHeader("X-User-id") String userId, //
 			@PathVariable String id) {
 
@@ -53,34 +55,36 @@ public class BudgetController {
 		return ResponseEntity.ok(budgetService.deleteBudget(request));
 	}
 
-	@GetMapping(path = "/{id}")
+	@GetMapping(path = BUDGET_ROUTE + "/{id}")
 	public ResponseEntity<GetBudgetsResponse> getBudget(@RequestHeader("X-User-id") String userId, //
 			@PathVariable String id) {
 
 		GetBudgetsRequest request = new GetBudgetsRequest() //
 				.withId(id) //
 				.withUserId(userId) //
-				.withSortBy(SortBy.valueOf("NAME")) //
+				.withSortBy(SortBy.NAME) //
 				.withSortDirection(SortDirection.valueOf("ASC"));
 
 		return ResponseEntity.ok(budgetService.getBudgets(request));
 	}
 
 	// Fetch all budgets
-	@GetMapping(path = "/")
+	@GetMapping(HttpRoutes.PORTFOLIO + "/{portfolioId}" + HttpRoutes.BUDGET)
 	public ResponseEntity<GetBudgetsResponse> getBudgets(@RequestHeader("X-User-id") String userId, //
+			@PathVariable String portfolioId,
 			@RequestParam(required = false, defaultValue = "NAME") SortBy sortBy, //
 			@RequestParam(required = false, defaultValue = "ASC") SortDirection sortDirection) {
 
 		GetBudgetsRequest request = new GetBudgetsRequest() //
 				.withUserId(userId) //
 				.withSortBy(sortBy) //
+				.withPortfolioId(portfolioId)
 				.withSortDirection(sortDirection);
 
 		return ResponseEntity.ok(budgetService.getBudgets(request));
 	}
 
-	@PutMapping
+	@PutMapping(BUDGET_ROUTE)
 	public ResponseEntity<UpdateBudgetResponse> updateBudget(@RequestHeader("X-User-id") String userId, //
 			@RequestBody UpdateBudgetRequest request) {
 

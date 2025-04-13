@@ -4,10 +4,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import com.app.personalfinancesservice.domain.categoryplanner.CategoryPlanner;
 import com.app.personalfinancesservice.domain.portfolio.Portfolio;
 import com.app.personalfinancesservice.domain.transaction.Transaction;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -22,10 +24,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Data
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
 public class Budget {
 
 	@Id
@@ -42,8 +44,13 @@ public class Budget {
 	@JsonBackReference
 	private Portfolio portfolio;
 
-	@OneToMany(mappedBy = "budget", cascade = CascadeType.ALL)
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "budget", cascade = CascadeType.ALL)
+	@JsonManagedReference
 	private List<Transaction> transactions;
+
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "budget", cascade = CascadeType.ALL)
+	@JsonManagedReference
+	private List<CategoryPlanner> categoryPlanners;
 
 	private String name;
 
