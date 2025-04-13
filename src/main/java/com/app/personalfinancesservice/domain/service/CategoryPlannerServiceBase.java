@@ -20,5 +20,5 @@ public interface CategoryPlannerServiceBase {
 
 	public GetListCategoryPlannerResponse getListCategoryPlanner(GetListCategoryPlannerRequest request);
 
-	public UpdateCategoryPlannerResponse updateCategory(UpdateCategoryPlannerRequest request);
+	public UpdateCategoryPlannerResponse updateCategoryPlanner(UpdateCategoryPlannerRequest request);
 }

@@ -149,7 +149,34 @@ public class CategoryPlannerServiceService implements CategoryPlannerServiceBase
 	}
 
 	@Override
-	public UpdateCategoryPlannerResponse updateCategory(UpdateCategoryPlannerRequest request) {
-		return null;
+	public UpdateCategoryPlannerResponse updateCategoryPlanner(UpdateCategoryPlannerRequest request) {
+
+		// Check if CategoryPlanner exists
+		GetCategoryPlannerRequest categoryPlannerRequest = new GetCategoryPlannerRequest().withId(request.getId()) //
+				.withUserId(request.getUserId()) //
+				;
+
+		CategoryPlanner oldCategoryPlanner = getCategoryPlanner(categoryPlannerRequest).getCategoryPlanner();
+		if (oldCategoryPlanner == null) {
+			String message = String.format("CategoryPlanner of id %s could not be found", request.getId());
+			throw new NotFoundException(CATEGORY_PLANNER, message);
+		}
+
+		// Check if new category exists
+		GetCategoryRequest categoryRequest = new GetCategoryRequest() //
+				.withId(request.getCategoryId()) //
+				.withUserId(request.getUserId());
+		List<Category> category = categoryService //
+				.getCategory(categoryRequest).getCategory();
+		if (category.isEmpty()) {
+			String message = String.format("Category of id %s could not be found", request.getCategoryId());
+			throw new NotFoundException(CATEGORY_PLANNER, message);
+		}
+		// Convert and save
+		CategoryPlanner updatedCategoryPlanner = CategoryPlannerConverter //
+				.convert(request, category.getFirst(), oldCategoryPlanner);
+
+		return new UpdateCategoryPlannerResponse() //
+				.withCategoryPlanner(categoryPlannerRepository.save(updatedCategoryPlanner));
 	}
 }

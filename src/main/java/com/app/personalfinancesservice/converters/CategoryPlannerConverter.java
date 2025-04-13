@@ -3,8 +3,10 @@ package com.app.personalfinancesservice.converters;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import com.app.personalfinancesservice.domain.category.Category;
 import com.app.personalfinancesservice.domain.categoryplanner.CategoryPlanner;
 import com.app.personalfinancesservice.domain.categoryplanner.input.CreateCategoryPlannerRequest;
+import com.app.personalfinancesservice.domain.categoryplanner.input.UpdateCategoryPlannerRequest;
 
 public class CategoryPlannerConverter {
 
@@ -17,8 +19,18 @@ public class CategoryPlannerConverter {
 
 		return new CategoryPlanner() //
 				.withUserId(userId) //
-				.withPlannedAmount(request.getPlannedAmount()) //
+				.withPlannedAmount(Math.abs(request.getPlannedAmount())) //
 				.withCreatedAt(LocalDateTime.now());
+	}
+
+	public static CategoryPlanner convert(UpdateCategoryPlannerRequest request, //
+			Category category, //
+			CategoryPlanner oldCategoryPlanner) {
+
+		return oldCategoryPlanner //
+				.withCategory(category) //
+				.withPlannedAmount(Math.abs(request.getPlannedAmount())) //
+				.withUpdatedAt(LocalDateTime.now());
 	}
 
 	private CategoryPlannerConverter() {

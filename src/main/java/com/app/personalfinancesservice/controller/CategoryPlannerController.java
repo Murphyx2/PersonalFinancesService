@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,9 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.app.personalfinancesservice.domain.categoryplanner.input.CreateCategoryPlannerRequest;
 import com.app.personalfinancesservice.domain.categoryplanner.input.GetCategoryPlannerRequest;
 import com.app.personalfinancesservice.domain.categoryplanner.input.GetListCategoryPlannerRequest;
+import com.app.personalfinancesservice.domain.categoryplanner.input.UpdateCategoryPlannerRequest;
 import com.app.personalfinancesservice.domain.categoryplanner.output.CreateCategoryPlannerResponse;
 import com.app.personalfinancesservice.domain.categoryplanner.output.GetCategoryPlannerResponse;
 import com.app.personalfinancesservice.domain.categoryplanner.output.GetListCategoryPlannerResponse;
+import com.app.personalfinancesservice.domain.categoryplanner.output.UpdateCategoryPlannerResponse;
 import com.app.personalfinancesservice.domain.filter.SortBy;
 import com.app.personalfinancesservice.domain.filter.SortDirection;
 import com.app.personalfinancesservice.domain.http.HttpRoutes;
@@ -69,6 +72,15 @@ public class CategoryPlannerController {
 				.withTransactionType(transactionType);
 
 		return ResponseEntity.ok(categoryPlannerServiceService.getListCategoryPlanner(request));
+	}
+
+	@PutMapping(HttpRoutes.CATEGORY_PLANNER)
+	public ResponseEntity<UpdateCategoryPlannerResponse> updateCategoryPlanner(@RequestHeader("X-User-id") String userId, //
+			@RequestBody UpdateCategoryPlannerRequest request) {
+
+		request.withUserId(userId);
+
+		return ResponseEntity.ok(categoryPlannerServiceService.updateCategoryPlanner(request));
 	}
 
 }
