@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 import com.app.personalfinancesservice.converters.CategoryPlannerConverter;
+import com.app.personalfinancesservice.converters.GetCategoryPlannerRequestConverter;
 import com.app.personalfinancesservice.converters.UUIDConverter;
 import com.app.personalfinancesservice.domain.budget.Budget;
 import com.app.personalfinancesservice.domain.budget.input.GetBudgetsRequest;
@@ -90,7 +91,17 @@ public class CategoryPlannerServiceService implements CategoryPlannerServiceBase
 
 	@Override
 	public void deleteCategoryPlanner(DeleteCategoryPlannerRequest request) {
-		// Empty waiting for implementation
+
+		// Get Category Planner
+		GetCategoryPlannerRequest categoryRequest = GetCategoryPlannerRequestConverter.convert(request);
+
+		CategoryPlanner categoryPlanner = getCategoryPlanner(categoryRequest).getCategoryPlanner();
+		if (categoryPlanner == null) {
+			String message = String.format("CategoryPlanner of id %s could not be found", request.getId());
+			throw new NotFoundException(CATEGORY_PLANNER, message);
+		}
+
+		categoryPlannerRepository.delete(categoryPlanner);
 	}
 
 	@Override
@@ -152,9 +163,7 @@ public class CategoryPlannerServiceService implements CategoryPlannerServiceBase
 	public UpdateCategoryPlannerResponse updateCategoryPlanner(UpdateCategoryPlannerRequest request) {
 
 		// Check if CategoryPlanner exists
-		GetCategoryPlannerRequest categoryPlannerRequest = new GetCategoryPlannerRequest().withId(request.getId()) //
-				.withUserId(request.getUserId()) //
-				;
+		GetCategoryPlannerRequest categoryPlannerRequest = GetCategoryPlannerRequestConverter.convert(request);
 
 		CategoryPlanner oldCategoryPlanner = getCategoryPlanner(categoryPlannerRequest).getCategoryPlanner();
 		if (oldCategoryPlanner == null) {
