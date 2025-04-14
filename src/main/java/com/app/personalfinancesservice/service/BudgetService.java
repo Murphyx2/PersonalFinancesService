@@ -37,6 +37,10 @@ public class BudgetService implements BudgetServiceBase {
 		this.portfolioService = portfolioService;
 	}
 
+	public boolean budgetExists(UUID budgetId, UUID userId) {
+		return budgetRepository.existsByIdAndUserId(budgetId, userId);
+	}
+
 	@Override
 	public CreateBudgetResponse createBudget(CreateBudgetRequest request) {
 
@@ -89,7 +93,9 @@ public class BudgetService implements BudgetServiceBase {
 
 		// fetch all budgets from Portfolio
 		if (request.getId() == null) {
-			budgets = budgetRepository.getAllByUserId(userId);
+			final UUID portfolioId = UUIDConverter //
+					.convert(request.getPortfolioId(), "portfolioId", BUDGET_LABEL);
+			budgets = budgetRepository.getAllByUserIdAndPortfolioId(userId, portfolioId);
 		} else {
 			final UUID budgetId = UUIDConverter //
 					.convert(request.getId(), "budgetId", BUDGET_LABEL);
@@ -97,10 +103,10 @@ public class BudgetService implements BudgetServiceBase {
 		}
 
 		//Filtering results
-		List<Budget> filteredBudgets = BudgetSorter //
+		List<Budget> sortedBudgets = BudgetSorter //
 				.sort(budgets, request.getSortBy(), request.getSortDirection());
 
-		return new GetBudgetsResponse().withBudgets(filteredBudgets);
+		return new GetBudgetsResponse().withBudgets(sortedBudgets);
 	}
 
 	@Override

@@ -26,7 +26,7 @@ import com.app.personalfinancesservice.domain.portfolio.output.UpdatePortfolioRe
 import com.app.personalfinancesservice.service.PortfolioService;
 
 @RestController
-@RequestMapping(HttpRoutes.PORTFOLIO)
+@RequestMapping(HttpRoutes.API_ROOT + HttpRoutes.PORTFOLIO)
 public class PortfolioController {
 
 	private final PortfolioService portfolioService;
@@ -55,7 +55,9 @@ public class PortfolioController {
 
 	@GetMapping("/{id}")
 	public ResponseEntity<GetPortfolioResponse> getPortfolio(@RequestHeader("X-User-id") String userId, //
-			@RequestParam(required = false, defaultValue = "NAME") SortBy sortBy, @RequestParam(required = false, defaultValue = "ASC") SortDirection sortDirection, @PathVariable String id) {
+			@RequestParam(required = false, defaultValue = "NAME") SortBy sortBy, //
+			@RequestParam(required = false, defaultValue = "ASC") SortDirection sortDirection, //
+			@PathVariable String id) {
 
 		GetPortfolioRequest request = new GetPortfolioRequest() //
 				.withPortfolioId(id) //
@@ -69,7 +71,8 @@ public class PortfolioController {
 
 	@GetMapping("/")
 	public ResponseEntity<GetPortfolioResponse> getPortfolios(@RequestHeader("X-User-id") String userId, //
-			@RequestParam(required = false, defaultValue = "CREATED_AT") SortBy sortBy, @RequestParam(required = false, defaultValue = "ASC") SortDirection sortDirection) {
+			@RequestParam(required = false, defaultValue = "CREATED_AT") SortBy sortBy, //
+			@RequestParam(required = false, defaultValue = "ASC") SortDirection sortDirection) {
 
 		GetPortfolioRequest request = new GetPortfolioRequest() //
 				.withUserId(userId) //

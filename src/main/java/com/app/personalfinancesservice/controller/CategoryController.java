@@ -28,7 +28,7 @@ import com.app.personalfinancesservice.service.CategoryService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping(HttpRoutes.CATEGORY)
+@RequestMapping(HttpRoutes.API_ROOT + HttpRoutes.CATEGORY)
 public class CategoryController {
 
 	private final CategoryService categoryService;
@@ -58,7 +58,7 @@ public class CategoryController {
 	}
 
 	@GetMapping()
-	public ResponseEntity<GetCategoryResponse> getCategory(@RequestHeader("X-User-id") String userId, //
+	public ResponseEntity<GetCategoryResponse> getCategories(@RequestHeader("X-User-id") String userId, //
 			@RequestParam(required = false, defaultValue = "NAME") SortBy sortBy, //
 			@RequestParam(required = false, defaultValue = "ASC") SortDirection sortDirection, //
 			@RequestParam(required = false) TransactionType transactionType) {

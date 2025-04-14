@@ -1,11 +1,10 @@
-package com.app.personalfinancesservice.domain.transaction;
+package com.app.personalfinancesservice.domain.categoryplanner;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 import com.app.personalfinancesservice.domain.budget.Budget;
 import com.app.personalfinancesservice.domain.category.Category;
-import com.app.personalfinancesservice.domain.currency.DefaultCurrencies;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -23,9 +22,9 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Entity
-@AllArgsConstructor
 @NoArgsConstructor
-public class Transaction {
+@AllArgsConstructor
+public class CategoryPlanner {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
@@ -37,7 +36,7 @@ public class Transaction {
 	private UUID budgetId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "budget_id", insertable = false, updatable = false)
+	@JoinColumn(name = "budget_id", nullable = false, insertable = false, updatable = false)
 	@JsonBackReference
 	private Budget budget;
 
@@ -46,14 +45,7 @@ public class Transaction {
 	@JsonManagedReference
 	private Category category;
 
-	private DefaultCurrencies currencyCode;
-
-	private String description;
-
-	private Double amount;
-
-	@JsonFormat(pattern = "yyyy-MM-dd' 'HH:mm:ss")
-	private LocalDateTime transactionDate;
+	private Double plannedAmount;
 
 	@JsonFormat(pattern = "yyyy-MM-dd' 'HH:mm:ss")
 	private LocalDateTime createdAt;
@@ -61,57 +53,37 @@ public class Transaction {
 	@JsonFormat(pattern = "yyyy-MM-dd' 'HH:mm:ss")
 	private LocalDateTime updatedAt;
 
-	public Transaction withBudgetId(UUID budgetId) {
+	public CategoryPlanner withBudgetId(UUID budgetId) {
 		this.setBudgetId(budgetId);
 		return this;
 	}
 
-	public Transaction withAmount(Double amount) {
-		this.setAmount(amount);
-		return this;
-	}
-
-	public Transaction withBudget(Budget budget) {
-		this.setBudget(budget);
-		return this;
-	}
-
-	public Transaction withCategory(Category category) {
+	public CategoryPlanner withCategory(Category category) {
 		this.setCategory(category);
 		return this;
 	}
 
-	public Transaction withCreatedAt(LocalDateTime createdAt) {
+	public CategoryPlanner withCreatedAt(LocalDateTime createdAt) {
 		this.setCreatedAt(createdAt);
 		return this;
 	}
 
-	public Transaction withCurrencyCode(DefaultCurrencies currencyCode) {
-		this.setCurrencyCode(currencyCode);
-		return this;
-	}
-
-	public Transaction withDescription(String description) {
-		this.setDescription(description);
-		return this;
-	}
-
-	public Transaction withId(UUID id) {
+	public CategoryPlanner withId(UUID id) {
 		this.setId(id);
 		return this;
 	}
 
-	public Transaction withTransactionDate(LocalDateTime transactionDate) {
-		this.setTransactionDate(transactionDate);
+	public CategoryPlanner withPlannedAmount(Double plannedAmount) {
+		this.setPlannedAmount(plannedAmount);
 		return this;
 	}
 
-	public Transaction withUpdatedAt(LocalDateTime updatedAt) {
+	public CategoryPlanner withUpdatedAt(LocalDateTime updatedAt) {
 		this.setUpdatedAt(updatedAt);
 		return this;
 	}
 
-	public Transaction withUserId(UUID userId) {
+	public CategoryPlanner withUserId(UUID userId) {
 		this.setUserId(userId);
 		return this;
 	}

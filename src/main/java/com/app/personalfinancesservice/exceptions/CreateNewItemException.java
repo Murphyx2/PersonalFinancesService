@@ -14,4 +14,11 @@ public class CreateNewItemException extends RuntimeException {
 		this.fieldValue = fieldValue;
 		this.location = location;
 	}
+
+	public CreateNewItemException(String location, String fieldValue) {
+		super(fieldValue);
+		this.fieldValue = fieldValue;
+		this.fieldName = null;
+		this.location = location;
+	}
 }

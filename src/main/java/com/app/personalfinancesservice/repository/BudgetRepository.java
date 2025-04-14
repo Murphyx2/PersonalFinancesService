@@ -11,7 +11,9 @@ import com.app.personalfinancesservice.domain.budget.Budget;
 @Repository
 public interface BudgetRepository extends JpaRepository<Budget, UUID> {
 
-	List<Budget> getAllByUserId(UUID userId);
+	boolean existsByIdAndUserId(UUID id, UUID userId);
+
+	List<Budget> getAllByUserIdAndPortfolioId(UUID userId, UUID portfolioId);
 
 	List<Budget> getByIdAndUserId(UUID id, UUID userId);
 }

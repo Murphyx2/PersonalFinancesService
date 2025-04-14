@@ -12,7 +12,7 @@ import com.app.personalfinancesservice.domain.http.HttpRoutes;
 import com.app.personalfinancesservice.service.CurrencyService;
 
 @RestController
-@RequestMapping(HttpRoutes.CURRENCY)
+@RequestMapping(HttpRoutes.API_ROOT + HttpRoutes.CURRENCY)
 public class CurrencyController {
 
 	private final CurrencyService currencyService;

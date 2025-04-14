@@ -30,6 +30,10 @@ public class CategorySorter {
 
 	private static Comparator<Category> getComparator(SortBy sortBy) {
 
+		if(sortBy == null){
+			sortBy = SortBy.CREATED_AT;
+		}
+
 		return switch (sortBy) {
 			case SortBy.NAME -> Comparator.comparing(Category::getName);
 			default -> Comparator.comparing(Category::getCreatedAt);

@@ -56,7 +56,7 @@ class CategoryControllerTest {
 		when(categoryService.createCategory(any(CreateCategoryRequest.class))) //
 				.thenThrow(new CreateNewItemException("category", String.format("Category: %s already exists", "Test"), CATEGORY_LABEL));
 
-		mockMvc.perform(post(HttpRoutes.CATEGORY) //
+		mockMvc.perform(post(HttpRoutes.API_ROOT + HttpRoutes.CATEGORY) //
 						.contentType(MediaType.APPLICATION_JSON) //
 						.header("X-User-id", userId.toString()).content(REQUEST_BODY) //
 				).andExpect(status().isBadRequest()) //
@@ -73,7 +73,7 @@ class CategoryControllerTest {
 						String.format("Could not save %s", "Test") //
 						, CATEGORY_LABEL));
 
-		mockMvc.perform(post(HttpRoutes.CATEGORY) //
+		mockMvc.perform(post(HttpRoutes.API_ROOT + HttpRoutes.CATEGORY) //
 						.contentType(MediaType.APPLICATION_JSON) //
 						.header("X-User-id", userId.toString()).content(REQUEST_BODY) //
 				).andExpect(status().isBadRequest()) //
@@ -96,7 +96,7 @@ class CategoryControllerTest {
 
 		when(categoryService.createCategory(any(CreateCategoryRequest.class))).thenReturn(response);
 
-		mockMvc.perform(post(HttpRoutes.CATEGORY) //
+		mockMvc.perform(post(HttpRoutes.API_ROOT + HttpRoutes.CATEGORY) //
 						.contentType(MediaType.APPLICATION_JSON) //
 						.header("X-User-id", userId.toString()).content(REQUEST_BODY) //
 				).andExpect(status().isOk()) //
@@ -109,7 +109,7 @@ class CategoryControllerTest {
 	}
 
 	@Test
-	void getCategorySuccess() throws Exception {
+	void getCategoriesSuccess() throws Exception {
 		UUID userId = UUID.randomUUID();
 		UUID id = UUID.randomUUID();
 
@@ -132,7 +132,7 @@ class CategoryControllerTest {
 		when(categoryService.getCategory(any(GetCategoryRequest.class))) //
 				.thenReturn(new GetCategoryResponse().withCategory(categories));
 
-		mockMvc.perform(get(HttpRoutes.CATEGORY + "/{id}", id.toString()) //
+		mockMvc.perform(get(HttpRoutes.API_ROOT + HttpRoutes.CATEGORY + "/{id}", id.toString()) //
 						.contentType(MediaType.APPLICATION_JSON) //
 						.header("X-User-id", userId.toString())) //
 				.andExpect(status().isOk()) //

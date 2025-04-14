@@ -15,12 +15,18 @@ public class GetBudgetsRequest {
 
 	private String id;
 	private String userId;
+	private String portfolioId;
 
 	private SortBy sortBy;
 	private SortDirection sortDirection;
 
 	public GetBudgetsRequest withId(String id) {
 		this.setId(id);
+		return this;
+	}
+
+	public GetBudgetsRequest withPortfolioId(String portfolioId) {
+		this.setPortfolioId(portfolioId);
 		return this;
 	}
 
