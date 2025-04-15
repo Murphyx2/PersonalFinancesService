@@ -16,17 +16,22 @@ import com.app.personalfinancesservice.domain.service.TransactionServiceBase;
 import com.app.personalfinancesservice.domain.transaction.Transaction;
 import com.app.personalfinancesservice.domain.transaction.TransactionType;
 import com.app.personalfinancesservice.domain.transaction.input.CreateTransactionRequest;
+import com.app.personalfinancesservice.domain.transaction.input.GetListTransactionRequest;
 import com.app.personalfinancesservice.domain.transaction.input.GetTransactionRequest;
 import com.app.personalfinancesservice.domain.transaction.output.CreateTransactionResponse;
+import com.app.personalfinancesservice.domain.transaction.output.GetListTransactionResponse;
 import com.app.personalfinancesservice.domain.transaction.output.GetTransactionResponse;
 import com.app.personalfinancesservice.domain.transaction.output.GetTransactionTypeResponse;
 import com.app.personalfinancesservice.exceptions.NotFoundException;
+import com.app.personalfinancesservice.filter.TransactionFilter;
+import com.app.personalfinancesservice.filter.TransactionSorter;
 import com.app.personalfinancesservice.repository.TransactionRepository;
 
 @Service
 public class TransactionService implements TransactionServiceBase {
 
 	private static final String TRANSACTION_LABEL = "TRANSACTION";
+	private static final String USER_ID_LABEL = "userId";
 
 	TransactionRepository repository;
 
@@ -44,7 +49,7 @@ public class TransactionService implements TransactionServiceBase {
 
 		UUID budgetId = UUIDConverter.convert(request.getBudgetId(), "budgetId", TRANSACTION_LABEL);
 		UUID categoryId = UUIDConverter.convert(request.getCategoryId(), "categoryId", TRANSACTION_LABEL);
-		UUID userId = UUIDConverter.convert(request.getUserId(), "userId", TRANSACTION_LABEL);
+		UUID userId = UUIDConverter.convert(request.getUserId(), USER_ID_LABEL, TRANSACTION_LABEL);
 
 		//Check if Budget Exist
 		if(!budgetService.budgetExists(budgetId,userId)) {
@@ -73,7 +78,34 @@ public class TransactionService implements TransactionServiceBase {
 
 	@Override
 	public GetTransactionResponse getTransaction(GetTransactionRequest request) {
-		return null;
+
+		UUID userId = UUIDConverter.convert(request.getUserId(), USER_ID_LABEL, TRANSACTION_LABEL);
+		UUID transactionId = UUIDConverter.convert(request.getId(), "transactionId", TRANSACTION_LABEL);
+
+		Transaction transaction = repository.getTransactionByIdAndUserId(transactionId, userId);
+
+		return new GetTransactionResponse().withTransaction(transaction);
+	}
+
+	@Override
+	public GetListTransactionResponse getListTransaction(GetListTransactionRequest request) {
+
+		UUID userId = UUIDConverter.convert(request.getUserId(), USER_ID_LABEL, TRANSACTION_LABEL);
+		UUID budgetId = UUIDConverter.convert(request.getBudgetId(), "budgetId", TRANSACTION_LABEL);
+
+		List<Transaction> transactionList = repository.getTransactionsByBudgetIdAndUserId(budgetId, userId);
+		// Filter
+		List<Transaction> filteredTransaction = TransactionFilter //
+				.filterByTransactionType(transactionList, request.getTransactionType());
+
+		filteredTransaction = TransactionFilter //
+				.filterByTransactionName(filteredTransaction, request.getCategoryName());
+
+		// Sort
+		List<Transaction> sortedTransactions = TransactionSorter //
+				.sortTransactions(filteredTransaction, request.getSortBy(), request.getSortDirection());
+
+		return new GetListTransactionResponse().withTransactions(sortedTransactions);
 	}
 
 	@Override
