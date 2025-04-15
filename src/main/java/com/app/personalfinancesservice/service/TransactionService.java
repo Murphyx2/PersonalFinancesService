@@ -16,10 +16,12 @@ import com.app.personalfinancesservice.domain.service.TransactionServiceBase;
 import com.app.personalfinancesservice.domain.transaction.Transaction;
 import com.app.personalfinancesservice.domain.transaction.TransactionType;
 import com.app.personalfinancesservice.domain.transaction.input.CreateTransactionRequest;
+import com.app.personalfinancesservice.domain.transaction.input.DeleteTransactionRequest;
 import com.app.personalfinancesservice.domain.transaction.input.GetListTransactionRequest;
 import com.app.personalfinancesservice.domain.transaction.input.GetTransactionRequest;
 import com.app.personalfinancesservice.domain.transaction.input.UpdateTransactionRequest;
 import com.app.personalfinancesservice.domain.transaction.output.CreateTransactionResponse;
+import com.app.personalfinancesservice.domain.transaction.output.DeleteTransactionResponse;
 import com.app.personalfinancesservice.domain.transaction.output.GetListTransactionResponse;
 import com.app.personalfinancesservice.domain.transaction.output.GetTransactionResponse;
 import com.app.personalfinancesservice.domain.transaction.output.GetTransactionTypeResponse;
@@ -75,6 +77,23 @@ public class TransactionService implements TransactionServiceBase {
 				.withCategory(category.getFirst());
 
 		return new CreateTransactionResponse().withTransaction(repository.save(transaction));
+	}
+
+	@Override
+	public DeleteTransactionResponse deleteTransaction(DeleteTransactionRequest request) {
+
+		GetTransactionRequest requestTransaction = new GetTransactionRequest() //
+				.withId(request.getId()) //
+				.withUserId(request.getUserId());
+
+		Transaction transaction = getTransaction(requestTransaction).getTransaction();
+		if (transaction == null) {
+			String message = String.format("Transaction with id %s does not exist", request.getId());
+			throw new NotFoundException(TRANSACTION_LABEL, message);
+		}
+
+		repository.delete(transaction);
+		return new DeleteTransactionResponse().withSuccess(true);
 	}
 
 	@Override
