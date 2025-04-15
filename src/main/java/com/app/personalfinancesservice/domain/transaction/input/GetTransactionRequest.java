@@ -9,17 +9,11 @@ import lombok.Setter;
 @NoArgsConstructor
 public class GetTransactionRequest {
 
-	private String transactionId;
-	private String budgetId;
+	private String id;
 	private String userId;
 
-	public GetTransactionRequest withBudgetId(String budgetId) {
-		this.setBudgetId(budgetId);
-		return this;
-	}
-
-	public GetTransactionRequest withTransactionId(String transactionId) {
-		this.setTransactionId(transactionId);
+	public GetTransactionRequest withId(String transactionId) {
+		this.setId(transactionId);
 		return this;
 	}
 
