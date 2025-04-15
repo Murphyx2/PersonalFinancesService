@@ -18,10 +18,12 @@ import com.app.personalfinancesservice.domain.transaction.TransactionType;
 import com.app.personalfinancesservice.domain.transaction.input.CreateTransactionRequest;
 import com.app.personalfinancesservice.domain.transaction.input.GetListTransactionRequest;
 import com.app.personalfinancesservice.domain.transaction.input.GetTransactionRequest;
+import com.app.personalfinancesservice.domain.transaction.input.UpdateTransactionRequest;
 import com.app.personalfinancesservice.domain.transaction.output.CreateTransactionResponse;
 import com.app.personalfinancesservice.domain.transaction.output.GetListTransactionResponse;
 import com.app.personalfinancesservice.domain.transaction.output.GetTransactionResponse;
 import com.app.personalfinancesservice.domain.transaction.output.GetTransactionTypeResponse;
+import com.app.personalfinancesservice.domain.transaction.output.UpdateTransactionResponse;
 import com.app.personalfinancesservice.exceptions.NotFoundException;
 import com.app.personalfinancesservice.filter.TransactionFilter;
 import com.app.personalfinancesservice.filter.TransactionSorter;
@@ -52,7 +54,7 @@ public class TransactionService implements TransactionServiceBase {
 		UUID userId = UUIDConverter.convert(request.getUserId(), USER_ID_LABEL, TRANSACTION_LABEL);
 
 		//Check if Budget Exist
-		if(!budgetService.budgetExists(budgetId,userId)) {
+		if (!budgetService.budgetExists(budgetId, userId)) {
 			String message = String.format("Budget with id %s does not exist", budgetId);
 			throw new NotFoundException(TRANSACTION_LABEL, message);
 		}
@@ -61,7 +63,7 @@ public class TransactionService implements TransactionServiceBase {
 				.withId(categoryId.toString()) //
 				.withUserId(userId.toString());
 		List<Category> category = categoryService.getCategory(categoryRequest).getCategory();
-		if(category == null || category.isEmpty()) {
+		if (category == null || category.isEmpty()) {
 			String message = String.format("Category with id %s does not exist", categoryId);
 			throw new NotFoundException(TRANSACTION_LABEL, message);
 		}
@@ -72,19 +74,7 @@ public class TransactionService implements TransactionServiceBase {
 				.withUserId(userId) //
 				.withCategory(category.getFirst());
 
-
 		return new CreateTransactionResponse().withTransaction(repository.save(transaction));
-	}
-
-	@Override
-	public GetTransactionResponse getTransaction(GetTransactionRequest request) {
-
-		UUID userId = UUIDConverter.convert(request.getUserId(), USER_ID_LABEL, TRANSACTION_LABEL);
-		UUID transactionId = UUIDConverter.convert(request.getId(), "transactionId", TRANSACTION_LABEL);
-
-		Transaction transaction = repository.getTransactionByIdAndUserId(transactionId, userId);
-
-		return new GetTransactionResponse().withTransaction(transaction);
 	}
 
 	@Override
@@ -109,6 +99,17 @@ public class TransactionService implements TransactionServiceBase {
 	}
 
 	@Override
+	public GetTransactionResponse getTransaction(GetTransactionRequest request) {
+
+		UUID userId = UUIDConverter.convert(request.getUserId(), USER_ID_LABEL, TRANSACTION_LABEL);
+		UUID transactionId = UUIDConverter.convert(request.getId(), "transactionId", TRANSACTION_LABEL);
+
+		Transaction transaction = repository.getTransactionByIdAndUserId(transactionId, userId);
+
+		return new GetTransactionResponse().withTransaction(transaction);
+	}
+
+	@Override
 	public GetTransactionTypeResponse getTransactionType() {
 
 		// Sort them to always keep the same older.
@@ -119,5 +120,34 @@ public class TransactionService implements TransactionServiceBase {
 
 		return new GetTransactionTypeResponse() //
 				.withTransactionType(transactionType);
+	}
+
+	@Override
+	public UpdateTransactionResponse updateTransaction(UpdateTransactionRequest request) {
+
+		//Get transaction
+		GetTransactionRequest transactionRequest = new GetTransactionRequest() //
+				.withId(request.getId()) //
+				.withUserId(request.getUserId());
+		Transaction transaction = getTransaction(transactionRequest).getTransaction();
+		if (transaction == null) {
+			String message = String.format("Transaction with id %s does not exist", request.getId());
+			throw new NotFoundException(TRANSACTION_LABEL, message);
+		}
+
+		// Get Category
+		GetCategoryRequest categoryRequest = new GetCategoryRequest() //
+				.withId(request.getCategoryId()) //
+				.withUserId(request.getUserId());
+		List<Category> category = categoryService.getCategory(categoryRequest).getCategory();
+		if (category == null || category.isEmpty()) {
+			String message = String.format("Category with id %s does not exist", request.getCategoryId());
+			throw new NotFoundException(TRANSACTION_LABEL, message);
+		}
+
+		Transaction updatedTransaction = TransactionConverter //
+				.convert(transaction, category.getFirst(), request);
+
+		return new UpdateTransactionResponse().withTransaction(repository.save(updatedTransaction));
 	}
 }
