@@ -5,9 +5,11 @@ import java.util.UUID;
 
 import com.app.personalfinancesservice.domain.budget.Budget;
 import com.app.personalfinancesservice.domain.category.Category;
+import com.app.personalfinancesservice.domain.currency.DefaultCurrencies;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -31,8 +33,11 @@ public class Transaction {
 
 	private UUID userId;
 
+	@Column(name = "budget_id", nullable = false)
+	private UUID budgetId;
+
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "budget_id", nullable = false)
+	@JoinColumn(name = "budget_id", insertable = false, updatable = false)
 	@JsonBackReference
 	private Budget budget;
 
@@ -41,11 +46,7 @@ public class Transaction {
 	@JsonManagedReference
 	private Category category;
 
-	private String currencyCode;
-
-	private TransactionType transactionType;
-
-	private String name;
+	private DefaultCurrencies currencyCode;
 
 	private String description;
 
@@ -59,6 +60,11 @@ public class Transaction {
 
 	@JsonFormat(pattern = "yyyy-MM-dd' 'HH:mm:ss")
 	private LocalDateTime updatedAt;
+
+	public Transaction withBudgetId(UUID budgetId) {
+		this.setBudgetId(budgetId);
+		return this;
+	}
 
 	public Transaction withAmount(Double amount) {
 		this.setAmount(amount);
@@ -80,7 +86,7 @@ public class Transaction {
 		return this;
 	}
 
-	public Transaction withCurrencyCode(String currencyCode) {
+	public Transaction withCurrencyCode(DefaultCurrencies currencyCode) {
 		this.setCurrencyCode(currencyCode);
 		return this;
 	}
@@ -95,18 +101,8 @@ public class Transaction {
 		return this;
 	}
 
-	public Transaction withName(String name) {
-		this.setName(name);
-		return this;
-	}
-
 	public Transaction withTransactionDate(LocalDateTime transactionDate) {
 		this.setTransactionDate(transactionDate);
-		return this;
-	}
-
-	public Transaction withTransactionType(TransactionType transactionType) {
-		this.setTransactionType(transactionType);
 		return this;
 	}
 

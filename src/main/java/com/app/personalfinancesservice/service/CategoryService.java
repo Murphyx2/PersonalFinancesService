@@ -52,6 +52,10 @@ public class CategoryService implements CategoryServiceBase {
 				);
 	}
 
+	public boolean categoryExists(UUID categoryId, UUID userId) {
+		return categoryRepository.existsByIdAndUserId(categoryId, userId);
+	}
+
 	@Override
 	public CreateCategoryResponse createCategory(CreateCategoryRequest request) {
 

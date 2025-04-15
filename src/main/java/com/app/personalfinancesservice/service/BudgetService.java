@@ -37,6 +37,10 @@ public class BudgetService implements BudgetServiceBase {
 		this.portfolioService = portfolioService;
 	}
 
+	public boolean budgetExists(UUID budgetId, UUID userId) {
+		return budgetRepository.existsByIdAndUserId(budgetId, userId);
+	}
+
 	@Override
 	public CreateBudgetResponse createBudget(CreateBudgetRequest request) {
 

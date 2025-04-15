@@ -5,7 +5,11 @@ import java.util.stream.Stream;
 
 public enum DefaultCurrencies {
 
-	USD, CAD, DOP, EUR;
+	USD, //
+	CAD, //
+	DOP, //
+	EUR //
+	;
 
 	public static List<String> getCurrenciesCodes() {
 		return Stream.of(values()) //
