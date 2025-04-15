@@ -21,7 +21,8 @@ PersonalFinancesService is a Java-based service designed to help users manage th
 
 ## Database Structure
 The main means of persistency is a Postgresql database, below you'll find the structure implemented in the project.
-![Entity-relationship diagram drawio](https://github.com/user-attachments/assets/76e5475d-6d3a-41a9-bb45-9dd0c7c4e633)
+![Entity-relationship diagram](https://github.com/user-attachments/assets/e0a38060-0620-4a97-85c1-7afae6b2f3fc)
+
 
 ## Features
 
