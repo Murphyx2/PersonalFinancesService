@@ -1,5 +1,7 @@
 package com.app.personalfinancesservice.domain.category.output;
 
+import java.util.List;
+
 import com.app.personalfinancesservice.domain.category.Category;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,12 +10,12 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class GetCategoryResponse {
+public class GetCategoriesResponse {
 
-	private Category category;
+	private List<Category> categories;
 
-	public GetCategoryResponse withCategory(Category category) {
-		this.setCategory(category);
+	public GetCategoriesResponse withCategories(List<Category> category) {
+		this.setCategories(category);
 		return this;
 	}
 }

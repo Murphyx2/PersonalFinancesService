@@ -17,11 +17,11 @@ import com.app.personalfinancesservice.domain.http.HttpRoutes;
 import com.app.personalfinancesservice.domain.portfolio.Portfolio;
 import com.app.personalfinancesservice.domain.portfolio.input.CreatePortfolioRequest;
 import com.app.personalfinancesservice.domain.portfolio.input.DeletePortfolioRequest;
-import com.app.personalfinancesservice.domain.portfolio.input.GetPortfolioRequest;
+import com.app.personalfinancesservice.domain.portfolio.input.GetPortfoliosRequest;
 import com.app.personalfinancesservice.domain.portfolio.input.UpdatePortfolioRequest;
 import com.app.personalfinancesservice.domain.portfolio.output.CreatePortfolioResponse;
 import com.app.personalfinancesservice.domain.portfolio.output.DeletePortfolioResponse;
-import com.app.personalfinancesservice.domain.portfolio.output.GetPortfolioResponse;
+import com.app.personalfinancesservice.domain.portfolio.output.GetPortfoliosResponse;
 import com.app.personalfinancesservice.domain.portfolio.output.UpdatePortfolioResponse;
 import com.app.personalfinancesservice.exceptions.InvalidIdException;
 import com.app.personalfinancesservice.service.PortfolioService;
@@ -149,7 +149,7 @@ class PortfolioControllerTest {
 		String invalidPortfolioId = "no-uuid";
 
 		// Configuration the mock to throw an exception for an Invalid ID
-		when(portfolioServiceMock.getPortfolios(any(GetPortfolioRequest.class))) //
+		when(portfolioServiceMock.getPortfolios(any(GetPortfoliosRequest.class))) //
 				.thenThrow(new InvalidIdException(EXCEPTION_LABEL, PORTFOLIOID_LABEL, invalidPortfolioId));
 
 		mockMvc.perform(get(HttpRoutes.API_ROOT + HttpRoutes.PORTFOLIO + "/{portfolioId}", invalidPortfolioId) //
@@ -190,10 +190,10 @@ class PortfolioControllerTest {
 		List<Portfolio> portfolios = new ArrayList<>();
 		portfolios.add(portfolio);
 
-		GetPortfolioResponse response = new GetPortfolioResponse() //
+		GetPortfoliosResponse response = new GetPortfoliosResponse() //
 				.withPortfolios(portfolios);
 
-		when(portfolioServiceMock.getPortfolios(any(GetPortfolioRequest.class))) //
+		when(portfolioServiceMock.getPortfolios(any(GetPortfoliosRequest.class))) //
 				.thenReturn(response);
 
 		mockMvc.perform(get(HttpRoutes.API_ROOT + HttpRoutes.PORTFOLIO + "/{portfolioId}", validPortfolioId.toString()) //

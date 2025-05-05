@@ -60,25 +60,6 @@ public class TransactionController {
 		return ResponseEntity.ok(transactionService.deleteTransaction(request));
 	}
 
-	@GetMapping(path = HttpRoutes.TRANSACTIONS)
-	public ResponseEntity<GetListTransactionResponse> getListTransaction(@RequestHeader("X-User-id") String userId, //
-			@RequestParam String budgetId, @RequestParam(required = false) SortBy sortBy, //
-			@RequestParam(required = false) SortDirection sortDirection, //
-			@RequestParam(required = false) String categoryName, //
-			@RequestParam(required = false) TransactionType transactionType) {
-
-		GetListTransactionRequest request = new GetListTransactionRequest() //
-				.withUserId(userId) //
-				.withBudgetId(budgetId) //
-				.withSortBy(sortBy) //
-				.withSortDirection(sortDirection) //
-				.withCategoryName(categoryName) //
-				.withTransactionType(transactionType) //
-				;
-
-		return ResponseEntity.ok(transactionService.getListTransaction(request));
-	}
-
 	@GetMapping(path = HttpRoutes.TRANSACTIONS + "/{id}")
 	public ResponseEntity<GetTransactionResponse> getTransactionType(@RequestHeader("X-User-id") String userId, //
 			@PathVariable(value = "id") String id) {
@@ -94,6 +75,25 @@ public class TransactionController {
 	public ResponseEntity<GetTransactionTypeResponse> getTransactionType() {
 
 		return ResponseEntity.ok(transactionService.getTransactionType());
+	}
+
+	@GetMapping(path = HttpRoutes.TRANSACTIONS)
+	public ResponseEntity<GetListTransactionResponse> getTransactions(@RequestHeader("X-User-id") String userId, //
+			@RequestParam String budgetId, @RequestParam(required = false) SortBy sortBy, //
+			@RequestParam(required = false) SortDirection sortDirection, //
+			@RequestParam(required = false) String categoryName, //
+			@RequestParam(required = false) TransactionType transactionType) {
+
+		GetListTransactionRequest request = new GetListTransactionRequest() //
+				.withUserId(userId) //
+				.withBudgetId(budgetId) //
+				.withSortBy(sortBy) //
+				.withSortDirection(sortDirection) //
+				.withCategoryName(categoryName) //
+				.withTransactionType(transactionType) //
+				;
+
+		return ResponseEntity.ok(transactionService.getListTransaction(request));
 	}
 
 	@PutMapping(path = HttpRoutes.TRANSACTIONS)

@@ -14,10 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.app.personalfinancesservice.domain.category.input.CreateCategoryRequest;
 import com.app.personalfinancesservice.domain.category.input.DeleteCategoryRequest;
+import com.app.personalfinancesservice.domain.category.input.GetCategoriesRequest;
 import com.app.personalfinancesservice.domain.category.input.GetCategoryRequest;
 import com.app.personalfinancesservice.domain.category.input.UpdateCategoryRequest;
 import com.app.personalfinancesservice.domain.category.output.CreateCategoryResponse;
 import com.app.personalfinancesservice.domain.category.output.DeleteCategoryResponse;
+import com.app.personalfinancesservice.domain.category.output.GetCategoriesResponse;
 import com.app.personalfinancesservice.domain.category.output.GetCategoryResponse;
 import com.app.personalfinancesservice.domain.category.output.UpdateCategoryResponse;
 import com.app.personalfinancesservice.domain.filter.SortBy;
@@ -58,17 +60,17 @@ public class CategoryController {
 	}
 
 	@GetMapping()
-	public ResponseEntity<GetCategoryResponse> getCategories(@RequestHeader("X-User-id") String userId, //
+	public ResponseEntity<GetCategoriesResponse> getCategories(@RequestHeader("X-User-id") String userId, //
 			@RequestParam(required = false, defaultValue = "NAME") SortBy sortBy, //
 			@RequestParam(required = false, defaultValue = "ASC") SortDirection sortDirection, //
 			@RequestParam(required = false) TransactionType transactionType) {
 
-		GetCategoryRequest request = new GetCategoryRequest() //
+		GetCategoriesRequest request = new GetCategoriesRequest() //
 				.withUserId(userId) //
 				.withSortBy(sortBy) //
 				.withSortDirection(sortDirection) //
 				.withTransactionType(transactionType);
-		return ResponseEntity.ok(categoryService.getCategory(request));
+		return ResponseEntity.ok(categoryService.getCategories(request));
 	}
 
 	@GetMapping("/{id}")

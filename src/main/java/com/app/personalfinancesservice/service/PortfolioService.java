@@ -1,6 +1,7 @@
 package com.app.personalfinancesservice.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -14,15 +15,18 @@ import com.app.personalfinancesservice.domain.portfolio.Portfolio;
 import com.app.personalfinancesservice.domain.portfolio.input.CreatePortfolioRequest;
 import com.app.personalfinancesservice.domain.portfolio.input.DeletePortfolioRequest;
 import com.app.personalfinancesservice.domain.portfolio.input.GetPortfolioRequest;
+import com.app.personalfinancesservice.domain.portfolio.input.GetPortfoliosRequest;
 import com.app.personalfinancesservice.domain.portfolio.input.UpdatePortfolioRequest;
 import com.app.personalfinancesservice.domain.portfolio.output.CreatePortfolioResponse;
 import com.app.personalfinancesservice.domain.portfolio.output.DeletePortfolioResponse;
 import com.app.personalfinancesservice.domain.portfolio.output.GetPortfolioResponse;
+import com.app.personalfinancesservice.domain.portfolio.output.GetPortfoliosResponse;
 import com.app.personalfinancesservice.domain.portfolio.output.UpdatePortfolioResponse;
 import com.app.personalfinancesservice.domain.service.PortfolioServiceBase;
 import com.app.personalfinancesservice.exceptions.CreateNewItemException;
 import com.app.personalfinancesservice.exceptions.InvalidIdException;
 import com.app.personalfinancesservice.exceptions.MissingIdException;
+import com.app.personalfinancesservice.exceptions.NotFoundException;
 import com.app.personalfinancesservice.filter.PortfolioSorter;
 import com.app.personalfinancesservice.repository.PortfolioRepository;
 
@@ -75,7 +79,7 @@ public class PortfolioService implements PortfolioServiceBase {
 	public DeletePortfolioResponse deletePortfolio(DeletePortfolioRequest request) {
 
 		try {
-			GetPortfolioRequest getRequest = new GetPortfolioRequest() //
+			GetPortfoliosRequest getRequest = new GetPortfoliosRequest() //
 					.withPortfolioId(request.getId()) //
 					.withUserId(request.getUserId());
 			repository.delete(getPortfolios(getRequest).getPortfolios().getFirst());
@@ -87,7 +91,24 @@ public class PortfolioService implements PortfolioServiceBase {
 	}
 
 	@Override
-	public GetPortfolioResponse getPortfolios(GetPortfolioRequest request) {
+	public GetPortfolioResponse getPortfolio(GetPortfolioRequest request) {
+		UUID userId = UUIDConverter //
+				.convert(request.getUserId(), USER_ID_LABEL, PORTFOLIO_LABEL);
+
+		UUID id = UUIDConverter //
+				.convert(request.getPortfolioId(), PORTFOLIO_ID_LABEL, PORTFOLIO_LABEL);
+
+		Optional<Portfolio> portfolio = repository.getPortfolioByIdAndUserId(id, userId);
+
+		return new GetPortfolioResponse() //
+				.withPortfolio(portfolio.orElseThrow( //
+								() -> new NotFoundException(PORTFOLIO_LABEL, PORTFOLIO_ID_LABEL, request.getPortfolioId()) //
+						) //
+				);
+	}
+
+	@Override
+	public GetPortfoliosResponse getPortfolios(GetPortfoliosRequest request) {
 
 		List<Portfolio> portfolios;
 
@@ -95,21 +116,13 @@ public class PortfolioService implements PortfolioServiceBase {
 				.convert(request.getUserId(), USER_ID_LABEL, PORTFOLIO_LABEL);
 
 		// Return all portfolio from User
-		if (request.getPortfolioId() == null) {
-			portfolios = repository.getAllByUserId(userId);
-		} else {
-
-			UUID id = UUIDConverter //
-					.convert(request.getPortfolioId(), PORTFOLIO_ID_LABEL, PORTFOLIO_LABEL);
-
-			portfolios = repository.getPortfolioByIdAndUserId(id, userId);
-		}
+		portfolios = repository.getAllByUserId(userId);
 
 		// Apply filter here
 		List<Portfolio> sortedPortfolios = PortfolioSorter //
 				.sort(portfolios, request.getSortBy(), request.getSortDirection());
 
-		return new GetPortfolioResponse().withPortfolios(sortedPortfolios);
+		return new GetPortfoliosResponse().withPortfolios(sortedPortfolios);
 	}
 
 	@Override
@@ -120,7 +133,7 @@ public class PortfolioService implements PortfolioServiceBase {
 		}
 
 		// if null return empty
-		GetPortfolioResponse oldPortfolio = getPortfolios(new GetPortfolioRequest() //
+		GetPortfoliosResponse oldPortfolio = getPortfolios(new GetPortfoliosRequest() //
 				.withPortfolioId(request.getId())//
 				.withUserId(request.getUserId()) //
 		);

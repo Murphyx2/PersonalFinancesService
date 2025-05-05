@@ -14,10 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.app.personalfinancesservice.domain.budget.input.CreateBudgetRequest;
 import com.app.personalfinancesservice.domain.budget.input.DeleteBudgetRequest;
+import com.app.personalfinancesservice.domain.budget.input.GetBudgetRequest;
 import com.app.personalfinancesservice.domain.budget.input.GetBudgetsRequest;
 import com.app.personalfinancesservice.domain.budget.input.UpdateBudgetRequest;
 import com.app.personalfinancesservice.domain.budget.output.CreateBudgetResponse;
 import com.app.personalfinancesservice.domain.budget.output.DeleteBudgetResponse;
+import com.app.personalfinancesservice.domain.budget.output.GetBudgetResponse;
 import com.app.personalfinancesservice.domain.budget.output.GetBudgetsResponse;
 import com.app.personalfinancesservice.domain.budget.output.UpdateBudgetResponse;
 import com.app.personalfinancesservice.domain.filter.SortBy;
@@ -55,17 +57,16 @@ public class BudgetController {
 		return ResponseEntity.ok(budgetService.deleteBudget(request));
 	}
 
+
 	@GetMapping(path = BUDGET_ROUTE + "/{id}")
-	public ResponseEntity<GetBudgetsResponse> getBudget(@RequestHeader("X-User-id") String userId, //
+	public ResponseEntity<GetBudgetResponse> getBudget(@RequestHeader("X-User-id") String userId, //
 			@PathVariable String id) {
 
-		GetBudgetsRequest request = new GetBudgetsRequest() //
+		GetBudgetRequest request = new GetBudgetRequest() //
 				.withId(id) //
-				.withUserId(userId) //
-				.withSortBy(SortBy.NAME) //
-				.withSortDirection(SortDirection.valueOf("ASC"));
+				.withUserId(userId);
 
-		return ResponseEntity.ok(budgetService.getBudgets(request));
+		return ResponseEntity.ok(budgetService.getBudget(request));
 	}
 
 	// Fetch all budgets

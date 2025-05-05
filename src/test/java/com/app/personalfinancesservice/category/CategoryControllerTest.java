@@ -15,9 +15,9 @@ import com.app.personalfinancesservice.controller.CategoryController;
 import com.app.personalfinancesservice.converters.CategoryConverter;
 import com.app.personalfinancesservice.domain.category.Category;
 import com.app.personalfinancesservice.domain.category.input.CreateCategoryRequest;
-import com.app.personalfinancesservice.domain.category.input.GetCategoryRequest;
+import com.app.personalfinancesservice.domain.category.input.GetCategoriesRequest;
 import com.app.personalfinancesservice.domain.category.output.CreateCategoryResponse;
-import com.app.personalfinancesservice.domain.category.output.GetCategoryResponse;
+import com.app.personalfinancesservice.domain.category.output.GetCategoriesResponse;
 import com.app.personalfinancesservice.domain.http.HttpRoutes;
 import com.app.personalfinancesservice.domain.transaction.TransactionType;
 import com.app.personalfinancesservice.exceptions.CreateNewItemException;
@@ -129,8 +129,8 @@ class CategoryControllerTest {
 		categories.add(category);
 		categories.add(category2);
 
-		when(categoryService.getCategory(any(GetCategoryRequest.class))) //
-				.thenReturn(new GetCategoryResponse().withCategory(categories));
+		when(categoryService.getCategories(any(GetCategoriesRequest.class))) //
+				.thenReturn(new GetCategoriesResponse().withCategories(categories));
 
 		mockMvc.perform(get(HttpRoutes.API_ROOT + HttpRoutes.CATEGORY + "/{id}", id.toString()) //
 						.contentType(MediaType.APPLICATION_JSON) //
