@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import com.app.personalfinancesservice.converters.TransactionConverter;
 import com.app.personalfinancesservice.converters.UUIDConverter;
 import com.app.personalfinancesservice.domain.category.Category;
-import com.app.personalfinancesservice.domain.category.input.GetCategoryRequest;
+import com.app.personalfinancesservice.domain.category.input.GetCategoriesRequest;
 import com.app.personalfinancesservice.domain.service.TransactionServiceBase;
 import com.app.personalfinancesservice.domain.transaction.Transaction;
 import com.app.personalfinancesservice.domain.transaction.TransactionType;
@@ -61,10 +61,10 @@ public class TransactionService implements TransactionServiceBase {
 			throw new NotFoundException(TRANSACTION_LABEL, message);
 		}
 		//Check if Category exists
-		GetCategoryRequest categoryRequest = new GetCategoryRequest() //
+		GetCategoriesRequest categoriesRequest = new GetCategoriesRequest() //
 				.withId(categoryId.toString()) //
 				.withUserId(userId.toString());
-		List<Category> category = categoryService.getCategory(categoryRequest).getCategory();
+		List<Category> category = categoryService.getCategories(categoriesRequest).getCategories();
 		if (category == null || category.isEmpty()) {
 			String message = String.format("Category with id %s does not exist", categoryId);
 			throw new NotFoundException(TRANSACTION_LABEL, message);
@@ -155,10 +155,10 @@ public class TransactionService implements TransactionServiceBase {
 		}
 
 		// Get Category
-		GetCategoryRequest categoryRequest = new GetCategoryRequest() //
+		GetCategoriesRequest categoriesRequest = new GetCategoriesRequest() //
 				.withId(request.getCategoryId()) //
 				.withUserId(request.getUserId());
-		List<Category> category = categoryService.getCategory(categoryRequest).getCategory();
+		List<Category> category = categoryService.getCategories(categoriesRequest).getCategories();
 		if (category == null || category.isEmpty()) {
 			String message = String.format("Category with id %s does not exist", request.getCategoryId());
 			throw new NotFoundException(TRANSACTION_LABEL, message);

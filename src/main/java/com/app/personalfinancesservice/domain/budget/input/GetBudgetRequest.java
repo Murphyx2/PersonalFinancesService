@@ -1,4 +1,4 @@
-package com.app.personalfinancesservice.domain.portfolio.input;
+package com.app.personalfinancesservice.domain.budget.input;
 
 import com.app.personalfinancesservice.domain.filter.SortBy;
 import com.app.personalfinancesservice.domain.filter.SortDirection;
@@ -9,19 +9,25 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-public class GetPortfolioRequest {
+@NoArgsConstructor
+public class GetBudgetRequest {
 
+	private String id;
 	private String userId;
 	private String portfolioId;
 
-	public GetPortfolioRequest withPortfolioId(String portfolioId) {
+	public GetBudgetRequest withId(String id) {
+		this.setId(id);
+		return this;
+	}
+
+	public GetBudgetRequest withPortfolioId(String portfolioId) {
 		this.setPortfolioId(portfolioId);
 		return this;
 	}
 
-	public GetPortfolioRequest withUserId(String userId) {
+	public GetBudgetRequest withUserId(String userId) {
 		this.setUserId(userId);
 		return this;
 	}

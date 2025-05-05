@@ -1,6 +1,7 @@
 package com.app.personalfinancesservice.repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,5 +16,7 @@ public interface BudgetRepository extends JpaRepository<Budget, UUID> {
 
 	List<Budget> getAllByUserIdAndPortfolioId(UUID userId, UUID portfolioId);
 
-	List<Budget> getByIdAndUserId(UUID id, UUID userId);
+	List<Budget> getListByIdAndUserId(UUID id, UUID userId);
+
+	Optional<Budget> getByIdAndUserId(UUID id, UUID userId);
 }

@@ -11,7 +11,7 @@ import com.app.personalfinancesservice.converters.UUIDConverter;
 import com.app.personalfinancesservice.domain.budget.Budget;
 import com.app.personalfinancesservice.domain.budget.input.GetBudgetsRequest;
 import com.app.personalfinancesservice.domain.category.Category;
-import com.app.personalfinancesservice.domain.category.input.GetCategoryRequest;
+import com.app.personalfinancesservice.domain.category.input.GetCategoriesRequest;
 import com.app.personalfinancesservice.domain.categoryplanner.CategoryPlanner;
 import com.app.personalfinancesservice.domain.categoryplanner.input.CreateCategoryPlannerRequest;
 import com.app.personalfinancesservice.domain.categoryplanner.input.DeleteCategoryPlannerRequest;
@@ -64,10 +64,10 @@ public class CategoryPlannerServiceService implements CategoryPlannerServiceBase
 		}
 
 		// Check if Category exists
-		List<Category> category = categoryService.getCategory(new GetCategoryRequest() //
+		List<Category> category = categoryService.getCategories(new GetCategoriesRequest() //
 				.withId(request.getCategoryId()) //
 				.withUserId(request.getUserId()) //
-		).getCategory();
+		).getCategories();
 		if (category.isEmpty()) {
 			throw new NotFoundException(CATEGORY_PLANNER, CATEGORY_ID_LABEL, request.getBudgetId());
 		}
@@ -172,11 +172,13 @@ public class CategoryPlannerServiceService implements CategoryPlannerServiceBase
 		}
 
 		// Check if new category exists
-		GetCategoryRequest categoryRequest = new GetCategoryRequest() //
+		GetCategoriesRequest categoriesRequest = new GetCategoriesRequest() //
 				.withId(request.getCategoryId()) //
 				.withUserId(request.getUserId());
+
 		List<Category> category = categoryService //
-				.getCategory(categoryRequest).getCategory();
+				.getCategories(categoriesRequest).getCategories();
+
 		if (category.isEmpty()) {
 			String message = String.format("Category of id %s could not be found", request.getCategoryId());
 			throw new NotFoundException(CATEGORY_PLANNER, message);

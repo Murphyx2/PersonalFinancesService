@@ -1,6 +1,7 @@
 package com.app.personalfinancesservice.repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,5 +13,5 @@ import com.app.personalfinancesservice.domain.portfolio.Portfolio;
 public interface PortfolioRepository extends JpaRepository<Portfolio, UUID> {
 	List<Portfolio> getAllByUserId(UUID userId);
 
-	List<Portfolio> getPortfolioByIdAndUserId(UUID id, UUID userId);
+	Optional<Portfolio> getPortfolioByIdAndUserId(UUID id, UUID userId);
 }

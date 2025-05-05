@@ -1,4 +1,5 @@
 # Default Configuration
+
 spring:
   application:
     name: personal-finance
@@ -18,6 +19,12 @@ eureka:
     service-url:
       defaultZone: http://eureka-server:8761/eureka/
     enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics
 
 
 # Dev configurations

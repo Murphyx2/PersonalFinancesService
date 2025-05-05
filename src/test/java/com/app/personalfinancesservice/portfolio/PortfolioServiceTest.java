@@ -10,9 +10,9 @@ import com.app.personalfinancesservice.domain.filter.SortBy;
 import com.app.personalfinancesservice.domain.filter.SortDirection;
 import com.app.personalfinancesservice.domain.portfolio.Portfolio;
 import com.app.personalfinancesservice.domain.portfolio.input.CreatePortfolioRequest;
-import com.app.personalfinancesservice.domain.portfolio.input.GetPortfolioRequest;
+import com.app.personalfinancesservice.domain.portfolio.input.GetPortfoliosRequest;
 import com.app.personalfinancesservice.domain.portfolio.output.CreatePortfolioResponse;
-import com.app.personalfinancesservice.domain.portfolio.output.GetPortfolioResponse;
+import com.app.personalfinancesservice.domain.portfolio.output.GetPortfoliosResponse;
 import com.app.personalfinancesservice.exceptions.CreateNewItemException;
 import com.app.personalfinancesservice.exceptions.InvalidIdException;
 import com.app.personalfinancesservice.exceptions.MissingIdException;
@@ -119,13 +119,13 @@ class PortfolioServiceTest {
 		UUID validUserId = UUID.randomUUID();
 		UUID unknownPortfolioId = UUID.randomUUID();
 
-		GetPortfolioRequest request = new GetPortfolioRequest() //
+		GetPortfoliosRequest request = new GetPortfoliosRequest() //
 				.withPortfolioId(unknownPortfolioId.toString()) //
 				.withUserId(validUserId.toString());
 
-		when(portfolioRepository.getPortfolioByIdAndUserId(any(UUID.class), any(UUID.class))).thenReturn(null);
+		when(portfolioRepository.getAllByUserId(any(UUID.class))).thenReturn(null);
 
-		GetPortfolioResponse response = portfolioService.getPortfolios(request);
+		GetPortfoliosResponse response = portfolioService.getPortfolios(request);
 
 		assertNull(response.getPortfolios());
 	}
@@ -145,15 +145,15 @@ class PortfolioServiceTest {
 		List<Portfolio> portfolios = new ArrayList<>();
 		portfolios.add(portfolio);
 
-		GetPortfolioRequest request = new GetPortfolioRequest() //
+		GetPortfoliosRequest request = new GetPortfoliosRequest() //
 				.withPortfolioId(validPortfolioId.toString()) //
 				.withUserId(validUserId.toString()) //
 				.withSortBy(SortBy.CREATED_AT) //
 				.withSortDirection(SortDirection.ASC);
 
-		when(portfolioRepository.getPortfolioByIdAndUserId(any(UUID.class), any(UUID.class))).thenReturn(portfolios);
+		when(portfolioRepository.getAllByUserId(any(UUID.class))).thenReturn(portfolios);
 
-		GetPortfolioResponse response = portfolioService.getPortfolios(request);
+		GetPortfoliosResponse response = portfolioService.getPortfolios(request);
 
 		assertEquals(portfolio.getId(), response.getPortfolios().getFirst().getId());
 		assertEquals(portfolio.getName(), response.getPortfolios().getFirst().getName());

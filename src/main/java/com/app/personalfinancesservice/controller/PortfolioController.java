@@ -18,10 +18,12 @@ import com.app.personalfinancesservice.domain.http.HttpRoutes;
 import com.app.personalfinancesservice.domain.portfolio.input.CreatePortfolioRequest;
 import com.app.personalfinancesservice.domain.portfolio.input.DeletePortfolioRequest;
 import com.app.personalfinancesservice.domain.portfolio.input.GetPortfolioRequest;
+import com.app.personalfinancesservice.domain.portfolio.input.GetPortfoliosRequest;
 import com.app.personalfinancesservice.domain.portfolio.input.UpdatePortfolioRequest;
 import com.app.personalfinancesservice.domain.portfolio.output.CreatePortfolioResponse;
 import com.app.personalfinancesservice.domain.portfolio.output.DeletePortfolioResponse;
 import com.app.personalfinancesservice.domain.portfolio.output.GetPortfolioResponse;
+import com.app.personalfinancesservice.domain.portfolio.output.GetPortfoliosResponse;
 import com.app.personalfinancesservice.domain.portfolio.output.UpdatePortfolioResponse;
 import com.app.personalfinancesservice.service.PortfolioService;
 
@@ -55,26 +57,22 @@ public class PortfolioController {
 
 	@GetMapping("/{id}")
 	public ResponseEntity<GetPortfolioResponse> getPortfolio(@RequestHeader("X-User-id") String userId, //
-			@RequestParam(required = false, defaultValue = "NAME") SortBy sortBy, //
-			@RequestParam(required = false, defaultValue = "ASC") SortDirection sortDirection, //
 			@PathVariable String id) {
 
 		GetPortfolioRequest request = new GetPortfolioRequest() //
 				.withPortfolioId(id) //
-				.withUserId(userId) //
-				.withSortBy(sortBy) //
-				.withSortDirection(sortDirection);
+				.withUserId(userId);
 
 		return ResponseEntity //
-				.ok(portfolioService.getPortfolios(request));
+				.ok(portfolioService.getPortfolio(request));
 	}
 
 	@GetMapping("/")
-	public ResponseEntity<GetPortfolioResponse> getPortfolios(@RequestHeader("X-User-id") String userId, //
+	public ResponseEntity<GetPortfoliosResponse> getPortfolios(@RequestHeader("X-User-id") String userId, //
 			@RequestParam(required = false, defaultValue = "CREATED_AT") SortBy sortBy, //
 			@RequestParam(required = false, defaultValue = "ASC") SortDirection sortDirection) {
 
-		GetPortfolioRequest request = new GetPortfolioRequest() //
+		GetPortfoliosRequest request = new GetPortfoliosRequest() //
 				.withUserId(userId) //
 				.withSortBy(sortBy) //
 				.withSortDirection(sortDirection);

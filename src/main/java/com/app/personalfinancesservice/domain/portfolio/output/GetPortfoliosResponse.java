@@ -10,12 +10,12 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetPortfolioResponse {
+public class GetPortfoliosResponse {
 
-	private Portfolio portfolio;
+	private List<Portfolio> portfolios;
 
-	public GetPortfolioResponse withPortfolio(Portfolio portfolio) {
-		this.setPortfolio(portfolio);
+	public GetPortfoliosResponse withPortfolios(List<Portfolio> portfolio) {
+		this.setPortfolios(portfolio);
 		return this;
 	}
 }
