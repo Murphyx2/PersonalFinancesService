@@ -39,3 +39,13 @@ jobs:
         with:
           name: test-results
           path: target/surefire-reports/*.xml
+      # Step 7: Notify if something fails
+      - name: Report failure
+        if: failure()
+        run: echo "Woops!, Build or tests failed. Check the logs above."
+      # Step 8: Upload the JAR File
+      - name: Upload JAR artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: spring-boot-jar
+          path: target/*.jar
