@@ -69,7 +69,7 @@ public class GlobalExceptionHandler {
 		Map<String, String> error = new HashMap<>();
 		error.put(ERROR_KEY_NAME, ex.getLocation());
 		error.put(MESSAGE_LABEL, ex.getMessage());
-		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
 	}
 
 
