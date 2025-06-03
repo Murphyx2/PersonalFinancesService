@@ -32,13 +32,16 @@ jobs:
       # Step 5:
       - name: Run tests
         run: mvn test
+      # Step 6: Generate Surefire HTML report
+      - name: Generate surefire report
+        run: mvn surefire-report:report
       # Step 6: Upload test results for visibility
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results
-          path: target/surefire-reports/*.xml
+          name: surefire-html-report
+          path: target/site/surefire-report.html
       # Step 7: Notify if something fails
       - name: Report failure
         if: failure()
