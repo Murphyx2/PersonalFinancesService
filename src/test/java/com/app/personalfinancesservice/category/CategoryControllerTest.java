@@ -132,15 +132,15 @@ class CategoryControllerTest {
 		when(categoryService.getCategories(any(GetCategoriesRequest.class))) //
 				.thenReturn(new GetCategoriesResponse().withCategories(categories));
 
-		mockMvc.perform(get(HttpRoutes.API_ROOT + HttpRoutes.CATEGORY + "/{id}", id.toString()) //
+		mockMvc.perform(get(HttpRoutes.API_ROOT + HttpRoutes.CATEGORY) //
 						.contentType(MediaType.APPLICATION_JSON) //
 						.header("X-User-id", userId.toString())) //
 				.andExpect(status().isOk()) //
-				.andExpect(jsonPath("$.category").exists()) //
-				.andExpect(jsonPath("$.category").isArray()) //
-				.andExpect(jsonPath("$.category[0].name").value(category.getName())) //
-				.andExpect(jsonPath("$.category[0].transactionType").value(category.getTransactionType().toString())) //
-				.andExpect(jsonPath("$.category[0].createdAt").exists()) //
+				.andExpect(jsonPath("$.categories").exists()) //
+				.andExpect(jsonPath("$.categories").isArray()) //
+				.andExpect(jsonPath("$.categories[0].name").value(category.getName())) //
+				.andExpect(jsonPath("$.categories[0].transactionType").value(category.getTransactionType().toString())) //
+				.andExpect(jsonPath("$.categories[0].createdAt").exists()) //
 		;
 	}
 

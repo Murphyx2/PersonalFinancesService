@@ -87,7 +87,7 @@ class BudgetControllerTest {
 						.contentType(MediaType.APPLICATION_JSON) //
 						.content(REQUEST_BODY) //
 				) //
-				.andExpect(status().isBadRequest()) //
+				.andExpect(status().isNotFound()) //
 				.andExpect(jsonPath("$.error").value(PORTFOLIO_LABEL)) //
 				.andExpect(jsonPath("$.message")//
 						.value(String.format("Error %s of value %s could not be found", //
@@ -150,7 +150,7 @@ class BudgetControllerTest {
 		when(budgetService.getBudgets(any(GetBudgetsRequest.class))).thenReturn(response);
 
 		String httpGetRoute = String.format(HttpRoutes.API_ROOT //
-				+ HttpRoutes.BUDGET + "/%s", budget.getId().toString());
+				+ HttpRoutes.PORTFOLIO + "/%s/budget", budget.getId().toString());
 
 		mockMvc.perform(get(httpGetRoute) //
 						.header("X-User-id", userId.toString()) //
@@ -223,7 +223,7 @@ class BudgetControllerTest {
 						.contentType(MediaType.APPLICATION_JSON) //
 						.content(REQUEST_BODY) //
 				) //
-				.andExpect(status().isBadRequest()) //
+				.andExpect(status().isNotFound()) //
 				.andExpect(jsonPath("$.error").value(BUDGET_LABEL)) //
 				.andExpect(jsonPath("$.message")//
 						.value(String.format("Error %s of value %s could not be found", //
