@@ -11,6 +11,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 
 import io.github.cdimascio.dotenv.Dotenv;
 
+@SuppressWarnings("squid:S2629")
 @SpringBootApplication
 public class PersonalFinancesServiceApplication {
 
@@ -23,7 +24,7 @@ public class PersonalFinancesServiceApplication {
 		SpringApplication app = new SpringApplication(PersonalFinancesServiceApplication.class);
 		ConfigurableApplicationContext context = app.run(args);
 
-		logger.info("Active profiles: " + Arrays.toString(context.getEnvironment().getActiveProfiles()));
+		logger.info(String.format("Active profiles: %s", Arrays.toString(context.getEnvironment().getActiveProfiles())));
 	}
 
 }
