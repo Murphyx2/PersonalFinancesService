@@ -32,6 +32,13 @@ jobs:
       # Step 5: Run tests
       - name: Run tests
         run: mvn test
+      # Step 5.1:
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: target/surefire-reports/*.xml
       # Step 6: Generate Surefire HTML report
       - name: Generate surefire report
         run: mvn surefire-report:report
@@ -44,7 +51,7 @@ jobs:
           path: target/site/surefire-report.html
       # Step 8: SonarQube Scan
       - name: SonarQube Scan
-        run: mvn sonar:sonar -Dsonar.host.url=${{ secrets.SONAR_HOST.url }} -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+        run: mvn sonar:sonar -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} -Dsonar.login=${{ secrets.SONAR_TOKEN }}
       # Step 9: Notify if something fails
       - name: Report failure
         if: failure()
