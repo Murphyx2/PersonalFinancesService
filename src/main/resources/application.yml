@@ -26,6 +26,16 @@ management:
       exposure:
         include: health, info, metrics
 
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui/index.html
+    enabled: true
+logging:
+  level:
+    org.springdoc: DEBUG
 
 # Dev configurations
 ---
@@ -49,3 +59,11 @@ server:
 eureka:
   client:
     enabled: false  # Disable Eureka in dev
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui/index.html
+    enabled: true

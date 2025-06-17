@@ -29,8 +29,15 @@ import com.app.personalfinancesservice.domain.transaction.TransactionType;
 import com.app.personalfinancesservice.service.CategoryService;
 import jakarta.validation.Valid;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping(HttpRoutes.API_ROOT + HttpRoutes.CATEGORY)
+@Tag(
+		name = "Category Management",
+		description = "Endpoint to manage Categories"
+)
 public class CategoryController {
 
 	private final CategoryService categoryService;
@@ -39,6 +46,7 @@ public class CategoryController {
 		this.categoryService = categoryService;
 	}
 
+	@Operation(summary = "Create a Category", description = "Create a new category")
 	@PostMapping
 	public ResponseEntity<CreateCategoryResponse> createCategory(@RequestHeader("X-User-id") String userId, //
 			@Valid @RequestBody CreateCategoryRequest request) {
@@ -48,6 +56,7 @@ public class CategoryController {
 		return ResponseEntity.ok(categoryService.createCategory(request));
 	}
 
+	@Operation(summary = "Delete a Category", description = "Delete a category by its Id")
 	@DeleteMapping("/{id}")
 	public ResponseEntity<DeleteCategoryResponse> deleteCategory(@RequestHeader("X-User-id") String userId, //
 			@PathVariable String id) {
@@ -59,6 +68,7 @@ public class CategoryController {
 		return ResponseEntity.ok(categoryService.deleteCategory(request));
 	}
 
+	@Operation(summary = "Get a list of categories", description = "Get a list of categories by user id")
 	@GetMapping()
 	public ResponseEntity<GetCategoriesResponse> getCategories(@RequestHeader("X-User-id") String userId, //
 			@RequestParam(required = false, defaultValue = "NAME") SortBy sortBy, //
@@ -73,6 +83,7 @@ public class CategoryController {
 		return ResponseEntity.ok(categoryService.getCategories(request));
 	}
 
+	@Operation(summary = "Get a category", description = "Get a category by user id")
 	@GetMapping("/{id}")
 	public ResponseEntity<GetCategoryResponse> getCategory(@RequestHeader("X-User-id") String userId, //
 			@PathVariable String id) {
@@ -83,6 +94,7 @@ public class CategoryController {
 		return ResponseEntity.ok(categoryService.getCategory(request));
 	}
 
+	@Operation(summary = "Update a category", description = "Update a category")
 	@PutMapping()
 	public ResponseEntity<UpdateCategoryResponse> updateCategory(@RequestHeader("X-User-id") String userId, //
 			@Valid @RequestBody UpdateCategoryRequest request) {

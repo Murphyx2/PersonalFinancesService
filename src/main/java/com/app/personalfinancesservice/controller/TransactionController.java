@@ -30,8 +30,15 @@ import com.app.personalfinancesservice.domain.transaction.output.UpdateTransacti
 import com.app.personalfinancesservice.service.TransactionService;
 import jakarta.validation.Valid;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping(HttpRoutes.API_ROOT)
+@Tag(
+		name = "Transaction Management",
+		description = "Endpoint to manage transactions, income, expenses or others"
+)
 public class TransactionController {
 
 	private final TransactionService transactionService;
@@ -40,6 +47,7 @@ public class TransactionController {
 		this.transactionService = transactionService;
 	}
 
+	@Operation(summary = "Create a transaction", description = "Create a new transaction")
 	@PostMapping(path = HttpRoutes.TRANSACTIONS)
 	public ResponseEntity<CreateTransactionResponse> createTransaction(@RequestHeader("X-User-id") String userId, //
 			@Valid @RequestBody CreateTransactionRequest request) {
@@ -49,6 +57,7 @@ public class TransactionController {
 		return ResponseEntity.ok(transactionService.createTransaction(request));
 	}
 
+	@Operation(summary = "Delete a transaction", description = "Delete a transaction by its id")
 	@DeleteMapping(path = HttpRoutes.TRANSACTIONS + "/{id}")
 	public ResponseEntity<DeleteTransactionResponse> deleteTransaction(@RequestHeader("X-User-id") String userId, //
 			@PathVariable(value = "id") String id) {
@@ -60,8 +69,9 @@ public class TransactionController {
 		return ResponseEntity.ok(transactionService.deleteTransaction(request));
 	}
 
+	@Operation(summary = "Get a transaction", description = "Get a transaction by its id")
 	@GetMapping(path = HttpRoutes.TRANSACTIONS + "/{id}")
-	public ResponseEntity<GetTransactionResponse> getTransactionType(@RequestHeader("X-User-id") String userId, //
+	public ResponseEntity<GetTransactionResponse> getTransaction(@RequestHeader("X-User-id") String userId, //
 			@PathVariable(value = "id") String id) {
 
 		GetTransactionRequest request = new GetTransactionRequest() //
@@ -71,12 +81,14 @@ public class TransactionController {
 		return ResponseEntity.ok(transactionService.getTransaction(request));
 	}
 
+	@Operation(summary = "Get a list of transaction types", description = "Get a list of transaction types")
 	@GetMapping(path = HttpRoutes.TRANSACTIONS + "/type")
 	public ResponseEntity<GetTransactionTypeResponse> getTransactionType() {
 
 		return ResponseEntity.ok(transactionService.getTransactionType());
 	}
 
+	@Operation(summary = "Get a list of transactions", description = "Get a list of transactions by user id, budget id")
 	@GetMapping(path = HttpRoutes.TRANSACTIONS)
 	public ResponseEntity<GetListTransactionResponse> getTransactions(@RequestHeader("X-User-id") String userId, //
 			@RequestParam String budgetId, @RequestParam(required = false) SortBy sortBy, //
@@ -96,6 +108,7 @@ public class TransactionController {
 		return ResponseEntity.ok(transactionService.getListTransaction(request));
 	}
 
+	@Operation(summary = "Update a transaction", description = "Update a transaction")
 	@PutMapping(path = HttpRoutes.TRANSACTIONS)
 	public ResponseEntity<UpdateTransactionResponse> updateTransaction(@RequestHeader("X-User-id") String userId, //
 			@RequestBody UpdateTransactionRequest request) {
