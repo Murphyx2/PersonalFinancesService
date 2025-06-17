@@ -51,6 +51,11 @@ public class LoggingFilter extends OncePerRequestFilter {
 				requestHeaders //
 		));
 
+		if (request.getRequestURI().startsWith("/swagger-ui") || request.getRequestURI().startsWith("/v3/api-docs")) {
+			filterChain.doFilter(request, response);
+			return;
+		}
+
 		filterChain.doFilter(request, response);
 
 		LOGGER.info(String.format(RESPONSE_HEADER_TEMPLATE, //

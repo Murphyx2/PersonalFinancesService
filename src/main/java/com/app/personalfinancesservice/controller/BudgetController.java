@@ -27,8 +27,15 @@ import com.app.personalfinancesservice.domain.filter.SortDirection;
 import com.app.personalfinancesservice.domain.http.HttpRoutes;
 import com.app.personalfinancesservice.service.BudgetService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping(HttpRoutes.API_ROOT)
+@Tag(
+		name = "Budget Management",
+		description = "Endpoints for managing budgets"
+)
 public class BudgetController {
 
 	private final BudgetService budgetService;
@@ -39,6 +46,7 @@ public class BudgetController {
 		this.budgetService = budgetService;
 	}
 
+	@Operation(summary = "Create a budget")
 	@PostMapping(BUDGET_ROUTE)
 	public ResponseEntity<CreateBudgetResponse> createBudget(@RequestHeader("X-User-id") String userId, //
 			@RequestBody CreateBudgetRequest request) {
@@ -48,6 +56,7 @@ public class BudgetController {
 		return ResponseEntity.ok(budgetService.createBudget(request));
 	}
 
+	@Operation(summary = "Deletes a budget")
 	@DeleteMapping(path = BUDGET_ROUTE + "/{id}")
 	public ResponseEntity<DeleteBudgetResponse> deleteBudget(@RequestHeader("X-User-id") String userId, //
 			@PathVariable String id) {
@@ -58,6 +67,7 @@ public class BudgetController {
 	}
 
 
+	@Operation(summary = "Get a budget by ID", description = "Retrieves a budget by its id")
 	@GetMapping(path = BUDGET_ROUTE + "/{id}")
 	public ResponseEntity<GetBudgetResponse> getBudget(@RequestHeader("X-User-id") String userId, //
 			@PathVariable String id) {
@@ -70,6 +80,7 @@ public class BudgetController {
 	}
 
 	// Fetch all budgets
+	@Operation(summary = "Get a list budgets by portfolio ID", description = "Retrieves a list of budgets by portfolio id")
 	@GetMapping(HttpRoutes.PORTFOLIO + "/{portfolioId}" + HttpRoutes.BUDGET)
 	public ResponseEntity<GetBudgetsResponse> getBudgets(@RequestHeader("X-User-id") String userId, //
 			@PathVariable String portfolioId,
@@ -85,6 +96,7 @@ public class BudgetController {
 		return ResponseEntity.ok(budgetService.getBudgets(request));
 	}
 
+	@Operation(summary = "Update a budget", description = "Update a budget")
 	@PutMapping(BUDGET_ROUTE)
 	public ResponseEntity<UpdateBudgetResponse> updateBudget(@RequestHeader("X-User-id") String userId, //
 			@RequestBody UpdateBudgetRequest request) {

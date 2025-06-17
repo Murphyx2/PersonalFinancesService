@@ -28,8 +28,15 @@ import com.app.personalfinancesservice.domain.transaction.TransactionType;
 import com.app.personalfinancesservice.service.CategoryPlannerServiceService;
 import jakarta.validation.constraints.Null;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping(HttpRoutes.API_ROOT + HttpRoutes.BUDGET)
+@Tag(
+		name = "Category Planner Management",
+		description = "Endpoint to manage categories target amount"
+)
 public class CategoryPlannerController {
 
 	private final CategoryPlannerServiceService categoryPlannerService;
@@ -38,6 +45,7 @@ public class CategoryPlannerController {
 		this.categoryPlannerService = categoryPlannerService;
 	}
 
+	@Operation(summary = "Create a Planner Category", description = "Create a planner for a category")
 	@PostMapping(HttpRoutes.CATEGORY_PLANNER)
 	public ResponseEntity<CreateCategoryPlannerResponse> createCategoryPlanner(@RequestHeader("X-User-id") String userId, //
 			@RequestBody CreateCategoryPlannerRequest request) {
@@ -47,6 +55,7 @@ public class CategoryPlannerController {
 		return ResponseEntity.ok(categoryPlannerService.createCategoryPlanner(request));
 	}
 
+	@Operation(summary = "Delete a category planner", description = "Delete a category planner by its id")
 	@DeleteMapping(HttpRoutes.CATEGORY_PLANNER + "/{id}")
 	public ResponseEntity<Null> deleteCategoryPlanner(@RequestHeader("X-User-id") String userId, //
 			@PathVariable("id") String id) {
@@ -61,6 +70,7 @@ public class CategoryPlannerController {
 		return ResponseEntity.ok(null);
 	}
 
+	@Operation(summary = "Get a category planner", description = "Get a category planner by its id")
 	@GetMapping(HttpRoutes.CATEGORY_PLANNER + "/{id}")
 	public ResponseEntity<GetCategoryPlannerResponse> getCategoryPlanner(@RequestHeader("X-User-id") String userId, //
 			@PathVariable("id") String id) {
@@ -72,6 +82,7 @@ public class CategoryPlannerController {
 		return ResponseEntity.ok(categoryPlannerService.getCategoryPlanner(request));
 	}
 
+	@Operation(summary = "Get a list of categories planner", description = "Get a list of categories planner by a budget id")
 	@GetMapping(HttpRoutes.CATEGORY_PLANNER)
 	public ResponseEntity<GetListCategoryPlannerResponse> getCategoryPlanners(@RequestHeader("X-User-id") String userId, //
 			@RequestParam String budgetId, //
@@ -91,6 +102,7 @@ public class CategoryPlannerController {
 		return ResponseEntity.ok(categoryPlannerService.getListCategoryPlanner(request));
 	}
 
+	@Operation(summary = "Update a category planner", description = "Update a category planner")
 	@PutMapping(HttpRoutes.CATEGORY_PLANNER)
 	public ResponseEntity<UpdateCategoryPlannerResponse> updateCategoryPlanner(@RequestHeader("X-User-id") String userId, //
 			@RequestBody UpdateCategoryPlannerRequest request) {
