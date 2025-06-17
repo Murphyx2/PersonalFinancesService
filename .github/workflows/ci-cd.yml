@@ -50,8 +50,8 @@ jobs:
           name: surefire-html-report
           path: target/site/surefire-report.html
       # Step 8: SonarQube Scan
-      - name: SonarQube Scan
-        run: mvn sonar:sonar -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.projectKey=PersonalFinance
+#      - name: SonarQube Scan
+#        run: mvn sonar:sonar -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.projectKey=PersonalFinance
       # Step 9: Notify if something fails
       - name: Report failure
         if: failure()
