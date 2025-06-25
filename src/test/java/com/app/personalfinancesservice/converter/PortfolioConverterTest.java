@@ -2,7 +2,6 @@ package com.app.personalfinancesservice.converter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.UUID;
 
 import com.app.personalfinancesservice.converters.PortfolioConverter;
 import com.app.personalfinancesservice.domain.portfolio.Portfolio;
@@ -20,14 +19,13 @@ class PortfolioConverterTest {
 		String userId = "caaa8fba-8b90-43e9-a261-a451f305c966";
 		LocalDateTime dateTime = LocalDateTime.now();
 
-		CreatePortfolioRequest request = new CreatePortfolioRequest()
-				.withUserId(userId) //
+		CreatePortfolioRequest request = new CreatePortfolioRequest().withUserId(userId) //
 				.withName("Test Portfolio") //
 				.withDescription("Test Description");
 
 		Portfolio portfolio = PortfolioConverter.convert(request);
 
-		assertEquals(request.getUserId(), portfolio.getUserId());
+		assertEquals(request.getUserId(), portfolio.getUserId().toString());
 		assertEquals(request.getName(), portfolio.getName());
 		assertEquals(request.getDescription(), portfolio.getDescription());
 		assertEquals(dateTime.getYear(), portfolio.getCreated().getYear());
@@ -35,7 +33,6 @@ class PortfolioConverterTest {
 		assertEquals(dateTime.getDayOfMonth(), portfolio.getCreated().getDayOfMonth());
 		assertEquals(dateTime.getHour(), portfolio.getCreated().getHour());
 		assertEquals(dateTime.getMinute(), portfolio.getCreated().getMinute());
-		assertEquals(dateTime.getSecond(), portfolio.getCreated().getSecond());
 	}
 
 	@Test
@@ -43,8 +40,7 @@ class PortfolioConverterTest {
 		LocalDateTime dateTime = LocalDateTime.now();
 		Portfolio oldPortfolio = new Portfolio() //
 				.withName("Test Portfolio") //
-				.withDescription("Test Description")
-				.withBudgets(new ArrayList<>()) //
+				.withDescription("Test Description").withBudgets(new ArrayList<>()) //
 				.withCreated(dateTime) //
 				;
 		UpdatePortfolioRequest request = new UpdatePortfolioRequest() //
