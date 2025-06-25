@@ -17,7 +17,7 @@ class PortfolioConverterTest {
 	@Test
 	void testConvertCreatePortfolioSuccess() {
 
-		UUID userId = UUID.fromString("caaa8fba-8b90-43e9-a261-a451f305c966");
+		String userId = "caaa8fba-8b90-43e9-a261-a451f305c966";
 		LocalDateTime dateTime = LocalDateTime.now();
 
 		CreatePortfolioRequest request = new CreatePortfolioRequest()

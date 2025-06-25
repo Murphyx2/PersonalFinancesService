@@ -46,10 +46,10 @@ public class PortfolioController {
 
 	@Operation(summary = "Create a Portfolio", description = "Create a new portfolio")
 	@PostMapping
-	public ResponseEntity<CreatePortfolioResponse> createPortfolio(@RequestHeader("X-User-id") String id, //
+	public ResponseEntity<CreatePortfolioResponse> createPortfolio(@RequestHeader("X-User-id") String userId, //
 			@RequestBody CreatePortfolioRequest request) {
 
-		return ResponseEntity.ok(portfolioService.createPortfolio(id, request));
+		return ResponseEntity.ok(portfolioService.createPortfolio(request.withUserId(userId)));
 	}
 
 	@Operation(summary = "Delete a Portfolio", description = "Delete a portfolio by its id")
