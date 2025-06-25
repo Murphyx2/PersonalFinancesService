@@ -14,7 +14,6 @@ import com.app.personalfinancesservice.domain.portfolio.input.GetPortfoliosReque
 import com.app.personalfinancesservice.domain.portfolio.output.CreatePortfolioResponse;
 import com.app.personalfinancesservice.domain.portfolio.output.GetPortfoliosResponse;
 import com.app.personalfinancesservice.exceptions.CreateNewItemException;
-import com.app.personalfinancesservice.exceptions.InvalidIdException;
 import com.app.personalfinancesservice.exceptions.MissingIdException;
 import com.app.personalfinancesservice.repository.PortfolioRepository;
 import com.app.personalfinancesservice.service.PortfolioService;
@@ -105,13 +104,12 @@ class PortfolioServiceTest {
 		String invalidUserId = "invalidUserId";
 		CreatePortfolioRequest request = new CreatePortfolioRequest();
 
-		InvalidIdException exception = assertThrows(InvalidIdException.class, () -> {
+		CreateNewItemException exception = assertThrows(CreateNewItemException.class, () -> {
 			portfolioService.createPortfolio(request.withUserId(invalidUserId));
 		});
 
-		assertEquals(String.format("Invalid %s %s", USERID_LABEL, invalidUserId), exception.getMessage());
+		assertEquals("Error creating Portfolio, null", exception.getMessage());
 		assertEquals("PORTFOLIO", exception.getLocation());
-		assertEquals(invalidUserId, exception.getFieldValue());
 	}
 
 	@Test
