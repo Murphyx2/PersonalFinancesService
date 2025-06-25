@@ -19,7 +19,7 @@ import com.app.personalfinancesservice.domain.budget.output.GetBudgetResponse;
 import com.app.personalfinancesservice.domain.budget.output.GetBudgetsResponse;
 import com.app.personalfinancesservice.domain.budget.output.UpdateBudgetResponse;
 import com.app.personalfinancesservice.domain.portfolio.Portfolio;
-import com.app.personalfinancesservice.domain.portfolio.input.GetPortfoliosRequest;
+import com.app.personalfinancesservice.domain.portfolio.input.GetPortfolioRequest;
 import com.app.personalfinancesservice.domain.service.BudgetServiceBase;
 import com.app.personalfinancesservice.exceptions.NotFoundException;
 import com.app.personalfinancesservice.filter.BudgetSorter;
@@ -46,12 +46,12 @@ public class BudgetService implements BudgetServiceBase {
 	@Override
 	public CreateBudgetResponse createBudget(CreateBudgetRequest request) {
 
-		//Check if portfolio exists
-		GetPortfoliosRequest requestPortfolio = new GetPortfoliosRequest() //
+		//Check if the portfolio exists
+		GetPortfolioRequest requestPortfolio = new GetPortfolioRequest() //
 				.withUserId(request.getUserId()) //
 				.withPortfolioId(request.getPortfolioId());
-		Portfolio portfolio = portfolioService.getPortfolios(requestPortfolio) //
-				.getPortfolios().getFirst();
+		Portfolio portfolio = portfolioService.getPortfolio(requestPortfolio) //
+				.getPortfolio();
 
 		if (portfolio == null) {
 			throw new NotFoundException(BUDGET_LABEL, "portfolio", request.getPortfolioId());
@@ -67,18 +67,33 @@ public class BudgetService implements BudgetServiceBase {
 	@Override
 	public DeleteBudgetResponse deleteBudget(DeleteBudgetRequest request) {
 
-		GetBudgetsRequest requestBudget = new GetBudgetsRequest().withId(request.getId()) //
+		GetBudgetRequest requestBudget = new GetBudgetRequest().withId(request.getId()) //
 				.withUserId(request.getUserId()) //
 				;
 
-		List<Budget> getResponse = getBudgets(requestBudget).getBudgets();
-		if (getResponse == null || getResponse.isEmpty()) {
+		Budget getResponse = getBudget(requestBudget).getBudget();
+		if (getResponse == null) {
 			return new DeleteBudgetResponse().withSuccess(false);
 		}
 
-		budgetRepository.delete(getResponse.getFirst());
+		budgetRepository.delete(getResponse);
 
 		return new DeleteBudgetResponse().withSuccess(true);
+	}
+
+	@Override
+	public GetBudgetResponse getBudget(GetBudgetRequest request) {
+
+		final UUID userId = UUIDConverter //
+				.convert(request.getUserId(), "userId", BUDGET_LABEL);
+
+		final UUID budgetId = UUIDConverter //
+				.convert(request.getId(), "budgetId", BUDGET_LABEL);
+
+		Budget budget = budgetRepository.getByIdAndUserId(budgetId, userId) //
+				.orElseThrow(() -> new NotFoundException(BUDGET_LABEL, "budget", request.getId()));
+
+		return new GetBudgetResponse().withBudget(budget);
 	}
 
 	/***
@@ -112,28 +127,13 @@ public class BudgetService implements BudgetServiceBase {
 	}
 
 	@Override
-	public GetBudgetResponse getBudget(GetBudgetRequest request) {
-
-		final UUID userId = UUIDConverter //
-				.convert(request.getUserId(), "userId", BUDGET_LABEL);
-
-		final UUID budgetId = UUIDConverter //
-				.convert(request.getId(), "budgetId", BUDGET_LABEL);
-
-		Budget budget = budgetRepository.getByIdAndUserId(budgetId, userId) //
-				.orElseThrow(() -> new NotFoundException(BUDGET_LABEL, "budget", request.getId()));
-
-		return new GetBudgetResponse().withBudget(budget);
-	}
-
-	@Override
 	public UpdateBudgetResponse updateBudget(UpdateBudgetRequest request) {
 
-		GetBudgetsRequest requestBudget = new GetBudgetsRequest() //
+		GetBudgetRequest requestBudget = new GetBudgetRequest() //
 				.withId(request.getId()) //
 				.withUserId(request.getUserId());
 
-		Budget oldBudget = getBudgets(requestBudget).getBudgets().getFirst();
+		Budget oldBudget = getBudget(requestBudget).getBudget();
 
 		if (oldBudget == null) {
 			throw new NotFoundException(BUDGET_LABEL, "budget", request.getId());
