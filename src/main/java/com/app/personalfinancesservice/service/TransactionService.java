@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import com.app.personalfinancesservice.converters.TransactionConverter;
 import com.app.personalfinancesservice.converters.UUIDConverter;
 import com.app.personalfinancesservice.domain.category.Category;
-import com.app.personalfinancesservice.domain.category.input.GetCategoriesRequest;
+import com.app.personalfinancesservice.domain.category.input.GetCategoryRequest;
 import com.app.personalfinancesservice.domain.service.TransactionServiceBase;
 import com.app.personalfinancesservice.domain.transaction.Transaction;
 import com.app.personalfinancesservice.domain.transaction.TransactionType;
@@ -61,11 +61,11 @@ public class TransactionService implements TransactionServiceBase {
 			throw new NotFoundException(TRANSACTION_LABEL, message);
 		}
 		//Check if Category exists
-		GetCategoriesRequest categoriesRequest = new GetCategoriesRequest() //
+		GetCategoryRequest categoryRequest = new GetCategoryRequest() //
 				.withId(categoryId.toString()) //
 				.withUserId(userId.toString());
-		List<Category> category = categoryService.getCategories(categoriesRequest).getCategories();
-		if (category == null || category.isEmpty()) {
+		Category category = categoryService.getCategory(categoryRequest).getCategory();
+		if (category == null) {
 			String message = String.format("Category with id %s does not exist", categoryId);
 			throw new NotFoundException(TRANSACTION_LABEL, message);
 		}
@@ -74,7 +74,7 @@ public class TransactionService implements TransactionServiceBase {
 		Transaction transaction = TransactionConverter.convert(request) //
 				.withBudgetId(budgetId) //
 				.withUserId(userId) //
-				.withCategory(category.getFirst());
+				.withCategory(category);
 
 		return new CreateTransactionResponse().withTransaction(repository.save(transaction));
 	}
@@ -155,17 +155,17 @@ public class TransactionService implements TransactionServiceBase {
 		}
 
 		// Get Category
-		GetCategoriesRequest categoriesRequest = new GetCategoriesRequest() //
+		GetCategoryRequest categoriesRequest = new GetCategoryRequest() //
 				.withId(request.getCategoryId()) //
 				.withUserId(request.getUserId());
-		List<Category> category = categoryService.getCategories(categoriesRequest).getCategories();
-		if (category == null || category.isEmpty()) {
+		Category category = categoryService.getCategory(categoriesRequest).getCategory();
+		if (category == null) {
 			String message = String.format("Category with id %s does not exist", request.getCategoryId());
 			throw new NotFoundException(TRANSACTION_LABEL, message);
 		}
 
 		Transaction updatedTransaction = TransactionConverter //
-				.convert(transaction, category.getFirst(), request);
+				.convert(transaction, category, request);
 
 		return new UpdateTransactionResponse().withTransaction(repository.save(updatedTransaction));
 	}

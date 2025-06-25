@@ -9,10 +9,12 @@ import com.app.personalfinancesservice.domain.portfolio.input.UpdatePortfolioReq
 
 public class PortfolioConverter {
 
+	private static final String PORTFOLIO_LABEL = "PORTFOLIO";
+
 	public static Portfolio convert(CreatePortfolioRequest request) {
 
 		Portfolio portfolio = new Portfolio() //
-				.withUserId(request.getUserId()) //
+				.withUserId(UUIDConverter.convert(request.getUserId(), "userId", PORTFOLIO_LABEL)) //
 				.withName(request.getName()) //
 				.withDescription(request.getDescription()) //
 				.withCreated(LocalDateTime.now());

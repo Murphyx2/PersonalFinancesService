@@ -63,26 +63,14 @@ public class PortfolioService implements PortfolioServiceBase {
 		return new CreatePortfolioResponse().withPortfolio(portfolio);
 	}
 
-	public CreatePortfolioResponse createPortfolio(String userId, CreatePortfolioRequest request) {
-
-		try {
-			request.withUserId(UUID.fromString(userId));
-		} catch (IllegalArgumentException e) {
-			LOGGER.error(PORTFOLIO_LABEL, e);
-			throw new InvalidIdException(PORTFOLIO_LABEL, USER_ID_LABEL, userId);
-		}
-
-		return this.createPortfolio(request);
-	}
-
 	@Override
 	public DeletePortfolioResponse deletePortfolio(DeletePortfolioRequest request) {
 
 		try {
-			GetPortfoliosRequest getRequest = new GetPortfoliosRequest() //
+			GetPortfolioRequest getRequest = new GetPortfolioRequest() //
 					.withPortfolioId(request.getId()) //
 					.withUserId(request.getUserId());
-			repository.delete(getPortfolios(getRequest).getPortfolios().getFirst());
+			repository.delete(getPortfolio(getRequest).getPortfolio());
 		} catch (Exception e) {
 			LOGGER.error(PORTFOLIO_LABEL, e);
 			return new DeletePortfolioResponse().withSuccess(false);
@@ -115,7 +103,7 @@ public class PortfolioService implements PortfolioServiceBase {
 		UUID userId = UUIDConverter //
 				.convert(request.getUserId(), USER_ID_LABEL, PORTFOLIO_LABEL);
 
-		// Return all portfolio from User
+		// Return all portfolios from User
 		portfolios = repository.getAllByUserId(userId);
 
 		// Apply filter here
@@ -133,19 +121,19 @@ public class PortfolioService implements PortfolioServiceBase {
 		}
 
 		// if null return empty
-		GetPortfoliosResponse oldPortfolio = getPortfolios(new GetPortfoliosRequest() //
+		GetPortfolioResponse oldPortfolio = getPortfolio(new GetPortfolioRequest() //
 				.withPortfolioId(request.getId())//
 				.withUserId(request.getUserId()) //
 		);
 
-		if (oldPortfolio == null || oldPortfolio.getPortfolios().isEmpty()) {
+		if (oldPortfolio == null) {
 			return new UpdatePortfolioResponse();
 		}
 
 		Portfolio portfolio = PortfolioConverter //
-				.convert(request, oldPortfolio.getPortfolios().getFirst()) //
-				.withId(oldPortfolio.getPortfolios().getFirst().getId()) //
-				.withUserId(oldPortfolio.getPortfolios().getFirst().getUserId()) //
+				.convert(request, oldPortfolio.getPortfolio()) //
+				.withId(oldPortfolio.getPortfolio().getId()) //
+				.withUserId(oldPortfolio.getPortfolio().getUserId()) //
 				;
 
 		return new UpdatePortfolioResponse() //

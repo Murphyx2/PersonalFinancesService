@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CreatePortfolioRequest {
 
-	private UUID userId;
+	private String userId;
 
 	private String name;
 
@@ -35,7 +35,7 @@ public class CreatePortfolioRequest {
 		return this;
 	}
 
-	public CreatePortfolioRequest withUserId(UUID userId) {
+	public CreatePortfolioRequest withUserId(String userId) {
 		this.setUserId(userId);
 		return this;
 	}

@@ -70,7 +70,7 @@ class PortfolioControllerTest {
 		CreatePortfolioResponse response = new CreatePortfolioResponse() //
 				.withPortfolio(portfolio);
 		// Configure the mock to return a success response
-		when(portfolioServiceMock.createPortfolio(eq(validUserId), any(CreatePortfolioRequest.class))) //
+		when(portfolioServiceMock.createPortfolio(any(CreatePortfolioRequest.class))) //
 				.thenReturn(response);
 
 		mockMvc.perform(post(HttpRoutes.API_ROOT + HttpRoutes.PORTFOLIO) //
@@ -93,8 +93,7 @@ class PortfolioControllerTest {
 		String invalidUserId = "no-uuid";
 
 		// Configuration the mock to throw an exception for an Invalid ID
-		when(portfolioServiceMock.createPortfolio(any(String.class) //
-				, any(CreatePortfolioRequest.class))) //
+		when(portfolioServiceMock.createPortfolio(any(CreatePortfolioRequest.class))) //
 				.thenThrow(new InvalidIdException(exceptionLabel, USERID_LABEL, invalidUserId));
 
 		mockMvc.perform(post(HttpRoutes.API_ROOT + HttpRoutes.PORTFOLIO) //

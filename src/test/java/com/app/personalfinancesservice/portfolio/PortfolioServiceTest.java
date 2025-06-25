@@ -58,12 +58,12 @@ class PortfolioServiceTest {
 	void createPortfolioRepositoryFailure() {
 		String validUserId = "550e8400-e29b-41d4-a716-446655440000";
 		CreatePortfolioRequest request = new CreatePortfolioRequest() //
-				.withUserId(UUID.fromString(validUserId));
+				.withUserId(validUserId);
 
 		when(portfolioRepository.save(any(Portfolio.class))).thenThrow(new RuntimeException("Database error"));
 
 		CreateNewItemException exception = assertThrows(CreateNewItemException.class, () -> {
-			portfolioService.createPortfolio(validUserId, request);
+			portfolioService.createPortfolio(request.withUserId(validUserId));
 		});
 
 		assertEquals(String.format("Error creating %s, %s", "Portfolio", null), exception.getMessage());
@@ -76,7 +76,7 @@ class PortfolioServiceTest {
 		//Arrange
 		String validUserId = "550e8400-e29b-41d4-a716-446655440000";
 		CreatePortfolioRequest request = new CreatePortfolioRequest() //
-				.withUserId(UUID.fromString(validUserId)) //
+				.withUserId(validUserId) //
 				.withName("New Portfolio") //
 				.withDescription("This is the description of the portfolio") //
 				.withCreated(LocalDateTime.now()) //
@@ -88,7 +88,7 @@ class PortfolioServiceTest {
 		when(portfolioRepository.save(any(Portfolio.class))).thenReturn(portfolio);
 
 		// Execute
-		CreatePortfolioResponse response = portfolioService.createPortfolio(validUserId, request);
+		CreatePortfolioResponse response = portfolioService.createPortfolio(request);
 
 		// Assert
 		verify(portfolioRepository, times(1)).save(any(Portfolio.class));
@@ -106,7 +106,7 @@ class PortfolioServiceTest {
 		CreatePortfolioRequest request = new CreatePortfolioRequest();
 
 		InvalidIdException exception = assertThrows(InvalidIdException.class, () -> {
-			portfolioService.createPortfolio(invalidUserId, request);
+			portfolioService.createPortfolio(request.withUserId(invalidUserId));
 		});
 
 		assertEquals(String.format("Invalid %s %s", USERID_LABEL, invalidUserId), exception.getMessage());
