@@ -9,9 +9,9 @@ import com.app.personalfinancesservice.converters.CategoryPlannerConverter;
 import com.app.personalfinancesservice.converters.GetCategoryPlannerRequestConverter;
 import com.app.personalfinancesservice.converters.UUIDConverter;
 import com.app.personalfinancesservice.domain.budget.Budget;
-import com.app.personalfinancesservice.domain.budget.input.GetBudgetsRequest;
+import com.app.personalfinancesservice.domain.budget.input.GetBudgetRequest;
 import com.app.personalfinancesservice.domain.category.Category;
-import com.app.personalfinancesservice.domain.category.input.GetCategoriesRequest;
+import com.app.personalfinancesservice.domain.category.input.GetCategoryRequest;
 import com.app.personalfinancesservice.domain.categoryplanner.CategoryPlanner;
 import com.app.personalfinancesservice.domain.categoryplanner.input.CreateCategoryPlannerRequest;
 import com.app.personalfinancesservice.domain.categoryplanner.input.DeleteCategoryPlannerRequest;
@@ -54,36 +54,36 @@ public class CategoryPlannerServiceService implements CategoryPlannerServiceBase
 	@Override
 	public CreateCategoryPlannerResponse createCategoryPlanner(CreateCategoryPlannerRequest request) {
 
-		// Check if budget exists
-		List<Budget> budget = budgetService.getBudgets(new GetBudgetsRequest() //
+		// Check if the budget exists
+		Budget budget = budgetService.getBudget(new GetBudgetRequest() //
 				.withId(request.getBudgetId()) //
 				.withUserId(request.getUserId()) //
-		).getBudgets();
-		if (budget.isEmpty()) {
+		).getBudget();
+		if (budget == null) {
 			throw new NotFoundException(CATEGORY_PLANNER, BUDGET_ID_LABEL, request.getBudgetId());
 		}
 
 		// Check if Category exists
-		List<Category> category = categoryService.getCategories(new GetCategoriesRequest() //
+		Category category = categoryService.getCategory(new GetCategoryRequest() //
 				.withId(request.getCategoryId()) //
 				.withUserId(request.getUserId()) //
-		).getCategories();
-		if (category.isEmpty()) {
+		).getCategory();
+		if (category == null) {
 			throw new NotFoundException(CATEGORY_PLANNER, CATEGORY_ID_LABEL, request.getBudgetId());
 		}
 
 		// Check if CategoryPlanner already exists
-		if (categoryPlannerAlreadyExists(category.getFirst().getId(), budget.getFirst().getId())) {
+		if (categoryPlannerAlreadyExists(category.getId(), budget.getId())) {
 			String message = String.format("CategoryPlanner of name %s and type %s already exists", //
-					category.getFirst().getName(), //
-					category.getFirst().getTransactionType());
+					category.getName(), //
+					category.getTransactionType());
 			throw new CreateNewItemException(CATEGORY_PLANNER, message);
 		}
 
 		CategoryPlanner newCategoryPlanner = CategoryPlannerConverter //
 				.convert(request) //
-				.withBudgetId(budget.getFirst().getId()) //
-				.withCategory(category.getFirst());
+				.withBudgetId(budget.getId()) //
+				.withCategory(category);
 
 		return new CreateCategoryPlannerResponse() //
 				.withCategoryPlanner(categoryPlannerRepository.save(newCategoryPlanner));
@@ -130,17 +130,17 @@ public class CategoryPlannerServiceService implements CategoryPlannerServiceBase
 				.convert(request.getUserId(), "userId", CATEGORY_PLANNER);
 
 		// Get budget
-		List<Budget> budget = budgetService.getBudgets(new GetBudgetsRequest() //
+		Budget budget = budgetService.getBudget(new GetBudgetRequest() //
 				.withUserId(request.getUserId()) //
 				.withId(request.getBudgetId()) //
-		).getBudgets();
+		).getBudget();
 
-		if (budget.isEmpty()) {
+		if (budget == null) {
 			throw new NotFoundException(CATEGORY_PLANNER, BUDGET_ID_LABEL, request.getBudgetId());
 		}
 
 		List<CategoryPlanner> categoryPlanners = categoryPlannerRepository //
-				.getCategoryPlannerByUserIdAndBudget(userId, budget.getFirst());
+				.getCategoryPlannerByUserIdAndBudget(userId, budget);
 
 		if (categoryPlanners == null || categoryPlanners.isEmpty()) {
 			throw new NotFoundException(CATEGORY_PLANNER, "categoryPlanner on budgetId", request.getBudgetId());
@@ -171,21 +171,21 @@ public class CategoryPlannerServiceService implements CategoryPlannerServiceBase
 			throw new NotFoundException(CATEGORY_PLANNER, message);
 		}
 
-		// Check if new category exists
-		GetCategoriesRequest categoriesRequest = new GetCategoriesRequest() //
+		// Check if the category exists
+		GetCategoryRequest categoryRequest = new GetCategoryRequest() //
 				.withId(request.getCategoryId()) //
 				.withUserId(request.getUserId());
 
-		List<Category> category = categoryService //
-				.getCategories(categoriesRequest).getCategories();
+		Category category = categoryService //
+				.getCategory(categoryRequest).getCategory();
 
-		if (category.isEmpty()) {
+		if (category == null) {
 			String message = String.format("Category of id %s could not be found", request.getCategoryId());
 			throw new NotFoundException(CATEGORY_PLANNER, message);
 		}
 		// Convert and save
 		CategoryPlanner updatedCategoryPlanner = CategoryPlannerConverter //
-				.convert(request, category.getFirst(), oldCategoryPlanner);
+				.convert(request, category, oldCategoryPlanner);
 
 		return new UpdateCategoryPlannerResponse() //
 				.withCategoryPlanner(categoryPlannerRepository.save(updatedCategoryPlanner));
