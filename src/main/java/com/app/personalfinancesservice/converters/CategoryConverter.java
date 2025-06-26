@@ -3,9 +3,10 @@ package com.app.personalfinancesservice.converters;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import com.app.personalfinancesservice.domain.category.Category;
-import com.app.personalfinancesservice.domain.category.input.CreateCategoryRequest;
-import com.app.personalfinancesservice.domain.category.input.UpdateCategoryRequest;
+import com.personalfinance.api.domain.category.Category;
+import com.personalfinance.api.domain.category.dto.CategoryDTO;
+import com.personalfinance.api.domain.category.input.CreateCategoryRequest;
+import com.personalfinance.api.domain.category.input.UpdateCategoryRequest;
 
 public class CategoryConverter {
 
@@ -29,6 +30,16 @@ public class CategoryConverter {
 				.withName(request.getName().toUpperCase()) //
 				.withTransactionType(request.getTransactionType());
 
+	}
+
+	public static Category convert(CategoryDTO categoryDTO) {
+		new Category() //
+				.withId(UUIDConverter.convert(categoryDTO.getId(), "id", CATEGORY_LABEL)) //
+				.withUserId(UUIDConverter.convert(categoryDTO.getUserId(), USER_ID_LABEL, CATEGORY_LABEL)) //
+				.withName(categoryDTO.getName()) //
+				.withTransactionType(categoryDTO.getTransactionType()) //
+				.withCreatedAt(categoryDTO.getCreatedAt()) //
+		;
 	}
 
 	private CategoryConverter() {

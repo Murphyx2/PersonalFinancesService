@@ -2,10 +2,10 @@ package com.app.personalfinancesservice.converters;
 
 import java.time.LocalDateTime;
 
-import com.app.personalfinancesservice.domain.category.Category;
-import com.app.personalfinancesservice.domain.transaction.Transaction;
-import com.app.personalfinancesservice.domain.transaction.input.CreateTransactionRequest;
-import com.app.personalfinancesservice.domain.transaction.input.UpdateTransactionRequest;
+import com.personalfinance.api.domain.category.Category;
+import com.personalfinance.api.domain.transaction.Transaction;
+import com.personalfinance.api.domain.transaction.input.CreateTransactionRequest;
+import com.personalfinance.api.domain.transaction.input.UpdateTransactionRequest;
 
 public class TransactionConverter {
 

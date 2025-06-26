@@ -10,25 +10,26 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.app.personalfinancesservice.converters.PortfolioConverter;
+import com.app.personalfinancesservice.converters.PortfolioDTOConverter;
 import com.app.personalfinancesservice.converters.UUIDConverter;
-import com.app.personalfinancesservice.domain.portfolio.Portfolio;
-import com.app.personalfinancesservice.domain.portfolio.input.CreatePortfolioRequest;
-import com.app.personalfinancesservice.domain.portfolio.input.DeletePortfolioRequest;
-import com.app.personalfinancesservice.domain.portfolio.input.GetPortfolioRequest;
-import com.app.personalfinancesservice.domain.portfolio.input.GetPortfoliosRequest;
-import com.app.personalfinancesservice.domain.portfolio.input.UpdatePortfolioRequest;
-import com.app.personalfinancesservice.domain.portfolio.output.CreatePortfolioResponse;
-import com.app.personalfinancesservice.domain.portfolio.output.DeletePortfolioResponse;
-import com.app.personalfinancesservice.domain.portfolio.output.GetPortfolioResponse;
-import com.app.personalfinancesservice.domain.portfolio.output.GetPortfoliosResponse;
-import com.app.personalfinancesservice.domain.portfolio.output.UpdatePortfolioResponse;
-import com.app.personalfinancesservice.domain.service.PortfolioServiceBase;
 import com.app.personalfinancesservice.exceptions.CreateNewItemException;
-import com.app.personalfinancesservice.exceptions.InvalidIdException;
 import com.app.personalfinancesservice.exceptions.MissingIdException;
 import com.app.personalfinancesservice.exceptions.NotFoundException;
 import com.app.personalfinancesservice.filter.PortfolioSorter;
 import com.app.personalfinancesservice.repository.PortfolioRepository;
+import com.personalfinance.api.domain.portfolio.Portfolio;
+import com.personalfinance.api.domain.portfolio.dto.PortfolioDTO;
+import com.personalfinance.api.domain.portfolio.input.CreatePortfolioRequest;
+import com.personalfinance.api.domain.portfolio.input.DeletePortfolioRequest;
+import com.personalfinance.api.domain.portfolio.input.GetPortfolioRequest;
+import com.personalfinance.api.domain.portfolio.input.GetPortfoliosRequest;
+import com.personalfinance.api.domain.portfolio.input.UpdatePortfolioRequest;
+import com.personalfinance.api.domain.portfolio.output.CreatePortfolioResponse;
+import com.personalfinance.api.domain.portfolio.output.DeletePortfolioResponse;
+import com.personalfinance.api.domain.portfolio.output.GetPortfolioResponse;
+import com.personalfinance.api.domain.portfolio.output.GetPortfoliosResponse;
+import com.personalfinance.api.domain.portfolio.output.UpdatePortfolioResponse;
+import com.personalfinance.api.service.PortfolioServiceBase;
 
 @Service
 public class PortfolioService implements PortfolioServiceBase {
@@ -60,7 +61,8 @@ public class PortfolioService implements PortfolioServiceBase {
 			throw new CreateNewItemException("Portfolio", request.getName(), PORTFOLIO_LABEL);
 		}
 
-		return new CreatePortfolioResponse().withPortfolio(portfolio);
+		return new CreatePortfolioResponse() //
+				.withPortfolio(PortfolioDTOConverter.convert(portfolio));
 	}
 
 	@Override
@@ -86,7 +88,7 @@ public class PortfolioService implements PortfolioServiceBase {
 		UUID id = UUIDConverter //
 				.convert(request.getPortfolioId(), PORTFOLIO_ID_LABEL, PORTFOLIO_LABEL);
 
-		Optional<Portfolio> portfolio = repository.getPortfolioByIdAndUserId(id, userId);
+		Optional<PortfolioDTO> portfolio = repository.getPortfolioByIdAndUserId(id, userId);
 
 		return new GetPortfolioResponse() //
 				.withPortfolio(portfolio.orElseThrow( //
@@ -98,7 +100,7 @@ public class PortfolioService implements PortfolioServiceBase {
 	@Override
 	public GetPortfoliosResponse getPortfolios(GetPortfoliosRequest request) {
 
-		List<Portfolio> portfolios;
+		List<PortfolioDTO> portfolios;
 
 		UUID userId = UUIDConverter //
 				.convert(request.getUserId(), USER_ID_LABEL, PORTFOLIO_LABEL);
@@ -107,7 +109,7 @@ public class PortfolioService implements PortfolioServiceBase {
 		portfolios = repository.getAllByUserId(userId);
 
 		// Apply filter here
-		List<Portfolio> sortedPortfolios = PortfolioSorter //
+		List<PortfolioDTO> sortedPortfolios = PortfolioSorter //
 				.sort(portfolios, request.getSortBy(), request.getSortDirection());
 
 		return new GetPortfoliosResponse().withPortfolios(sortedPortfolios);
@@ -130,7 +132,7 @@ public class PortfolioService implements PortfolioServiceBase {
 			return new UpdatePortfolioResponse();
 		}
 
-		Portfolio portfolio = PortfolioConverter //
+		PortfolioDTO portfolio = PortfolioConverter //
 				.convert(request, oldPortfolio.getPortfolio()) //
 				.withId(oldPortfolio.getPortfolio().getId()) //
 				.withUserId(oldPortfolio.getPortfolio().getUserId()) //

@@ -3,9 +3,10 @@ package com.app.personalfinancesservice.converters;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import com.app.personalfinancesservice.domain.portfolio.Portfolio;
-import com.app.personalfinancesservice.domain.portfolio.input.CreatePortfolioRequest;
-import com.app.personalfinancesservice.domain.portfolio.input.UpdatePortfolioRequest;
+import com.personalfinance.api.domain.portfolio.Portfolio;
+import com.personalfinance.api.domain.portfolio.dto.PortfolioDTO;
+import com.personalfinance.api.domain.portfolio.input.CreatePortfolioRequest;
+import com.personalfinance.api.domain.portfolio.input.UpdatePortfolioRequest;
 
 public class PortfolioConverter {
 
@@ -27,7 +28,7 @@ public class PortfolioConverter {
 
 	}
 
-	public static Portfolio convert(UpdatePortfolioRequest request, Portfolio oldPortfolio) {
+	public static Portfolio convert(UpdatePortfolioRequest request, PortfolioDTO oldPortfolio) {
 
 		return new Portfolio() //
 				.withName(request.getName()) //

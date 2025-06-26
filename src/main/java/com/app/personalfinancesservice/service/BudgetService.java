@@ -7,23 +7,24 @@ import org.springframework.stereotype.Service;
 
 import com.app.personalfinancesservice.converters.BudgetConverter;
 import com.app.personalfinancesservice.converters.UUIDConverter;
-import com.app.personalfinancesservice.domain.budget.Budget;
-import com.app.personalfinancesservice.domain.budget.input.CreateBudgetRequest;
-import com.app.personalfinancesservice.domain.budget.input.DeleteBudgetRequest;
-import com.app.personalfinancesservice.domain.budget.input.GetBudgetRequest;
-import com.app.personalfinancesservice.domain.budget.input.GetBudgetsRequest;
-import com.app.personalfinancesservice.domain.budget.input.UpdateBudgetRequest;
-import com.app.personalfinancesservice.domain.budget.output.CreateBudgetResponse;
-import com.app.personalfinancesservice.domain.budget.output.DeleteBudgetResponse;
-import com.app.personalfinancesservice.domain.budget.output.GetBudgetResponse;
-import com.app.personalfinancesservice.domain.budget.output.GetBudgetsResponse;
-import com.app.personalfinancesservice.domain.budget.output.UpdateBudgetResponse;
-import com.app.personalfinancesservice.domain.portfolio.Portfolio;
-import com.app.personalfinancesservice.domain.portfolio.input.GetPortfolioRequest;
-import com.app.personalfinancesservice.domain.service.BudgetServiceBase;
 import com.app.personalfinancesservice.exceptions.NotFoundException;
 import com.app.personalfinancesservice.filter.BudgetSorter;
 import com.app.personalfinancesservice.repository.BudgetRepository;
+import com.personalfinance.api.domain.budget.Budget;
+import com.personalfinance.api.domain.budget.dto.BudgetDTO;
+import com.personalfinance.api.domain.budget.input.CreateBudgetRequest;
+import com.personalfinance.api.domain.budget.input.DeleteBudgetRequest;
+import com.personalfinance.api.domain.budget.input.GetBudgetRequest;
+import com.personalfinance.api.domain.budget.input.GetBudgetsRequest;
+import com.personalfinance.api.domain.budget.input.UpdateBudgetRequest;
+import com.personalfinance.api.domain.budget.output.CreateBudgetResponse;
+import com.personalfinance.api.domain.budget.output.DeleteBudgetResponse;
+import com.personalfinance.api.domain.budget.output.GetBudgetResponse;
+import com.personalfinance.api.domain.budget.output.GetBudgetsResponse;
+import com.personalfinance.api.domain.budget.output.UpdateBudgetResponse;
+import com.personalfinance.api.domain.portfolio.dto.PortfolioDTO;
+import com.personalfinance.api.domain.portfolio.input.GetPortfolioRequest;
+import com.personalfinance.api.service.BudgetServiceBase;
 
 @Service
 public class BudgetService implements BudgetServiceBase {
@@ -50,7 +51,7 @@ public class BudgetService implements BudgetServiceBase {
 		GetPortfolioRequest requestPortfolio = new GetPortfolioRequest() //
 				.withUserId(request.getUserId()) //
 				.withPortfolioId(request.getPortfolioId());
-		Portfolio portfolio = portfolioService.getPortfolio(requestPortfolio) //
+		PortfolioDTO portfolio = portfolioService.getPortfolio(requestPortfolio) //
 				.getPortfolio();
 
 		if (portfolio == null) {
@@ -58,7 +59,7 @@ public class BudgetService implements BudgetServiceBase {
 		}
 
 		// Convert request to budget and save it
-		Budget requestBudget = BudgetConverter.convert(request);
+		BudgetDTO requestBudget = BudgetConverter.convert(request);
 
 		return new CreateBudgetResponse() //
 				.withBudget(budgetRepository.save(requestBudget));
@@ -71,7 +72,7 @@ public class BudgetService implements BudgetServiceBase {
 				.withUserId(request.getUserId()) //
 				;
 
-		Budget getResponse = getBudget(requestBudget).getBudget();
+		BudgetDTO getResponse = getBudget(requestBudget).getBudget();
 		if (getResponse == null) {
 			return new DeleteBudgetResponse().withSuccess(false);
 		}

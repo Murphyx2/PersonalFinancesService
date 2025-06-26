@@ -2,9 +2,9 @@ package com.app.personalfinancesservice.converters;
 
 import java.time.LocalDateTime;
 
-import com.app.personalfinancesservice.domain.budget.Budget;
-import com.app.personalfinancesservice.domain.budget.input.CreateBudgetRequest;
-import com.app.personalfinancesservice.domain.budget.input.UpdateBudgetRequest;
+import com.personalfinance.api.domain.budget.Budget;
+import com.personalfinance.api.domain.budget.input.CreateBudgetRequest;
+import com.personalfinance.api.domain.budget.input.UpdateBudgetRequest;
 
 public class BudgetConverter {
 
