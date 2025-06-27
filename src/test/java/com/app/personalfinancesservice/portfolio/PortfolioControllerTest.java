@@ -13,17 +13,18 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.app.personalfinancesservice.controller.PortfolioController;
 import com.app.personalfinancesservice.domain.http.HttpRoutes;
-import com.app.personalfinancesservice.domain.portfolio.Portfolio;
-import com.app.personalfinancesservice.domain.portfolio.input.CreatePortfolioRequest;
-import com.app.personalfinancesservice.domain.portfolio.input.DeletePortfolioRequest;
-import com.app.personalfinancesservice.domain.portfolio.input.GetPortfolioRequest;
-import com.app.personalfinancesservice.domain.portfolio.input.UpdatePortfolioRequest;
-import com.app.personalfinancesservice.domain.portfolio.output.CreatePortfolioResponse;
-import com.app.personalfinancesservice.domain.portfolio.output.DeletePortfolioResponse;
-import com.app.personalfinancesservice.domain.portfolio.output.GetPortfolioResponse;
-import com.app.personalfinancesservice.domain.portfolio.output.UpdatePortfolioResponse;
 import com.app.personalfinancesservice.exceptions.InvalidIdException;
 import com.app.personalfinancesservice.service.PortfolioService;
+import com.personalfinance.api.domain.portfolio.Portfolio;
+import com.personalfinance.api.domain.portfolio.dto.PortfolioDTO;
+import com.personalfinance.api.domain.portfolio.input.CreatePortfolioRequest;
+import com.personalfinance.api.domain.portfolio.input.DeletePortfolioRequest;
+import com.personalfinance.api.domain.portfolio.input.GetPortfolioRequest;
+import com.personalfinance.api.domain.portfolio.input.UpdatePortfolioRequest;
+import com.personalfinance.api.domain.portfolio.output.CreatePortfolioResponse;
+import com.personalfinance.api.domain.portfolio.output.DeletePortfolioResponse;
+import com.personalfinance.api.domain.portfolio.output.GetPortfolioResponse;
+import com.personalfinance.api.domain.portfolio.output.UpdatePortfolioResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -62,7 +63,8 @@ class PortfolioControllerTest {
 
 		// Arrange
 		String validUserId = "550e8400-e29b-41d4-a716-446655440000";
-		Portfolio portfolio = new Portfolio().withId(UUID.randomUUID()) //
+		PortfolioDTO portfolio = new PortfolioDTO() //
+				.withId(UUID.randomUUID()) //
 				.withName("New Portfolio") //
 				.withDescription("This is the description of the portfolio") //
 				.withCreated(LocalDateTime.now());
@@ -178,7 +180,7 @@ class PortfolioControllerTest {
 
 		UUID validUserId = UUID.randomUUID();
 		UUID validPortfolioId = UUID.randomUUID();
-		Portfolio portfolio = new Portfolio() //
+		PortfolioDTO portfolio = new PortfolioDTO() //
 				.withId(validPortfolioId) //
 				.withUserId(validUserId) //
 				.withBudgets(new ArrayList<>()) //
@@ -230,7 +232,7 @@ class PortfolioControllerTest {
 		UUID validUserId = UUID.randomUUID();
 		UUID validPortfolioId = UUID.randomUUID();
 
-		Portfolio portfolio = new Portfolio() //
+		PortfolioDTO portfolio = new PortfolioDTO() //
 				.withId(validPortfolioId) //
 				.withUserId(validUserId) //
 				.withBudgets(new ArrayList<>()) //

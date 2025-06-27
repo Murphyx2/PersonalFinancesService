@@ -28,9 +28,9 @@ public class PortfolioConverter {
 
 	}
 
-	public static Portfolio convert(UpdatePortfolioRequest request, PortfolioDTO oldPortfolio) {
+	public static Portfolio convert(UpdatePortfolioRequest request, Portfolio oldPortfolio) {
 
-		return new Portfolio() //
+		return oldPortfolio
 				.withName(request.getName()) //
 				.withDescription(request.getDescription()) //
 				.withBudgets(oldPortfolio.getBudgets()) //

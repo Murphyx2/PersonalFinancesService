@@ -6,17 +6,17 @@ import java.util.List;
 import java.util.UUID;
 
 import com.app.personalfinancesservice.converters.PortfolioConverter;
-import com.app.personalfinancesservice.domain.filter.SortBy;
-import com.app.personalfinancesservice.domain.filter.SortDirection;
-import com.app.personalfinancesservice.domain.portfolio.Portfolio;
-import com.app.personalfinancesservice.domain.portfolio.input.CreatePortfolioRequest;
-import com.app.personalfinancesservice.domain.portfolio.input.GetPortfoliosRequest;
-import com.app.personalfinancesservice.domain.portfolio.output.CreatePortfolioResponse;
-import com.app.personalfinancesservice.domain.portfolio.output.GetPortfoliosResponse;
 import com.app.personalfinancesservice.exceptions.CreateNewItemException;
 import com.app.personalfinancesservice.exceptions.MissingIdException;
 import com.app.personalfinancesservice.repository.PortfolioRepository;
 import com.app.personalfinancesservice.service.PortfolioService;
+import com.personalfinance.api.domain.portfolio.Portfolio;
+import com.personalfinance.api.domain.portfolio.input.CreatePortfolioRequest;
+import com.personalfinance.api.domain.portfolio.input.GetPortfoliosRequest;
+import com.personalfinance.api.domain.portfolio.output.CreatePortfolioResponse;
+import com.personalfinance.api.domain.portfolio.output.GetPortfoliosResponse;
+import com.personalfinance.api.filter.SortBy;
+import com.personalfinance.api.filter.SortDirection;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -33,8 +33,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class PortfolioServiceTest {
-
-	private static final String USERID_LABEL = "userId";
+	
 	@Mock
 	private PortfolioRepository portfolioRepository;
 	@InjectMocks

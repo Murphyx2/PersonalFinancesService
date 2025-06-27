@@ -1,8 +1,6 @@
 package com.app.personalfinancesservice.service;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,14 +9,11 @@ import org.springframework.stereotype.Service;
 
 import com.app.personalfinancesservice.converters.PortfolioConverter;
 import com.app.personalfinancesservice.converters.PortfolioDTOConverter;
-import com.app.personalfinancesservice.converters.UUIDConverter;
 import com.app.personalfinancesservice.exceptions.CreateNewItemException;
 import com.app.personalfinancesservice.exceptions.MissingIdException;
-import com.app.personalfinancesservice.exceptions.NotFoundException;
+import com.app.personalfinancesservice.facade.portfolio.PortfolioRepositoryFacade;
 import com.app.personalfinancesservice.filter.PortfolioSorter;
-import com.app.personalfinancesservice.repository.PortfolioRepository;
 import com.personalfinance.api.domain.portfolio.Portfolio;
-import com.personalfinance.api.domain.portfolio.dto.PortfolioDTO;
 import com.personalfinance.api.domain.portfolio.input.CreatePortfolioRequest;
 import com.personalfinance.api.domain.portfolio.input.DeletePortfolioRequest;
 import com.personalfinance.api.domain.portfolio.input.GetPortfolioRequest;
@@ -37,26 +32,21 @@ public class PortfolioService implements PortfolioServiceBase {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PortfolioService.class);
 
 	private static final String PORTFOLIO_LABEL = "PORTFOLIO";
-	private static final String USER_ID_LABEL = "userId";
-	private static final String PORTFOLIO_ID_LABEL = "PortfolioID";
 
-	private final PortfolioRepository repository;
+	private final PortfolioRepositoryFacade portfolioRepositoryFacade;
 
-	public PortfolioService(PortfolioRepository repository) {
-		this.repository = repository;
+	public PortfolioService(PortfolioRepositoryFacade portfolioRepositoryFacade) {
+		this.portfolioRepositoryFacade = portfolioRepositoryFacade;
 	}
 
 	@Override
 	public CreatePortfolioResponse createPortfolio(CreatePortfolioRequest request) {
 
-		//Validate UserID
-		if (request.getUserId() == null) {
-			throw new MissingIdException(PORTFOLIO_LABEL, USER_ID_LABEL);
-		}
 		//Proceed to save the portfolio
 		Portfolio portfolio;
 		try {
-			portfolio = repository.save(PortfolioConverter.convert(request));
+			portfolio = portfolioRepositoryFacade //
+					.savePortfolio(PortfolioConverter.convert(request));
 		} catch (Exception e) {
 			throw new CreateNewItemException("Portfolio", request.getName(), PORTFOLIO_LABEL);
 		}
@@ -68,51 +58,43 @@ public class PortfolioService implements PortfolioServiceBase {
 	@Override
 	public DeletePortfolioResponse deletePortfolio(DeletePortfolioRequest request) {
 
+		boolean result = false;
 		try {
-			GetPortfolioRequest getRequest = new GetPortfolioRequest() //
-					.withPortfolioId(request.getId()) //
-					.withUserId(request.getUserId());
-			repository.delete(getPortfolio(getRequest).getPortfolio());
+			Portfolio portfolio = portfolioRepositoryFacade //
+					.getPortfolioByIdAndUserId(request.getId(), request.getUserId());
+
+			result = portfolioRepositoryFacade.deletePortfolio(portfolio);
 		} catch (Exception e) {
 			LOGGER.error(PORTFOLIO_LABEL, e);
-			return new DeletePortfolioResponse().withSuccess(false);
+			return new DeletePortfolioResponse().withSuccess(result);
 		}
-		return new DeletePortfolioResponse().withSuccess(true);
+		return new DeletePortfolioResponse().withSuccess(result);
 	}
 
 	@Override
 	public GetPortfolioResponse getPortfolio(GetPortfolioRequest request) {
-		UUID userId = UUIDConverter //
-				.convert(request.getUserId(), USER_ID_LABEL, PORTFOLIO_LABEL);
-
-		UUID id = UUIDConverter //
-				.convert(request.getPortfolioId(), PORTFOLIO_ID_LABEL, PORTFOLIO_LABEL);
-
-		Optional<PortfolioDTO> portfolio = repository.getPortfolioByIdAndUserId(id, userId);
 
 		return new GetPortfolioResponse() //
-				.withPortfolio(portfolio.orElseThrow( //
-								() -> new NotFoundException(PORTFOLIO_LABEL, PORTFOLIO_ID_LABEL, request.getPortfolioId()) //
-						) //
+				.withPortfolio(PortfolioDTOConverter //
+						.convert(portfolioRepositoryFacade //
+								.getPortfolioByIdAndUserId(request.getPortfolioId() //
+										, request.getUserId()))//
 				);
 	}
 
 	@Override
 	public GetPortfoliosResponse getPortfolios(GetPortfoliosRequest request) {
 
-		List<PortfolioDTO> portfolios;
-
-		UUID userId = UUIDConverter //
-				.convert(request.getUserId(), USER_ID_LABEL, PORTFOLIO_LABEL);
-
 		// Return all portfolios from User
-		portfolios = repository.getAllByUserId(userId);
+		List<Portfolio> portfolios = portfolioRepositoryFacade //
+				.getAllPortfolioByUserId(request.getUserId());
 
 		// Apply filter here
-		List<PortfolioDTO> sortedPortfolios = PortfolioSorter //
+		List<Portfolio> sortedPortfolios = PortfolioSorter //
 				.sort(portfolios, request.getSortBy(), request.getSortDirection());
 
-		return new GetPortfoliosResponse().withPortfolios(sortedPortfolios);
+		return new GetPortfoliosResponse() //
+				.withPortfolios(PortfolioDTOConverter.convertMany(sortedPortfolios));
 	}
 
 	@Override
@@ -123,22 +105,17 @@ public class PortfolioService implements PortfolioServiceBase {
 		}
 
 		// if null return empty
-		GetPortfolioResponse oldPortfolio = getPortfolio(new GetPortfolioRequest() //
-				.withPortfolioId(request.getId())//
-				.withUserId(request.getUserId()) //
-		);
+		Portfolio oldPortfolio = portfolioRepositoryFacade //
+				.getPortfolioByIdAndUserId(request.getId(), request.getUserId());
 
 		if (oldPortfolio == null) {
 			return new UpdatePortfolioResponse();
 		}
 
-		PortfolioDTO portfolio = PortfolioConverter //
-				.convert(request, oldPortfolio.getPortfolio()) //
-				.withId(oldPortfolio.getPortfolio().getId()) //
-				.withUserId(oldPortfolio.getPortfolio().getUserId()) //
-				;
+		Portfolio updatedPortfolio = portfolioRepositoryFacade //
+				.savePortfolio(PortfolioConverter.convert(request, oldPortfolio));
 
 		return new UpdatePortfolioResponse() //
-				.withPortfolio(repository.save(portfolio));
+				.withPortfolio(PortfolioDTOConverter.convert(updatedPortfolio));
 	}
 }
