@@ -16,4 +16,6 @@ public interface PortfolioRepositoryFacade {
 	Portfolio getPortfolioByIdAndUserId(String id, String userId);
 
 	Portfolio savePortfolio(Portfolio portfolio);
+
+	boolean existsPortfolio(String id, String userId);
 }

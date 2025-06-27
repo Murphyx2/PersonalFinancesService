@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Component;
 
 import com.app.personalfinancesservice.converters.UUIDConverter;
+import com.app.personalfinancesservice.exceptions.CreateNewItemException;
 import com.app.personalfinancesservice.exceptions.MissingIdException;
 import com.app.personalfinancesservice.exceptions.NotFoundException;
 import com.app.personalfinancesservice.repository.PortfolioRepository;
@@ -62,11 +63,27 @@ public class PortfolioRepositoryFacadeImpl implements PortfolioRepositoryFacade 
 	@Override
 	public Portfolio savePortfolio(Portfolio portfolio) {
 
+		if(portfolio == null) {
+			throw new CreateNewItemException(PORTFOLIO_LABEL, "portfolio");
+		}
+
 		//Validate UserID
 		if (portfolio.getUserId() == null) {
 			throw new MissingIdException(PORTFOLIO_LABEL, USER_ID_LABEL);
 		}
 
 		return portfolioRepository.save(portfolio);
+	}
+
+	@Override
+	public boolean existsPortfolio(String id, String userId) {
+
+		UUID userIdUUID = UUIDConverter //
+				.convert(userId, USER_ID_LABEL, PORTFOLIO_LABEL);
+
+		UUID idUUID = UUIDConverter //
+				.convert(id, PORTFOLIO_ID_LABEL, PORTFOLIO_LABEL);
+
+		return portfolioRepository.existsByIdAndUserId(idUUID, userIdUUID);
 	}
 }

@@ -7,7 +7,12 @@ import com.personalfinance.api.domain.budget.dto.BudgetDTO;
 
 public class BudgetDTOConverter {
 
-	public static BudgetDTO convertMany(Budget budget) {
+	public static BudgetDTO convert(Budget budget) {
+
+		if (budget == null) {
+			return null;
+		}
+
 		return new BudgetDTO().withId(budget.getId().toString()) //
 				.withUserId(budget.getUserId().toString()) //
 				.withPortfolioId(budget.getPortfolioId().toString()) //
@@ -28,7 +33,7 @@ public class BudgetDTOConverter {
 	public static List<BudgetDTO> convertMany(List<Budget> budgets) {
 		return budgets //
 				.stream() //
-				.map(BudgetDTOConverter::convertMany) //
+				.map(BudgetDTOConverter::convert) //
 				.toList();
 	}
 
