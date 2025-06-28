@@ -8,26 +8,15 @@ import org.springframework.stereotype.Service;
 import com.app.personalfinancesservice.converters.CategoryPlannerConverter;
 import com.app.personalfinancesservice.converters.GetCategoryPlannerRequestConverter;
 import com.app.personalfinancesservice.converters.UUIDConverter;
-import com.app.personalfinancesservice.domain.budget.Budget;
-import com.app.personalfinancesservice.domain.budget.input.GetBudgetRequest;
-import com.app.personalfinancesservice.domain.category.Category;
-import com.app.personalfinancesservice.domain.category.input.GetCategoryRequest;
-import com.app.personalfinancesservice.domain.categoryplanner.CategoryPlanner;
-import com.app.personalfinancesservice.domain.categoryplanner.input.CreateCategoryPlannerRequest;
-import com.app.personalfinancesservice.domain.categoryplanner.input.DeleteCategoryPlannerRequest;
-import com.app.personalfinancesservice.domain.categoryplanner.input.GetCategoryPlannerRequest;
-import com.app.personalfinancesservice.domain.categoryplanner.input.GetListCategoryPlannerRequest;
-import com.app.personalfinancesservice.domain.categoryplanner.input.UpdateCategoryPlannerRequest;
-import com.app.personalfinancesservice.domain.categoryplanner.output.CreateCategoryPlannerResponse;
-import com.app.personalfinancesservice.domain.categoryplanner.output.GetCategoryPlannerResponse;
-import com.app.personalfinancesservice.domain.categoryplanner.output.GetListCategoryPlannerResponse;
-import com.app.personalfinancesservice.domain.categoryplanner.output.UpdateCategoryPlannerResponse;
-import com.app.personalfinancesservice.domain.service.CategoryPlannerServiceBase;
 import com.app.personalfinancesservice.exceptions.CreateNewItemException;
 import com.app.personalfinancesservice.exceptions.NotFoundException;
+import com.app.personalfinancesservice.facade.budget.BudgetRepositoryFacade;
 import com.app.personalfinancesservice.filter.CategoryPlannerFilter;
 import com.app.personalfinancesservice.filter.CategoryPlannerSorter;
 import com.app.personalfinancesservice.repository.CategoryPlannerRepository;
+import com.personalfinance.api.domain.categoryplanner.input.CreateCategoryPlannerRequest;
+import com.personalfinance.api.domain.categoryplanner.output.CreateCategoryPlannerResponse;
+import com.personalfinance.api.service.CategoryPlannerServiceBase;
 
 @Service
 public class CategoryPlannerServiceService implements CategoryPlannerServiceBase {
@@ -37,13 +26,13 @@ public class CategoryPlannerServiceService implements CategoryPlannerServiceBase
 	private static final String CATEGORY_ID_LABEL = "categoryId";
 
 	CategoryPlannerRepository categoryPlannerRepository;
-	BudgetService budgetService;
+	BudgetRepositoryFacade budgetRepositoryFacade;
 	CategoryService categoryService;
 
 	public CategoryPlannerServiceService(CategoryPlannerRepository categoryPlannerRepository, //
-			BudgetService budgetService, CategoryService categoryService) {
+			BudgetRepositoryFacade budgetRepositoryFacade, CategoryService categoryService) {
 		this.categoryPlannerRepository = categoryPlannerRepository;
-		this.budgetService = budgetService;
+		this.budgetRepositoryFacade = budgetRepositoryFacade;
 		this.categoryService = categoryService;
 	}
 
@@ -55,11 +44,7 @@ public class CategoryPlannerServiceService implements CategoryPlannerServiceBase
 	public CreateCategoryPlannerResponse createCategoryPlanner(CreateCategoryPlannerRequest request) {
 
 		// Check if the budget exists
-		Budget budget = budgetService.getBudget(new GetBudgetRequest() //
-				.withId(request.getBudgetId()) //
-				.withUserId(request.getUserId()) //
-		).getBudget();
-		if (budget == null) {
+		if (!budgetRepositoryFacade.budgetExists(request.getBudgetId(), request.getUserId())) {
 			throw new NotFoundException(CATEGORY_PLANNER, BUDGET_ID_LABEL, request.getBudgetId());
 		}
 
