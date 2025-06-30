@@ -9,9 +9,13 @@ import com.personalfinance.api.domain.transaction.input.UpdateTransactionRequest
 
 public class TransactionConverter {
 
+	private static final String TRANSACTION_LABEL = "TRANSACTION";
+
 	public static Transaction convert(CreateTransactionRequest request) {
 
 		return new Transaction() //
+				.withBudgetId(UUIDConverter.convert(request.getBudgetId(), "budgetId", TRANSACTION_LABEL)) //
+				.withUserId(UUIDConverter.convert(request.getUserId(), "userId", TRANSACTION_LABEL)) //
 				.withAmount(Math.abs(request.getAmount())) //
 				.withCurrencyCode(request.getCurrencyCode()) //
 				.withDescription(request.getDescription()) //

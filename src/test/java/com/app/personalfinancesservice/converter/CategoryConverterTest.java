@@ -3,9 +3,9 @@ package com.app.personalfinancesservice.converter;
 import java.util.UUID;
 
 import com.app.personalfinancesservice.converters.CategoryConverter;
-import com.app.personalfinancesservice.domain.category.Category;
-import com.app.personalfinancesservice.domain.category.input.CreateCategoryRequest;
-import com.app.personalfinancesservice.domain.transaction.TransactionType;
+import com.personalfinance.api.domain.category.Category;
+import com.personalfinance.api.domain.category.input.CreateCategoryRequest;
+import com.personalfinance.api.domain.transaction.TransactionType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;

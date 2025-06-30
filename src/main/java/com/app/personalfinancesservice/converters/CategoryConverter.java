@@ -33,13 +33,18 @@ public class CategoryConverter {
 	}
 
 	public static Category convert(CategoryDTO categoryDTO) {
-		new Category() //
+
+		if (categoryDTO == null) {
+			return null;
+		}
+
+		return new Category() //
 				.withId(UUIDConverter.convert(categoryDTO.getId(), "id", CATEGORY_LABEL)) //
 				.withUserId(UUIDConverter.convert(categoryDTO.getUserId(), USER_ID_LABEL, CATEGORY_LABEL)) //
 				.withName(categoryDTO.getName()) //
 				.withTransactionType(categoryDTO.getTransactionType()) //
 				.withCreatedAt(categoryDTO.getCreatedAt()) //
-		;
+				;
 	}
 
 	private CategoryConverter() {

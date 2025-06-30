@@ -1,5 +1,6 @@
 package com.app.personalfinancesservice.converters;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.personalfinance.api.domain.categoryplanner.CategoryPlanner;
@@ -20,6 +21,11 @@ public class CategoryPlannerDTOConverter {
 	}
 
 	public static List<CategoryPlannerDTO> convertMany(List<CategoryPlanner> categoryPlanners) {
+
+		if(categoryPlanners == null || categoryPlanners.isEmpty()){
+			return new ArrayList<>();
+		}
+
 		return categoryPlanners //
 				.stream() //
 				.map(CategoryPlannerDTOConverter::convert) //

@@ -1,5 +1,6 @@
 package com.app.personalfinancesservice.converters;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.personalfinance.api.domain.budget.Budget;
@@ -31,6 +32,11 @@ public class BudgetDTOConverter {
 	}
 
 	public static List<BudgetDTO> convertMany(List<Budget> budgets) {
+
+		if(budgets == null || budgets.isEmpty()){
+			return new ArrayList<>();
+		}
+
 		return budgets //
 				.stream() //
 				.map(BudgetDTOConverter::convert) //

@@ -12,22 +12,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.app.personalfinancesservice.domain.filter.SortBy;
-import com.app.personalfinancesservice.domain.filter.SortDirection;
 import com.app.personalfinancesservice.domain.http.HttpRoutes;
-import com.app.personalfinancesservice.domain.transaction.TransactionType;
-import com.app.personalfinancesservice.domain.transaction.input.CreateTransactionRequest;
-import com.app.personalfinancesservice.domain.transaction.input.DeleteTransactionRequest;
-import com.app.personalfinancesservice.domain.transaction.input.GetListTransactionRequest;
-import com.app.personalfinancesservice.domain.transaction.input.GetTransactionRequest;
-import com.app.personalfinancesservice.domain.transaction.input.UpdateTransactionRequest;
-import com.app.personalfinancesservice.domain.transaction.output.CreateTransactionResponse;
-import com.app.personalfinancesservice.domain.transaction.output.DeleteTransactionResponse;
-import com.app.personalfinancesservice.domain.transaction.output.GetListTransactionResponse;
-import com.app.personalfinancesservice.domain.transaction.output.GetTransactionResponse;
-import com.app.personalfinancesservice.domain.transaction.output.GetTransactionTypeResponse;
-import com.app.personalfinancesservice.domain.transaction.output.UpdateTransactionResponse;
 import com.app.personalfinancesservice.service.TransactionService;
+import com.personalfinance.api.domain.transaction.TransactionType;
+import com.personalfinance.api.domain.transaction.input.CreateTransactionRequest;
+import com.personalfinance.api.domain.transaction.input.DeleteTransactionRequest;
+import com.personalfinance.api.domain.transaction.input.GetListTransactionRequest;
+import com.personalfinance.api.domain.transaction.input.GetTransactionRequest;
+import com.personalfinance.api.domain.transaction.input.UpdateTransactionRequest;
+import com.personalfinance.api.domain.transaction.output.CreateTransactionResponse;
+import com.personalfinance.api.domain.transaction.output.DeleteTransactionResponse;
+import com.personalfinance.api.domain.transaction.output.GetListTransactionResponse;
+import com.personalfinance.api.domain.transaction.output.GetTransactionResponse;
+import com.personalfinance.api.domain.transaction.output.GetTransactionTypeResponse;
+import com.personalfinance.api.domain.transaction.output.UpdateTransactionResponse;
+import com.personalfinance.api.filter.SortBy;
+import com.personalfinance.api.filter.SortDirection;
 import jakarta.validation.Valid;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,10 +35,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping(HttpRoutes.API_ROOT)
-@Tag(
-		name = "Transaction Management",
-		description = "Endpoint to manage transactions, income, expenses or others"
-)
+@Tag(name = "Transaction Management", description = "Endpoint to manage transactions, income, expenses or others")
 public class TransactionController {
 
 	private final TransactionService transactionService;

@@ -2,8 +2,8 @@ package com.app.personalfinancesservice.filter;
 
 import java.util.List;
 
-import com.app.personalfinancesservice.domain.transaction.Transaction;
-import com.app.personalfinancesservice.domain.transaction.TransactionType;
+import com.personalfinance.api.domain.transaction.Transaction;
+import com.personalfinance.api.domain.transaction.TransactionType;
 
 public class TransactionFilter {
 

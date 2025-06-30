@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import com.personalfinance.api.domain.portfolio.Portfolio;
-import com.personalfinance.api.domain.portfolio.dto.PortfolioDTO;
 import com.personalfinance.api.domain.portfolio.input.CreatePortfolioRequest;
 import com.personalfinance.api.domain.portfolio.input.UpdatePortfolioRequest;
 
