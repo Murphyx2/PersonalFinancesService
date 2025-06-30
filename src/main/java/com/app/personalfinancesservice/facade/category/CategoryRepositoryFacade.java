@@ -12,6 +12,8 @@ public interface CategoryRepositoryFacade {
 
 	boolean categoryExists(String userId, String name, TransactionType transactionType);
 
+	boolean categoryExists(String categoryId, String userId);
+
 	Category getCategory(String id,  String userId);
 
 	List<Category> getCategories(String userId);

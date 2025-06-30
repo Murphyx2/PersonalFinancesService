@@ -17,6 +17,7 @@ public class CategoryRepositoryFacadeImpl implements CategoryRepositoryFacade {
 
 	private static final String CATEGORY_LABEL = "CATEGORY";
 	private static final String USER_ID_LABEL = "userId";
+	private static final String CATEGORY_ID_LABEL = "categoryId";
 
 	private final CategoryRepository categoryRepository;
 
@@ -38,6 +39,20 @@ public class CategoryRepositoryFacadeImpl implements CategoryRepositoryFacade {
 								&& category.getTransactionType().equals(transactionType) //
 				);
 
+	}
+
+	@Override
+	public boolean categoryExists(String categoryId, String userId) {
+
+		UUID userIdUUID = UUIDConverter //
+				.convert(userId, USER_ID_LABEL, CATEGORY_LABEL);
+
+		UUID categoryUUID = UUIDConverter //
+				.convert(categoryId, CATEGORY_ID_LABEL, CATEGORY_LABEL);
+
+		return categoryRepository //
+				.getCategoryByIdAndUserId(categoryUUID, userIdUUID) //
+				.isPresent();
 	}
 
 	@Override
@@ -67,7 +82,7 @@ public class CategoryRepositoryFacadeImpl implements CategoryRepositoryFacade {
 				.convert(userId, USER_ID_LABEL, CATEGORY_LABEL);
 
 		UUID categoryId = UUIDConverter //
-				.convert(id, "categoryId", CATEGORY_LABEL);
+				.convert(id, CATEGORY_ID_LABEL, CATEGORY_LABEL);
 
 		Optional<Category> category = categoryRepository //
 				.getCategoryByIdAndUserId(categoryId, userIdUUID);
