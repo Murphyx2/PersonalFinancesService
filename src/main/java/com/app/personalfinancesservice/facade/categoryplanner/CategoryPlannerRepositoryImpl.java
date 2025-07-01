@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 import com.app.personalfinancesservice.converters.UUIDConverter;
 import com.app.personalfinancesservice.exceptions.MissingIdException;
-import com.app.personalfinancesservice.repository.CategoryPlannerRepository;
+import com.app.personalfinancesservice.repository.CategoryPlannerJPARepository;
 import com.personalfinance.api.domain.categoryplanner.CategoryPlanner;
 import com.personalfinance.api.facade.CategoryPlannerRepositoryFacade;
 
@@ -19,12 +19,12 @@ public class CategoryPlannerRepositoryImpl implements CategoryPlannerRepositoryF
 
 	private static final String USER_ID_LABEL = "userId";
 
-	private final CategoryPlannerRepository categoryPlannerRepository;
+	private final CategoryPlannerJPARepository categoryPlannerJPARepository;
 
 	public CategoryPlannerRepositoryImpl( //
-			CategoryPlannerRepository categoryPlannerRepository //
+			CategoryPlannerJPARepository categoryPlannerJPARepository //
 	) {
-		this.categoryPlannerRepository = categoryPlannerRepository;
+		this.categoryPlannerJPARepository = categoryPlannerJPARepository;
 	}
 
 	@Override
@@ -39,7 +39,7 @@ public class CategoryPlannerRepositoryImpl implements CategoryPlannerRepositoryF
 		UUID budgetUUID = UUIDConverter //
 				.convert(budgetId, "budgetId", CATEGORY_PLANNER_LABEL);
 
-		List<CategoryPlanner> categoryPlanners = categoryPlannerRepository //
+		List<CategoryPlanner> categoryPlanners = categoryPlannerJPARepository //
 				.getCategoryPlannersByUserIdAndBudgetId(userIdUUID, budgetUUID);
 
 		return categoryPlanners //
@@ -58,7 +58,7 @@ public class CategoryPlannerRepositoryImpl implements CategoryPlannerRepositoryF
 		UUID categoryPlannerId = UUIDConverter //
 				.convert(id, "categoryPlannerId", CATEGORY_PLANNER_LABEL);
 
-		Optional<CategoryPlanner> categoryPlanner = categoryPlannerRepository //
+		Optional<CategoryPlanner> categoryPlanner = categoryPlannerJPARepository //
 				.getCategoryPlannerByIdAndUserId(categoryPlannerId, userIdUUID);
 
 		return categoryPlanner.isPresent();
@@ -66,7 +66,7 @@ public class CategoryPlannerRepositoryImpl implements CategoryPlannerRepositoryF
 
 	@Override
 	public void deleteCategoryPlanner(CategoryPlanner categoryPlanner) {
-		categoryPlannerRepository.delete(categoryPlanner);
+		categoryPlannerJPARepository.delete(categoryPlanner);
 	}
 
 	@Override
@@ -77,7 +77,7 @@ public class CategoryPlannerRepositoryImpl implements CategoryPlannerRepositoryF
 		UUID budgetUUID = UUIDConverter //
 				.convert(budgetId, "budgetId", CATEGORY_PLANNER_LABEL);
 
-		return categoryPlannerRepository //
+		return categoryPlannerJPARepository //
 				.getCategoryPlannersByUserIdAndBudgetId(userUUID, budgetUUID);
 	}
 
@@ -90,7 +90,7 @@ public class CategoryPlannerRepositoryImpl implements CategoryPlannerRepositoryF
 		UUID categoryPlannerId = UUIDConverter //
 				.convert(id, "categoryPlannerId", CATEGORY_PLANNER_LABEL);
 
-		return categoryPlannerRepository //
+		return categoryPlannerJPARepository //
 				.getCategoryPlannerByIdAndUserId(categoryPlannerId, userIdUUID) //
 				.orElse(null);
 	}
@@ -102,6 +102,6 @@ public class CategoryPlannerRepositoryImpl implements CategoryPlannerRepositoryF
 			throw new MissingIdException(CATEGORY_PLANNER_LABEL, "categoryPlanner");
 		}
 
-		return categoryPlannerRepository.save(categoryPlanner);
+		return categoryPlannerJPARepository.save(categoryPlanner);
 	}
 }

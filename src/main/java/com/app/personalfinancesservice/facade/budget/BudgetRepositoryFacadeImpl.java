@@ -9,6 +9,7 @@ import com.app.personalfinancesservice.converters.UUIDConverter;
 import com.app.personalfinancesservice.exceptions.MissingIdException;
 import com.app.personalfinancesservice.repository.BudgetRepository;
 import com.personalfinance.api.domain.budget.Budget;
+import com.personalfinance.api.facade.BudgetRepositoryFacade;
 
 @Component
 public class BudgetRepositoryFacadeImpl implements BudgetRepositoryFacade {

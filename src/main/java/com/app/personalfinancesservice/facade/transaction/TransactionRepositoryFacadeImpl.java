@@ -9,6 +9,7 @@ import com.app.personalfinancesservice.converters.UUIDConverter;
 import com.app.personalfinancesservice.exceptions.CreateNewItemException;
 import com.app.personalfinancesservice.repository.TransactionRepository;
 import com.personalfinance.api.domain.transaction.Transaction;
+import com.personalfinance.api.facade.TransactionRepositoryFacade;
 
 @Component
 public class TransactionRepositoryFacadeImpl implements TransactionRepositoryFacade {

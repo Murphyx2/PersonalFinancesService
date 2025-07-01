@@ -12,6 +12,7 @@ import com.app.personalfinancesservice.exceptions.MissingIdException;
 import com.app.personalfinancesservice.exceptions.NotFoundException;
 import com.app.personalfinancesservice.repository.PortfolioRepository;
 import com.personalfinance.api.domain.portfolio.Portfolio;
+import com.personalfinance.api.facade.PortfolioRepositoryFacade;
 
 @Component
 public class PortfolioRepositoryFacadeImpl implements PortfolioRepositoryFacade {
@@ -19,6 +20,7 @@ public class PortfolioRepositoryFacadeImpl implements PortfolioRepositoryFacade 
 	private static final String PORTFOLIO_LABEL = "PORTFOLIO";
 	private static final String USER_ID_LABEL = "userId";
 	private static final String PORTFOLIO_ID_LABEL = "PortfolioID";
+
 	private final PortfolioRepository portfolioRepository;
 
 	PortfolioRepositoryFacadeImpl(PortfolioRepository portfolioRepository) {

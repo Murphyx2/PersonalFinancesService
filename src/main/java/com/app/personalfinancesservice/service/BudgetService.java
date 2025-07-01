@@ -7,8 +7,6 @@ import org.springframework.stereotype.Service;
 import com.app.personalfinancesservice.converters.BudgetConverter;
 import com.app.personalfinancesservice.converters.BudgetDTOConverter;
 import com.app.personalfinancesservice.exceptions.NotFoundException;
-import com.app.personalfinancesservice.facade.budget.BudgetRepositoryFacade;
-import com.app.personalfinancesservice.facade.portfolio.PortfolioRepositoryFacade;
 import com.app.personalfinancesservice.filter.BudgetSorter;
 import com.personalfinance.api.domain.budget.Budget;
 import com.personalfinance.api.domain.budget.input.CreateBudgetRequest;
@@ -21,6 +19,8 @@ import com.personalfinance.api.domain.budget.output.DeleteBudgetResponse;
 import com.personalfinance.api.domain.budget.output.GetBudgetResponse;
 import com.personalfinance.api.domain.budget.output.GetBudgetsResponse;
 import com.personalfinance.api.domain.budget.output.UpdateBudgetResponse;
+import com.personalfinance.api.facade.BudgetRepositoryFacade;
+import com.personalfinance.api.facade.PortfolioRepositoryFacade;
 import com.personalfinance.api.service.BudgetServiceBase;
 
 @Service

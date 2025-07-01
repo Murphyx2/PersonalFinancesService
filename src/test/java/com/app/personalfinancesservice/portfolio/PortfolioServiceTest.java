@@ -7,13 +7,13 @@ import java.util.UUID;
 
 import com.app.personalfinancesservice.converters.PortfolioConverter;
 import com.app.personalfinancesservice.exceptions.CreateNewItemException;
-import com.app.personalfinancesservice.facade.portfolio.PortfolioRepositoryFacade;
 import com.app.personalfinancesservice.service.PortfolioService;
 import com.personalfinance.api.domain.portfolio.Portfolio;
 import com.personalfinance.api.domain.portfolio.input.CreatePortfolioRequest;
 import com.personalfinance.api.domain.portfolio.input.GetPortfoliosRequest;
 import com.personalfinance.api.domain.portfolio.output.CreatePortfolioResponse;
 import com.personalfinance.api.domain.portfolio.output.GetPortfoliosResponse;
+import com.personalfinance.api.facade.PortfolioRepositoryFacade;
 import com.personalfinance.api.filter.SortBy;
 import com.personalfinance.api.filter.SortDirection;
 import org.junit.jupiter.api.Test;

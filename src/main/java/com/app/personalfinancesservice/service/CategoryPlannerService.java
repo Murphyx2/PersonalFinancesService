@@ -8,8 +8,6 @@ import com.app.personalfinancesservice.converters.CategoryPlannerConverter;
 import com.app.personalfinancesservice.converters.CategoryPlannerDTOConverter;
 import com.app.personalfinancesservice.exceptions.CreateNewItemException;
 import com.app.personalfinancesservice.exceptions.NotFoundException;
-import com.app.personalfinancesservice.facade.budget.BudgetRepositoryFacade;
-import com.app.personalfinancesservice.facade.category.CategoryRepositoryFacade;
 import com.app.personalfinancesservice.filter.CategoryPlannerFilter;
 import com.app.personalfinancesservice.filter.CategoryPlannerSorter;
 import com.personalfinance.api.domain.category.Category;
@@ -24,7 +22,9 @@ import com.personalfinance.api.domain.categoryplanner.output.CreateCategoryPlann
 import com.personalfinance.api.domain.categoryplanner.output.GetCategoryPlannerResponse;
 import com.personalfinance.api.domain.categoryplanner.output.GetListCategoryPlannerResponse;
 import com.personalfinance.api.domain.categoryplanner.output.UpdateCategoryPlannerResponse;
+import com.personalfinance.api.facade.BudgetRepositoryFacade;
 import com.personalfinance.api.facade.CategoryPlannerRepositoryFacade;
+import com.personalfinance.api.facade.CategoryRepositoryFacade;
 import com.personalfinance.api.service.CategoryPlannerServiceBase;
 
 @Service

@@ -10,9 +10,6 @@ import org.springframework.stereotype.Service;
 import com.app.personalfinancesservice.converters.TransactionConverter;
 import com.app.personalfinancesservice.converters.TransactionDTOConverter;
 import com.app.personalfinancesservice.exceptions.NotFoundException;
-import com.app.personalfinancesservice.facade.budget.BudgetRepositoryFacade;
-import com.app.personalfinancesservice.facade.category.CategoryRepositoryFacade;
-import com.app.personalfinancesservice.facade.transaction.TransactionRepositoryFacade;
 import com.app.personalfinancesservice.filter.TransactionFilter;
 import com.app.personalfinancesservice.filter.TransactionSorter;
 import com.personalfinance.api.domain.category.Category;
@@ -30,6 +27,9 @@ import com.personalfinance.api.domain.transaction.output.GetListTransactionRespo
 import com.personalfinance.api.domain.transaction.output.GetTransactionResponse;
 import com.personalfinance.api.domain.transaction.output.GetTransactionTypeResponse;
 import com.personalfinance.api.domain.transaction.output.UpdateTransactionResponse;
+import com.personalfinance.api.facade.BudgetRepositoryFacade;
+import com.personalfinance.api.facade.CategoryRepositoryFacade;
+import com.personalfinance.api.facade.TransactionRepositoryFacade;
 import com.personalfinance.api.service.TransactionServiceBase;
 
 @Service
@@ -38,7 +38,6 @@ public class TransactionService implements TransactionServiceBase {
 	private static final String TRANSACTION_LABEL = "TRANSACTION";
 
 	TransactionRepositoryFacade transactionRepositoryFacade;
-
 	BudgetRepositoryFacade budgetRepositoryFacade;
 	CategoryRepositoryFacade categoryRepositoryFacade;
 

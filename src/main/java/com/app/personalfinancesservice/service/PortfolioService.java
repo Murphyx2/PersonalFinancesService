@@ -11,7 +11,6 @@ import com.app.personalfinancesservice.converters.PortfolioConverter;
 import com.app.personalfinancesservice.converters.PortfolioDTOConverter;
 import com.app.personalfinancesservice.exceptions.CreateNewItemException;
 import com.app.personalfinancesservice.exceptions.MissingIdException;
-import com.app.personalfinancesservice.facade.portfolio.PortfolioRepositoryFacade;
 import com.app.personalfinancesservice.filter.PortfolioSorter;
 import com.personalfinance.api.domain.portfolio.Portfolio;
 import com.personalfinance.api.domain.portfolio.input.CreatePortfolioRequest;
@@ -24,6 +23,7 @@ import com.personalfinance.api.domain.portfolio.output.DeletePortfolioResponse;
 import com.personalfinance.api.domain.portfolio.output.GetPortfolioResponse;
 import com.personalfinance.api.domain.portfolio.output.GetPortfoliosResponse;
 import com.personalfinance.api.domain.portfolio.output.UpdatePortfolioResponse;
+import com.personalfinance.api.facade.PortfolioRepositoryFacade;
 import com.personalfinance.api.service.PortfolioServiceBase;
 
 @Service

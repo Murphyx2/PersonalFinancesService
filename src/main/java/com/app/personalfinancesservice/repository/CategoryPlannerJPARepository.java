@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import com.personalfinance.api.domain.categoryplanner.CategoryPlanner;
 
 @Repository
-public interface CategoryPlannerRepository extends JpaRepository<CategoryPlanner, UUID> {
+public interface CategoryPlannerJPARepository extends JpaRepository<CategoryPlanner, UUID> {
 
 	Optional<CategoryPlanner> getCategoryPlannerByIdAndUserId(UUID id, UUID userId);
 

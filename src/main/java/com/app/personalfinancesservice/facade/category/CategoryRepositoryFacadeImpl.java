@@ -11,6 +11,7 @@ import com.app.personalfinancesservice.exceptions.MissingIdException;
 import com.app.personalfinancesservice.repository.CategoryRepository;
 import com.personalfinance.api.domain.category.Category;
 import com.personalfinance.api.domain.transaction.TransactionType;
+import com.personalfinance.api.facade.CategoryRepositoryFacade;
 
 @Component
 public class CategoryRepositoryFacadeImpl implements CategoryRepositoryFacade {
@@ -56,15 +57,8 @@ public class CategoryRepositoryFacadeImpl implements CategoryRepositoryFacade {
 	}
 
 	@Override
-	public boolean deleteCategory(Category category) {
-
-		if (category == null) {
-			return true;
-		}
-
+	public void deleteCategory(Category category) {
 		categoryRepository.delete(category);
-
-		return true;
 	}
 
 	@Override

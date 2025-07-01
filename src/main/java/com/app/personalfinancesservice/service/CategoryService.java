@@ -8,7 +8,6 @@ import com.app.personalfinancesservice.converters.CategoryConverter;
 import com.app.personalfinancesservice.converters.CategoryDTOConverter;
 import com.app.personalfinancesservice.exceptions.CreateNewItemException;
 import com.app.personalfinancesservice.exceptions.NotFoundException;
-import com.app.personalfinancesservice.facade.category.CategoryRepositoryFacade;
 import com.app.personalfinancesservice.filter.CategoryFilter;
 import com.app.personalfinancesservice.filter.CategorySorter;
 import com.personalfinance.api.domain.category.Category;
@@ -22,6 +21,7 @@ import com.personalfinance.api.domain.category.output.DeleteCategoryResponse;
 import com.personalfinance.api.domain.category.output.GetCategoriesResponse;
 import com.personalfinance.api.domain.category.output.GetCategoryResponse;
 import com.personalfinance.api.domain.category.output.UpdateCategoryResponse;
+import com.personalfinance.api.facade.CategoryRepositoryFacade;
 import com.personalfinance.api.service.CategoryServiceBase;
 
 @Service
@@ -66,8 +66,9 @@ public class CategoryService implements CategoryServiceBase {
 			return new DeleteCategoryResponse().withSuccess(true);
 		}
 
-		return new DeleteCategoryResponse() //
-				.withSuccess(categoryRepositoryFacade.deleteCategory(category));
+		categoryRepositoryFacade.deleteCategory(category);
+
+		return new DeleteCategoryResponse().withSuccess(true);
 	}
 
 	@Override
