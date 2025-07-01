@@ -11,7 +11,6 @@ import com.personalfinance.api.domain.categoryplanner.CategoryPlanner;
 
 @Repository
 public interface CategoryPlannerRepository extends JpaRepository<CategoryPlanner, UUID> {
-	boolean existsByCategory_IdAndBudgetId(UUID categoryId, UUID budgetId);
 
 	Optional<CategoryPlanner> getCategoryPlannerByIdAndUserId(UUID id, UUID userId);
 

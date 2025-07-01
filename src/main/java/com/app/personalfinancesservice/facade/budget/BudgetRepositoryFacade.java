@@ -2,20 +2,20 @@ package com.app.personalfinancesservice.facade.budget;
 
 import java.util.List;
 
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import com.personalfinance.api.domain.budget.Budget;
 
-@Repository
+@Component
 public interface BudgetRepositoryFacade {
-
-	Budget saveBudget(Budget budget);
-
-	Budget getBudgetByIdAndUserId(String id, String userId);
-
-	boolean deleteBudget(String id, String userId);
 
 	boolean budgetExists(String id, String userId);
 
+	boolean deleteBudget(String id, String userId);
+
+	Budget getBudgetByIdAndUserId(String id, String userId);
+
 	List<Budget> getBudgetsByPortfolioIdAndUserId(String portfolioId, String userId);
+
+	Budget saveBudget(Budget budget);
 }

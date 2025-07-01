@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.personalfinancesservice.domain.http.HttpRoutes;
-import com.app.personalfinancesservice.service.CategoryPlannerServiceService;
+import com.app.personalfinancesservice.service.CategoryPlannerService;
 import com.personalfinance.api.domain.categoryplanner.input.CreateCategoryPlannerRequest;
 import com.personalfinance.api.domain.categoryplanner.input.DeleteCategoryPlannerRequest;
 import com.personalfinance.api.domain.categoryplanner.input.GetCategoryPlannerRequest;
@@ -39,9 +39,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 )
 public class CategoryPlannerController {
 
-	private final CategoryPlannerServiceService categoryPlannerService;
+	private final CategoryPlannerService categoryPlannerService;
 
-	public CategoryPlannerController(CategoryPlannerServiceService categoryPlannerService) {
+	public CategoryPlannerController(CategoryPlannerService categoryPlannerService) {
 		this.categoryPlannerService = categoryPlannerService;
 	}
 

@@ -10,6 +10,7 @@ import com.app.personalfinancesservice.converters.UUIDConverter;
 import com.app.personalfinancesservice.exceptions.MissingIdException;
 import com.app.personalfinancesservice.repository.CategoryPlannerRepository;
 import com.personalfinance.api.domain.categoryplanner.CategoryPlanner;
+import com.personalfinance.api.facade.CategoryPlannerRepositoryFacade;
 
 @Component
 public class CategoryPlannerRepositoryImpl implements CategoryPlannerRepositoryFacade {
@@ -20,7 +21,9 @@ public class CategoryPlannerRepositoryImpl implements CategoryPlannerRepositoryF
 
 	private final CategoryPlannerRepository categoryPlannerRepository;
 
-	CategoryPlannerRepositoryImpl(CategoryPlannerRepository categoryPlannerRepository) {
+	public CategoryPlannerRepositoryImpl( //
+			CategoryPlannerRepository categoryPlannerRepository //
+	) {
 		this.categoryPlannerRepository = categoryPlannerRepository;
 	}
 

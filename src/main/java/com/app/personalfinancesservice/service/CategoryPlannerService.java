@@ -10,7 +10,6 @@ import com.app.personalfinancesservice.exceptions.CreateNewItemException;
 import com.app.personalfinancesservice.exceptions.NotFoundException;
 import com.app.personalfinancesservice.facade.budget.BudgetRepositoryFacade;
 import com.app.personalfinancesservice.facade.category.CategoryRepositoryFacade;
-import com.app.personalfinancesservice.facade.categoryplanner.CategoryPlannerRepositoryFacade;
 import com.app.personalfinancesservice.filter.CategoryPlannerFilter;
 import com.app.personalfinancesservice.filter.CategoryPlannerSorter;
 import com.personalfinance.api.domain.category.Category;
@@ -25,10 +24,11 @@ import com.personalfinance.api.domain.categoryplanner.output.CreateCategoryPlann
 import com.personalfinance.api.domain.categoryplanner.output.GetCategoryPlannerResponse;
 import com.personalfinance.api.domain.categoryplanner.output.GetListCategoryPlannerResponse;
 import com.personalfinance.api.domain.categoryplanner.output.UpdateCategoryPlannerResponse;
+import com.personalfinance.api.facade.CategoryPlannerRepositoryFacade;
 import com.personalfinance.api.service.CategoryPlannerServiceBase;
 
 @Service
-public class CategoryPlannerServiceService implements CategoryPlannerServiceBase {
+public class CategoryPlannerService implements CategoryPlannerServiceBase {
 
 	private static final String CATEGORY_PLANNER = "CATEGORY_PLANNER";
 	private static final String BUDGET_ID_LABEL = "budgetId";
@@ -38,8 +38,10 @@ public class CategoryPlannerServiceService implements CategoryPlannerServiceBase
 	BudgetRepositoryFacade budgetRepositoryFacade;
 	CategoryRepositoryFacade categoryRepositoryFacade;
 
-	public CategoryPlannerServiceService(CategoryPlannerRepositoryFacade categoryPlannerRepositoryFacade, //
-			BudgetRepositoryFacade budgetRepositoryFacade, CategoryRepositoryFacade categoryRepositoryFacade) {
+	public CategoryPlannerService( //
+			CategoryPlannerRepositoryFacade categoryPlannerRepositoryFacade, //
+			BudgetRepositoryFacade budgetRepositoryFacade, //
+			CategoryRepositoryFacade categoryRepositoryFacade) {
 		this.categoryPlannerRepositoryFacade = categoryPlannerRepositoryFacade;
 		this.budgetRepositoryFacade = budgetRepositoryFacade;
 		this.categoryRepositoryFacade = categoryRepositoryFacade;

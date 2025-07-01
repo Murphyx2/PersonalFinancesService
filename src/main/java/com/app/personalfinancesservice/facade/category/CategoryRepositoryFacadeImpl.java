@@ -21,7 +21,7 @@ public class CategoryRepositoryFacadeImpl implements CategoryRepositoryFacade {
 
 	private final CategoryRepository categoryRepository;
 
-	CategoryRepositoryFacadeImpl(CategoryRepository categoryRepository) {
+	public CategoryRepositoryFacadeImpl(CategoryRepository categoryRepository) {
 		this.categoryRepository = categoryRepository;
 	}
 

@@ -19,7 +19,7 @@ public class BudgetRepositoryFacadeImpl implements BudgetRepositoryFacade {
 
 	private final BudgetRepository budgetRepository;
 
-	BudgetRepositoryFacadeImpl(BudgetRepository budgetRepository) {
+	public BudgetRepositoryFacadeImpl(BudgetRepository budgetRepository) {
 		this.budgetRepository = budgetRepository;
 	}
 
