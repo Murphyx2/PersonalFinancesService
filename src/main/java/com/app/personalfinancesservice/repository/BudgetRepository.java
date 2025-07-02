@@ -16,9 +16,7 @@ public interface BudgetRepository extends JpaRepository<Budget, UUID> {
 
 	boolean existsByIdAndUserId(UUID id, UUID userId);
 
-	List<Budget> getAllByUserIdAndPortfolioId(UUID userId, UUID portfolioId);
+	List<Budget> getAllByPortfolioIdAndUserId(UUID portfolioId, UUID userId);
 
-	Optional<Budget> getByIdAndUserId(UUID id, UUID userId);
-
-	List<Budget> getListByIdAndUserId(UUID id, UUID userId);
+	Optional<Budget> getBudgetByIdAndUserId(UUID id, UUID userId);
 }

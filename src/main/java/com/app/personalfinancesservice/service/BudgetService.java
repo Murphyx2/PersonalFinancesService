@@ -40,7 +40,7 @@ public class BudgetService implements BudgetServiceBase {
 	public CreateBudgetResponse createBudget(CreateBudgetRequest request) {
 
 		// Check if portfolio exists
-		if (portfolioRepositoryFacade.existsPortfolio(request.getPortfolioId(), request.getUserId())) {
+		if (!portfolioRepositoryFacade.existsPortfolio(request.getPortfolioId(), request.getUserId())) {
 			throw new NotFoundException(BUDGET_LABEL, "portfolio", request.getPortfolioId());
 		}
 
@@ -55,8 +55,10 @@ public class BudgetService implements BudgetServiceBase {
 	@Override
 	public DeleteBudgetResponse deleteBudget(DeleteBudgetRequest request) {
 
-		return new DeleteBudgetResponse() //
-				.withSuccess(budgetRepositoryFacade.deleteBudget(request.getId(), request.getUserId()));
+		budgetRepositoryFacade //
+				.deleteBudget(request.getId(), request.getUserId());
+
+		return new DeleteBudgetResponse().withSuccess(true);
 	}
 
 	@Override

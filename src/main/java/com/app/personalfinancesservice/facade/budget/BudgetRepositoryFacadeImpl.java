@@ -25,41 +25,6 @@ public class BudgetRepositoryFacadeImpl implements BudgetRepositoryFacade {
 	}
 
 	@Override
-	public Budget saveBudget(Budget budget) {
-
-		if (budget == null) {
-			throw new MissingIdException(BUDGET_LABEL, "budget");
-		}
-
-		return budgetRepository.save(budget);
-	}
-
-	@Override
-	public Budget getBudgetByIdAndUserId(String id, String userId) {
-
-		final UUID userIdUUID = UUIDConverter //
-				.convert(userId, USER_ID_LABEL, BUDGET_LABEL);
-
-		final UUID idUUID = UUIDConverter //
-				.convert(id, BUDGET_ID_LABEL, BUDGET_LABEL);
-
-		return budgetRepository.getByIdAndUserId(idUUID, userIdUUID) //
-				.orElse(null);
-	}
-
-	@Override
-	public boolean deleteBudget(String id, String userId) {
-
-		final UUID userIdUUID = UUIDConverter //
-				.convert(userId, USER_ID_LABEL, BUDGET_LABEL);
-
-		final UUID idUUID = UUIDConverter //
-				.convert(id, BUDGET_ID_LABEL, BUDGET_LABEL);
-
-		return budgetRepository.deleteBudgetByIdAndUserId(idUUID, userIdUUID);
-	}
-
-	@Override
 	public boolean budgetExists(String id, String userId) {
 
 		final UUID userIdUUID = UUIDConverter //
@@ -72,6 +37,34 @@ public class BudgetRepositoryFacadeImpl implements BudgetRepositoryFacade {
 	}
 
 	@Override
+	public void deleteBudget(String id, String userId) {
+
+		final UUID userIdUUID = UUIDConverter //
+				.convert(userId, USER_ID_LABEL, BUDGET_LABEL);
+
+		final UUID idUUID = UUIDConverter //
+				.convert(id, BUDGET_ID_LABEL, BUDGET_LABEL);
+
+		budgetRepository //
+				.getBudgetByIdAndUserId(idUUID, userIdUUID) //
+				.ifPresent(budgetRepository::delete);
+
+	}
+
+	@Override
+	public Budget getBudgetByIdAndUserId(String id, String userId) {
+
+		final UUID userIdUUID = UUIDConverter //
+				.convert(userId, USER_ID_LABEL, BUDGET_LABEL);
+
+		final UUID idUUID = UUIDConverter //
+				.convert(id, BUDGET_ID_LABEL, BUDGET_LABEL);
+
+		return budgetRepository.getBudgetByIdAndUserId(idUUID, userIdUUID) //
+				.orElse(null);
+	}
+
+	@Override
 	public List<Budget> getBudgetsByPortfolioIdAndUserId(String portfolioId, String userId) {
 
 		final UUID userIdUUID = UUIDConverter //
@@ -80,6 +73,16 @@ public class BudgetRepositoryFacadeImpl implements BudgetRepositoryFacade {
 		final UUID idUUID = UUIDConverter //
 				.convert(portfolioId, "portfolioId", BUDGET_LABEL);
 
-		return budgetRepository.getListByIdAndUserId(idUUID, userIdUUID);
+		return budgetRepository.getAllByPortfolioIdAndUserId(idUUID, userIdUUID);
+	}
+
+	@Override
+	public Budget saveBudget(Budget budget) {
+
+		if (budget == null) {
+			throw new MissingIdException(BUDGET_LABEL, "budget");
+		}
+
+		return budgetRepository.save(budget);
 	}
 }
