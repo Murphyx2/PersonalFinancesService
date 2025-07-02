@@ -18,7 +18,7 @@ public class CategoryPlannerConverter {
 				.convert(request.getUserId(), "userId", CATEGORY_PLANNER);
 
 		UUID budgetUUID = UUIDConverter //
-				.convert(request.getUserId(), "budgetId", CATEGORY_PLANNER);
+				.convert(request.getBudgetId(), "budgetId", CATEGORY_PLANNER);
 
 		return new CategoryPlanner() //
 				.withUserId(userId) //

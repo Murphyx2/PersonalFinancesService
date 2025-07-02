@@ -11,6 +11,11 @@ public class BudgetConverter {
 	private static final String BUDGET_LABEL = "BUDGET";
 
 	public static Budget convert(CreateBudgetRequest request) {
+
+		if(request == null) {
+			return null;
+		}
+
 		return new Budget() //
 				.withUserId(UUIDConverter.convert(request.getUserId(), "userId", BUDGET_LABEL)) //
 				.withPortfolioId(UUIDConverter.convert(request.getPortfolioId(), "portfolioId", BUDGET_LABEL)) //

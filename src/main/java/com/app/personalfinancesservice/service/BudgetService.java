@@ -46,12 +46,11 @@ public class BudgetService implements BudgetServiceBase {
 			throw new NotFoundException(BUDGET_LABEL, "portfolio", request.getPortfolioId());
 		}
 
-		// Check if for dates
+		// Check if dates are correct
 		if(DateUtils.isStartDateGreaterThanStartDate(request.getEndAt(), request.getStartAt())
 		) {
 			throw new DateTimeException("End date should be greater than start");
 		}
-
 
 		// Convert request to a budget and save it
 		Budget newBudget = budgetRepositoryFacade //

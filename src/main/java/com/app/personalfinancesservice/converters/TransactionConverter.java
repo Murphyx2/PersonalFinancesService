@@ -13,6 +13,10 @@ public class TransactionConverter {
 
 	public static Transaction convert(CreateTransactionRequest request) {
 
+		if (request == null) {
+			return null;
+		}
+
 		return new Transaction() //
 				.withBudgetId(UUIDConverter.convert(request.getBudgetId(), "budgetId", TRANSACTION_LABEL)) //
 				.withUserId(UUIDConverter.convert(request.getUserId(), "userId", TRANSACTION_LABEL)) //
@@ -27,6 +31,10 @@ public class TransactionConverter {
 	public static Transaction convert(Transaction oldTransaction, //
 			Category category, //
 			UpdateTransactionRequest request) {
+
+		if(oldTransaction == null || category == null ||  request == null) {
+			return null;
+		}
 
 		return oldTransaction //
 				.withDescription(request.getDescription()) //

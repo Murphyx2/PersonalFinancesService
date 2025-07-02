@@ -1,5 +1,6 @@
 package com.app.personalfinancesservice.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -119,15 +120,16 @@ public class CategoryPlannerService implements CategoryPlannerServiceBase {
 	public GetListCategoryPlannerResponse getListCategoryPlanner(GetListCategoryPlannerRequest request) {
 
 		// Check budget
-		if (budgetRepositoryFacade.budgetExists(request.getBudgetId(), request.getUserId())) {
+		if (!budgetRepositoryFacade.budgetExists(request.getBudgetId(), request.getUserId())) {
 			throw new NotFoundException(CATEGORY_PLANNER, BUDGET_ID_LABEL, request.getBudgetId());
 		}
 
 		List<CategoryPlanner> categoryPlanners = categoryPlannerRepositoryFacade //
-				.getCategoriesPlanner(request.getBudgetId(), request.getUserId());
+				.getCategoriesPlanner(request.getUserId(), request.getBudgetId());
 
 		if (categoryPlanners == null || categoryPlanners.isEmpty()) {
-			throw new NotFoundException(CATEGORY_PLANNER, "categoryPlanner on budgetId", request.getBudgetId());
+			return new GetListCategoryPlannerResponse() //
+					.withCategoryPlanners(new ArrayList<>());
 		}
 		// Apply filter
 		List<CategoryPlanner> filteredCategoryPlanners = CategoryPlannerFilter //

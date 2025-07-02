@@ -9,6 +9,11 @@ import com.personalfinance.api.domain.categoryplanner.dto.CategoryPlannerDTO;
 public class CategoryPlannerDTOConverter {
 
 	public static CategoryPlannerDTO convert(CategoryPlanner categoryPlanner) {
+
+		if(categoryPlanner == null) {
+			return null;
+		}
+
 		return new CategoryPlannerDTO() //
 				.withId(categoryPlanner.getId().toString()) //
 				.withUserId(categoryPlanner.getUserId().toString()) //

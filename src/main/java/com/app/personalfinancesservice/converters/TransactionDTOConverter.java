@@ -19,6 +19,7 @@ public class TransactionDTOConverter {
 				.withUserId(transaction.getUserId().toString()) //
 				.withBudgetId(transaction.getBudgetId().toString()) //
 				.withCategory(CategoryDTOConverter.convert(transaction.getCategory())) //
+				.withDescription(transaction.getDescription()) //
 				.withCurrencyCode(transaction.getCurrencyCode()) //
 				.withAmount(transaction.getAmount()) //
 				.withTransactionDate(transaction.getTransactionDate()) //

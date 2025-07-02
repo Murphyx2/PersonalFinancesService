@@ -13,6 +13,10 @@ public class PortfolioConverter {
 
 	public static Portfolio convert(CreatePortfolioRequest request) {
 
+		if (request == null) {
+			return null;
+		}
+
 		Portfolio portfolio = new Portfolio() //
 				.withUserId(UUIDConverter.convert(request.getUserId(), "userId", PORTFOLIO_LABEL)) //
 				.withName(request.getName()) //
@@ -28,6 +32,10 @@ public class PortfolioConverter {
 	}
 
 	public static Portfolio convert(UpdatePortfolioRequest request, Portfolio oldPortfolio) {
+
+		if (request == null ||  oldPortfolio == null) {
+			return null;
+		}
 
 		return oldPortfolio
 				.withName(request.getName()) //

@@ -15,6 +15,10 @@ public class CategoryConverter {
 
 	public static Category convert(CreateCategoryRequest request) {
 
+		if (request == null) {
+			return null;
+		}
+
 		UUID userId = UUIDConverter.convert(request.getUserId(), USER_ID_LABEL, CATEGORY_LABEL);
 
 		return new Category() //
@@ -25,6 +29,9 @@ public class CategoryConverter {
 	}
 
 	public static Category convert(Category oldCategory, UpdateCategoryRequest request) {
+		if (oldCategory == null || request == null) {
+			return null;
+		}
 
 		return oldCategory //
 				.withName(request.getName().toUpperCase()) //
