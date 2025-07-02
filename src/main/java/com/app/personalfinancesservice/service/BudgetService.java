@@ -1,5 +1,6 @@
 package com.app.personalfinancesservice.service;
 
+import java.time.DateTimeException;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -8,6 +9,7 @@ import com.app.personalfinancesservice.converters.BudgetConverter;
 import com.app.personalfinancesservice.converters.BudgetDTOConverter;
 import com.app.personalfinancesservice.exceptions.NotFoundException;
 import com.app.personalfinancesservice.filter.BudgetSorter;
+import com.app.personalfinancesservice.utils.DateUtils;
 import com.personalfinance.api.domain.budget.Budget;
 import com.personalfinance.api.domain.budget.input.CreateBudgetRequest;
 import com.personalfinance.api.domain.budget.input.DeleteBudgetRequest;
@@ -43,6 +45,13 @@ public class BudgetService implements BudgetServiceBase {
 		if (!portfolioRepositoryFacade.existsPortfolio(request.getPortfolioId(), request.getUserId())) {
 			throw new NotFoundException(BUDGET_LABEL, "portfolio", request.getPortfolioId());
 		}
+
+		// Check if for dates
+		if(DateUtils.isStartDateGreaterThanStartDate(request.getEndAt(), request.getStartAt())
+		) {
+			throw new DateTimeException("End date should be greater than start");
+		}
+
 
 		// Convert request to a budget and save it
 		Budget newBudget = budgetRepositoryFacade //

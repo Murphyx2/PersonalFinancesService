@@ -1,12 +1,14 @@
 package com.app.personalfinancesservice.utils;
 
+import java.time.LocalDateTime;
+
 public class DateUtils {
 
-	public static boolean checkEndDateGreaterThanToday(){
-		return false;
+	public static boolean isStartDateGreaterThanStartDate(LocalDateTime endDate, LocalDateTime startDate) {
+		return startDate.isAfter(endDate);
 	}
 
-	public static boolean checkStartDateGreaterThanStartDate(){
-		return false;
+	private DateUtils() {
+		// Empty on purpose
 	}
 }
