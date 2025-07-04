@@ -6,10 +6,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.app.personalfinancesservice.domain.currency.input.GetCurrencyRequest;
-import com.app.personalfinancesservice.domain.currency.output.GetCurrencyResponse;
+
 import com.app.personalfinancesservice.domain.http.HttpRoutes;
 import com.app.personalfinancesservice.service.CurrencyService;
+import com.personalfinance.api.domain.currency.input.GetCurrencyRequest;
+import com.personalfinance.api.domain.currency.output.GetCurrencyResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

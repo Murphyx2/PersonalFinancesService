@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import com.app.personalfinancesservice.domain.category.Category;
-import com.app.personalfinancesservice.domain.filter.SortBy;
-import com.app.personalfinancesservice.domain.filter.SortDirection;
+import com.personalfinance.api.domain.category.Category;
+import com.personalfinance.api.filter.SortBy;
+import com.personalfinance.api.filter.SortDirection;
 
 public class CategorySorter {
 

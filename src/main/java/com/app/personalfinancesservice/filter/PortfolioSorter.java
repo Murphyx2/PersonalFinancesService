@@ -3,9 +3,9 @@ package com.app.personalfinancesservice.filter;
 import java.util.Comparator;
 import java.util.List;
 
-import com.app.personalfinancesservice.domain.filter.SortBy;
-import com.app.personalfinancesservice.domain.filter.SortDirection;
-import com.app.personalfinancesservice.domain.portfolio.Portfolio;
+import com.personalfinance.api.domain.portfolio.Portfolio;
+import com.personalfinance.api.filter.SortBy;
+import com.personalfinance.api.filter.SortDirection;
 
 public class PortfolioSorter {
 

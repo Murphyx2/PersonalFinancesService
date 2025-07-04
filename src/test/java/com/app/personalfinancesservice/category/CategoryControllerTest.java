@@ -13,15 +13,17 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.app.personalfinancesservice.controller.CategoryController;
 import com.app.personalfinancesservice.converters.CategoryConverter;
-import com.app.personalfinancesservice.domain.category.Category;
-import com.app.personalfinancesservice.domain.category.input.CreateCategoryRequest;
-import com.app.personalfinancesservice.domain.category.input.GetCategoriesRequest;
-import com.app.personalfinancesservice.domain.category.output.CreateCategoryResponse;
-import com.app.personalfinancesservice.domain.category.output.GetCategoriesResponse;
+import com.app.personalfinancesservice.converters.CategoryDTOConverter;
 import com.app.personalfinancesservice.domain.http.HttpRoutes;
-import com.app.personalfinancesservice.domain.transaction.TransactionType;
 import com.app.personalfinancesservice.exceptions.CreateNewItemException;
 import com.app.personalfinancesservice.service.CategoryService;
+import com.personalfinance.api.domain.category.Category;
+import com.personalfinance.api.domain.category.dto.CategoryDTO;
+import com.personalfinance.api.domain.category.input.CreateCategoryRequest;
+import com.personalfinance.api.domain.category.input.GetCategoriesRequest;
+import com.personalfinance.api.domain.category.output.CreateCategoryResponse;
+import com.personalfinance.api.domain.category.output.GetCategoriesResponse;
+import com.personalfinance.api.domain.transaction.TransactionType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -92,7 +94,8 @@ class CategoryControllerTest {
 		Category category = CategoryConverter.convert(request) //
 				.withId(userId);
 
-		CreateCategoryResponse response = new CreateCategoryResponse().withCategory(category);
+		CreateCategoryResponse response = new CreateCategoryResponse() //
+				.withCategory(CategoryDTOConverter.convert(category));
 
 		when(categoryService.createCategory(any(CreateCategoryRequest.class))).thenReturn(response);
 
@@ -113,19 +116,19 @@ class CategoryControllerTest {
 		UUID userId = UUID.randomUUID();
 		UUID id = UUID.randomUUID();
 
-		Category category = new Category() //
-				.withId(id) //
-				.withUserId(userId) //
+		CategoryDTO category = new CategoryDTO() //
+				.withId(id.toString()) //
+				.withUserId(userId.toString()) //
 				.withName("Telecommunications") //
 				.withTransactionType(TransactionType.EXPENSE) //
 				.withCreatedAt(LocalDateTime.now());
-		Category category2 = new Category() //
-				.withId(id) //
-				.withUserId(userId) //
+		CategoryDTO category2 = new CategoryDTO() //
+				.withId(id.toString()) //
+				.withUserId(userId.toString()) //
 				.withName("Utilities") //
 				.withTransactionType(TransactionType.EXPENSE) //
 				.withCreatedAt(LocalDateTime.now());
-		List<Category> categories = new ArrayList<>();
+		List<CategoryDTO> categories = new ArrayList<>();
 		categories.add(category);
 		categories.add(category2);
 

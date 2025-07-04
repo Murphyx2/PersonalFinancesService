@@ -2,16 +2,22 @@ package com.app.personalfinancesservice.converters;
 
 import java.time.LocalDateTime;
 
-import com.app.personalfinancesservice.domain.budget.Budget;
-import com.app.personalfinancesservice.domain.budget.input.CreateBudgetRequest;
-import com.app.personalfinancesservice.domain.budget.input.UpdateBudgetRequest;
+import com.personalfinance.api.domain.budget.Budget;
+import com.personalfinance.api.domain.budget.input.CreateBudgetRequest;
+import com.personalfinance.api.domain.budget.input.UpdateBudgetRequest;
 
 public class BudgetConverter {
 
 	private static final String BUDGET_LABEL = "BUDGET";
 
 	public static Budget convert(CreateBudgetRequest request) {
-		return new Budget().withUserId(UUIDConverter.convert(request.getUserId(), "userId", BUDGET_LABEL)) //
+
+		if(request == null) {
+			return null;
+		}
+
+		return new Budget() //
+				.withUserId(UUIDConverter.convert(request.getUserId(), "userId", BUDGET_LABEL)) //
 				.withPortfolioId(UUIDConverter.convert(request.getPortfolioId(), "portfolioId", BUDGET_LABEL)) //
 				.withName(request.getName()) //
 				.withDescription(request.getDescription()) //
@@ -22,6 +28,11 @@ public class BudgetConverter {
 	}
 
 	public static Budget convert(UpdateBudgetRequest request, Budget oldBudget) {
+
+		if (oldBudget == null) {
+			return null;
+		}
+
 		return new Budget() //
 				.withName(request.getName()) //
 				.withDescription(request.getDescription()) //

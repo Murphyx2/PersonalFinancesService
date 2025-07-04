@@ -6,17 +6,16 @@ import java.util.List;
 import java.util.UUID;
 
 import com.app.personalfinancesservice.converters.PortfolioConverter;
-import com.app.personalfinancesservice.domain.filter.SortBy;
-import com.app.personalfinancesservice.domain.filter.SortDirection;
-import com.app.personalfinancesservice.domain.portfolio.Portfolio;
-import com.app.personalfinancesservice.domain.portfolio.input.CreatePortfolioRequest;
-import com.app.personalfinancesservice.domain.portfolio.input.GetPortfoliosRequest;
-import com.app.personalfinancesservice.domain.portfolio.output.CreatePortfolioResponse;
-import com.app.personalfinancesservice.domain.portfolio.output.GetPortfoliosResponse;
 import com.app.personalfinancesservice.exceptions.CreateNewItemException;
-import com.app.personalfinancesservice.exceptions.MissingIdException;
-import com.app.personalfinancesservice.repository.PortfolioRepository;
 import com.app.personalfinancesservice.service.PortfolioService;
+import com.personalfinance.api.domain.portfolio.Portfolio;
+import com.personalfinance.api.domain.portfolio.input.CreatePortfolioRequest;
+import com.personalfinance.api.domain.portfolio.input.GetPortfoliosRequest;
+import com.personalfinance.api.domain.portfolio.output.CreatePortfolioResponse;
+import com.personalfinance.api.domain.portfolio.output.GetPortfoliosResponse;
+import com.personalfinance.api.facade.PortfolioRepositoryFacade;
+import com.personalfinance.api.filter.SortBy;
+import com.personalfinance.api.filter.SortDirection;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -24,8 +23,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -34,9 +35,8 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class PortfolioServiceTest {
 
-	private static final String USERID_LABEL = "userId";
 	@Mock
-	private PortfolioRepository portfolioRepository;
+	private PortfolioRepositoryFacade portfolioRepository;
 	@InjectMocks
 	private PortfolioService portfolioService;
 
@@ -45,11 +45,11 @@ class PortfolioServiceTest {
 		CreatePortfolioRequest request = new CreatePortfolioRequest() //
 				.withUserId(null);
 
-		MissingIdException exception = assertThrows(MissingIdException.class, () -> {
+		CreateNewItemException exception = assertThrows(CreateNewItemException.class, () -> {
 			portfolioService.createPortfolio(request);
 		});
 
-		assertEquals("Missing userId", exception.getMessage());
+		assertEquals("Error creating Portfolio, null", exception.getMessage());
 		assertEquals("PORTFOLIO", exception.getLocation());
 	}
 
@@ -59,7 +59,8 @@ class PortfolioServiceTest {
 		CreatePortfolioRequest request = new CreatePortfolioRequest() //
 				.withUserId(validUserId);
 
-		when(portfolioRepository.save(any(Portfolio.class))).thenThrow(new RuntimeException("Database error"));
+		when(portfolioRepository.savePortfolio(any(Portfolio.class))) //
+				.thenThrow(new RuntimeException("Database error"));
 
 		CreateNewItemException exception = assertThrows(CreateNewItemException.class, () -> {
 			portfolioService.createPortfolio(request.withUserId(validUserId));
@@ -84,13 +85,15 @@ class PortfolioServiceTest {
 		Portfolio portfolio = PortfolioConverter.convert(request);
 
 		// Configure the mock to return portfolio went saving
-		when(portfolioRepository.save(any(Portfolio.class))).thenReturn(portfolio);
+		when(portfolioRepository //
+				.savePortfolio(any(Portfolio.class))) //
+				.thenReturn(portfolio);
 
 		// Execute
 		CreatePortfolioResponse response = portfolioService.createPortfolio(request);
 
 		// Assert
-		verify(portfolioRepository, times(1)).save(any(Portfolio.class));
+		verify(portfolioRepository, times(1)).savePortfolio(any(Portfolio.class));
 
 		assertEquals(portfolio.getId(), response.getPortfolio().getId());
 		assertEquals(portfolio.getName(), response.getPortfolio().getName());
@@ -121,11 +124,12 @@ class PortfolioServiceTest {
 				.withPortfolioId(unknownPortfolioId.toString()) //
 				.withUserId(validUserId.toString());
 
-		when(portfolioRepository.getAllByUserId(any(UUID.class))).thenReturn(null);
+		when(portfolioRepository.getAllPortfolioByUserId(any())).thenReturn(null);
 
 		GetPortfoliosResponse response = portfolioService.getPortfolios(request);
 
-		assertNull(response.getPortfolios());
+		assertNotNull(response.getPortfolios());
+		assertTrue(response.getPortfolios().isEmpty());
 	}
 
 	@Test
@@ -149,7 +153,7 @@ class PortfolioServiceTest {
 				.withSortBy(SortBy.CREATED_AT) //
 				.withSortDirection(SortDirection.ASC);
 
-		when(portfolioRepository.getAllByUserId(any(UUID.class))).thenReturn(portfolios);
+		when(portfolioRepository.getAllPortfolioByUserId(any())).thenReturn(portfolios);
 
 		GetPortfoliosResponse response = portfolioService.getPortfolios(request);
 

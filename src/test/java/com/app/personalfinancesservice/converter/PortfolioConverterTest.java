@@ -4,9 +4,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import com.app.personalfinancesservice.converters.PortfolioConverter;
-import com.app.personalfinancesservice.domain.portfolio.Portfolio;
-import com.app.personalfinancesservice.domain.portfolio.input.CreatePortfolioRequest;
-import com.app.personalfinancesservice.domain.portfolio.input.UpdatePortfolioRequest;
+
+import com.personalfinance.api.domain.portfolio.Portfolio;
+import com.personalfinance.api.domain.portfolio.input.CreatePortfolioRequest;
+import com.personalfinance.api.domain.portfolio.input.UpdatePortfolioRequest;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -19,7 +20,8 @@ class PortfolioConverterTest {
 		String userId = "caaa8fba-8b90-43e9-a261-a451f305c966";
 		LocalDateTime dateTime = LocalDateTime.now();
 
-		CreatePortfolioRequest request = new CreatePortfolioRequest().withUserId(userId) //
+		CreatePortfolioRequest request = new CreatePortfolioRequest() //
+				.withUserId(userId) //
 				.withName("Test Portfolio") //
 				.withDescription("Test Description");
 

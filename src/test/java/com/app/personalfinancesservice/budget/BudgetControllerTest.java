@@ -14,17 +14,18 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.app.personalfinancesservice.controller.BudgetController;
 import com.app.personalfinancesservice.converters.BudgetConverter;
-import com.app.personalfinancesservice.domain.budget.Budget;
-import com.app.personalfinancesservice.domain.budget.input.CreateBudgetRequest;
-import com.app.personalfinancesservice.domain.budget.input.GetBudgetsRequest;
-import com.app.personalfinancesservice.domain.budget.input.UpdateBudgetRequest;
-import com.app.personalfinancesservice.domain.budget.output.CreateBudgetResponse;
-import com.app.personalfinancesservice.domain.budget.output.GetBudgetsResponse;
-import com.app.personalfinancesservice.domain.budget.output.UpdateBudgetResponse;
+import com.app.personalfinancesservice.converters.BudgetDTOConverter;
 import com.app.personalfinancesservice.domain.http.HttpRoutes;
 import com.app.personalfinancesservice.exceptions.InvalidIdException;
 import com.app.personalfinancesservice.exceptions.NotFoundException;
 import com.app.personalfinancesservice.service.BudgetService;
+import com.personalfinance.api.domain.budget.Budget;
+import com.personalfinance.api.domain.budget.input.CreateBudgetRequest;
+import com.personalfinance.api.domain.budget.input.GetBudgetsRequest;
+import com.personalfinance.api.domain.budget.input.UpdateBudgetRequest;
+import com.personalfinance.api.domain.budget.output.CreateBudgetResponse;
+import com.personalfinance.api.domain.budget.output.GetBudgetsResponse;
+import com.personalfinance.api.domain.budget.output.UpdateBudgetResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -110,7 +111,8 @@ class BudgetControllerTest {
 				.withStartAt(LocalDateTime.now()) //
 				.withEndAt(LocalDateTime.now());
 
-		CreateBudgetResponse response = new CreateBudgetResponse().withBudget(budget);
+		CreateBudgetResponse response = new CreateBudgetResponse()
+				.withBudget(BudgetDTOConverter.convert(budget));
 
 		when(budgetService.createBudget(any(CreateBudgetRequest.class))).thenReturn(response);
 
@@ -145,7 +147,8 @@ class BudgetControllerTest {
 
 		List<Budget> budgets = Collections.singletonList(budget);
 
-		GetBudgetsResponse response = new GetBudgetsResponse().withBudgets(budgets);
+		GetBudgetsResponse response = new GetBudgetsResponse() //
+				.withBudgets(BudgetDTOConverter.convertMany(budgets));
 
 		when(budgetService.getBudgets(any(GetBudgetsRequest.class))).thenReturn(response);
 
@@ -189,7 +192,8 @@ class BudgetControllerTest {
 		List<Budget> budgets = new java.util.ArrayList<>(Collections.singletonList(budget));
 		budgets.add(budget2);
 
-		GetBudgetsResponse response = new GetBudgetsResponse().withBudgets(budgets);
+		GetBudgetsResponse response = new GetBudgetsResponse() //
+				.withBudgets(BudgetDTOConverter.convertMany(budgets));
 
 		when(budgetService.getBudgets(any(GetBudgetsRequest.class))).thenReturn(response);
 
@@ -261,7 +265,7 @@ class BudgetControllerTest {
 		Budget updateBudget = BudgetConverter.convert(request, oldBudget);
 
 		when(budgetService.updateBudget(any(UpdateBudgetRequest.class))) //
-				.thenReturn(new UpdateBudgetResponse().withBudget(updateBudget));
+				.thenReturn(new UpdateBudgetResponse().withBudget(BudgetDTOConverter.convert(updateBudget)));
 
 		mockMvc.perform(put(HttpRoutes.API_ROOT + HttpRoutes.BUDGET) //
 						.header("X-User-id", userId.toString()) //
