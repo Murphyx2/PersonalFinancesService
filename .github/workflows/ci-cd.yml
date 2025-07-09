@@ -7,6 +7,9 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    permissions:
+      packages: read
+      contents: read
     steps:
       # Step 1:
       - name: Checkout code
@@ -28,10 +31,14 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
       # Step 4: Build with Maven
       - name: Build with Maven
-        run: mvn clean package -DSkipTests=false
+        run: mvn clean package -DSkipTests=false --settings .github/settings.xml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       # Step 5: Run tests
       - name: Run tests
-        run: mvn test
+        run: mvn test --settings .github/settings.xml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       # Step 5.1:
       - name: Upload test results
         if: always()
@@ -41,7 +48,9 @@ jobs:
           path: target/surefire-reports/*.xml
       # Step 6: Generate Surefire HTML report
       - name: Generate surefire report
-        run: mvn surefire-report:report
+        run: mvn surefire-report:report --settings .github/settings.xml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       # Step 7
       - name: Upload test results
         if: always()
