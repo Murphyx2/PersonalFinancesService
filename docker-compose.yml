@@ -10,6 +10,12 @@ services:
     networks:
       - personal_finance_net
       - app-network
+  redis:
+    image: redis:7.4
+    ports:
+      - "6379:6379"
+    networks:
+      - personal_finance_net
 
   # DB
   personal-finance-db:

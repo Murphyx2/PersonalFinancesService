@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import com.app.personalfinancesservice.converters.PortfolioConverter;
+import com.app.personalfinancesservice.converters.PortfolioDTOConverter;
 import com.app.personalfinancesservice.exceptions.CreateNewItemException;
 import com.app.personalfinancesservice.service.PortfolioService;
-import com.personalfinance.api.domain.portfolio.Portfolio;
+import com.personalfinance.api.domain.portfolio.dto.PortfolioDTO;
 import com.personalfinance.api.domain.portfolio.input.CreatePortfolioRequest;
 import com.personalfinance.api.domain.portfolio.input.GetPortfoliosRequest;
 import com.personalfinance.api.domain.portfolio.output.CreatePortfolioResponse;
@@ -32,6 +32,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@SuppressWarnings("java:S5778")
 @ExtendWith(MockitoExtension.class)
 class PortfolioServiceTest {
 
@@ -59,7 +60,7 @@ class PortfolioServiceTest {
 		CreatePortfolioRequest request = new CreatePortfolioRequest() //
 				.withUserId(validUserId);
 
-		when(portfolioRepository.savePortfolio(any(Portfolio.class))) //
+		when(portfolioRepository.savePortfolio(any(PortfolioDTO.class))) //
 				.thenThrow(new RuntimeException("Database error"));
 
 		CreateNewItemException exception = assertThrows(CreateNewItemException.class, () -> {
@@ -82,18 +83,19 @@ class PortfolioServiceTest {
 				.withCreated(LocalDateTime.now()) //
 				;
 
-		Portfolio portfolio = PortfolioConverter.convert(request);
+		PortfolioDTO portfolio = PortfolioDTOConverter.convert(request);
 
 		// Configure the mock to return portfolio went saving
 		when(portfolioRepository //
-				.savePortfolio(any(Portfolio.class))) //
+				.savePortfolio(any(PortfolioDTO.class))) //
 				.thenReturn(portfolio);
 
 		// Execute
 		CreatePortfolioResponse response = portfolioService.createPortfolio(request);
 
 		// Assert
-		verify(portfolioRepository, times(1)).savePortfolio(any(Portfolio.class));
+		verify(portfolioRepository, times(1)) //
+				.savePortfolio(any(PortfolioDTO.class));
 
 		assertEquals(portfolio.getId(), response.getPortfolio().getId());
 		assertEquals(portfolio.getName(), response.getPortfolio().getName());
@@ -124,7 +126,7 @@ class PortfolioServiceTest {
 				.withPortfolioId(unknownPortfolioId.toString()) //
 				.withUserId(validUserId.toString());
 
-		when(portfolioRepository.getAllPortfolioByUserId(any())).thenReturn(null);
+		when(portfolioRepository.getAllPortfolioByUserId(any())).thenReturn(new ArrayList<>());
 
 		GetPortfoliosResponse response = portfolioService.getPortfolios(request);
 
@@ -137,14 +139,14 @@ class PortfolioServiceTest {
 		UUID validUserId = UUID.randomUUID();
 		UUID validPortfolioId = UUID.randomUUID();
 
-		Portfolio portfolio = new Portfolio() //
+		PortfolioDTO portfolio = new PortfolioDTO() //
 				.withId(validUserId) //
 				.withUserId(validPortfolioId) //
 				.withName("Test name Portfolio") //
 				.withDescription("Test description portfolio") //
 				.withBudgets(new ArrayList<>()).withCreated(LocalDateTime.now());
 
-		List<Portfolio> portfolios = new ArrayList<>();
+		List<PortfolioDTO> portfolios = new ArrayList<>();
 		portfolios.add(portfolio);
 
 		GetPortfoliosRequest request = new GetPortfoliosRequest() //

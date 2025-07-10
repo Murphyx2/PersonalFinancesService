@@ -1,5 +1,4 @@
 # Default Configuration
-
 spring:
   application:
     name: personal-finance
@@ -11,6 +10,18 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      # username: your-username
+      # password: your-password
+  cache:
+    type: redis
+    redis:
+      time-to-live: 60000
+      cache-null-values: false
+
 server:
   port: ${SERVER_PORT:8500}
 
@@ -53,6 +64,17 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      # username: your-username
+      # password: your-password
+  cache:
+    type: redis
+    redis:
+      time-to-live: 60000
+      cache-null-values: false
 server:
     port: ${SERVER_PORT:8400}
 

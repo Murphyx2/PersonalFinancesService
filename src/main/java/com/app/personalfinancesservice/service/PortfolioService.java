@@ -7,12 +7,11 @@ import org.slf4j.LoggerFactory;
 
 import org.springframework.stereotype.Service;
 
-import com.app.personalfinancesservice.converters.PortfolioConverter;
 import com.app.personalfinancesservice.converters.PortfolioDTOConverter;
 import com.app.personalfinancesservice.exceptions.CreateNewItemException;
 import com.app.personalfinancesservice.exceptions.MissingIdException;
-import com.app.personalfinancesservice.filter.PortfolioSorter;
-import com.personalfinance.api.domain.portfolio.Portfolio;
+import com.app.personalfinancesservice.filter.PortfolioDTOSorter;
+import com.personalfinance.api.domain.portfolio.dto.PortfolioDTO;
 import com.personalfinance.api.domain.portfolio.input.CreatePortfolioRequest;
 import com.personalfinance.api.domain.portfolio.input.DeletePortfolioRequest;
 import com.personalfinance.api.domain.portfolio.input.GetPortfolioRequest;
@@ -42,17 +41,17 @@ public class PortfolioService implements PortfolioServiceBase {
 	@Override
 	public CreatePortfolioResponse createPortfolio(CreatePortfolioRequest request) {
 
-		//Proceed to save the portfolio
-		Portfolio portfolio;
+		//Proceed to save the portfolioDTO
+		PortfolioDTO portfolioDTO;
 		try {
-			portfolio = portfolioRepositoryFacade //
-					.savePortfolio(PortfolioConverter.convert(request));
+			portfolioDTO = portfolioRepositoryFacade //
+					.savePortfolio(PortfolioDTOConverter.convert(request));
 		} catch (Exception e) {
 			throw new CreateNewItemException("Portfolio", request.getName(), PORTFOLIO_LABEL);
 		}
 
 		return new CreatePortfolioResponse() //
-				.withPortfolio(PortfolioDTOConverter.convert(portfolio));
+				.withPortfolio(portfolioDTO);
 	}
 
 	@Override
@@ -60,7 +59,7 @@ public class PortfolioService implements PortfolioServiceBase {
 
 		boolean result = false;
 		try {
-			Portfolio portfolio = portfolioRepositoryFacade //
+			PortfolioDTO portfolio = portfolioRepositoryFacade //
 					.getPortfolioByIdAndUserId(request.getId(), request.getUserId());
 
 			result = portfolioRepositoryFacade.deletePortfolio(portfolio);
@@ -75,10 +74,9 @@ public class PortfolioService implements PortfolioServiceBase {
 	public GetPortfolioResponse getPortfolio(GetPortfolioRequest request) {
 
 		return new GetPortfolioResponse() //
-				.withPortfolio(PortfolioDTOConverter //
-						.convert(portfolioRepositoryFacade //
-								.getPortfolioByIdAndUserId(request.getPortfolioId() //
-										, request.getUserId()))//
+				.withPortfolio(portfolioRepositoryFacade //
+						.getPortfolioByIdAndUserId(request.getPortfolioId() //
+								, request.getUserId())//
 				);
 	}
 
@@ -86,15 +84,15 @@ public class PortfolioService implements PortfolioServiceBase {
 	public GetPortfoliosResponse getPortfolios(GetPortfoliosRequest request) {
 
 		// Return all portfolios from User
-		List<Portfolio> portfolios = portfolioRepositoryFacade //
+		List<PortfolioDTO> portfolios = portfolioRepositoryFacade //
 				.getAllPortfolioByUserId(request.getUserId());
 
 		// Apply filter here
-		List<Portfolio> sortedPortfolios = PortfolioSorter //
+		List<PortfolioDTO> sortedPortfolios = PortfolioDTOSorter //
 				.sort(portfolios, request.getSortBy(), request.getSortDirection());
 
 		return new GetPortfoliosResponse() //
-				.withPortfolios(PortfolioDTOConverter.convertMany(sortedPortfolios));
+				.withPortfolios(sortedPortfolios);
 	}
 
 	@Override
@@ -104,18 +102,10 @@ public class PortfolioService implements PortfolioServiceBase {
 			throw new MissingIdException(PORTFOLIO_LABEL, "portfolioId");
 		}
 
-		// if null return empty
-		Portfolio oldPortfolio = portfolioRepositoryFacade //
-				.getPortfolioByIdAndUserId(request.getId(), request.getUserId());
-
-		if (oldPortfolio == null) {
-			return new UpdatePortfolioResponse();
-		}
-
-		Portfolio updatedPortfolio = portfolioRepositoryFacade //
-				.savePortfolio(PortfolioConverter.convert(request, oldPortfolio));
+		PortfolioDTO updatedPortfolio = portfolioRepositoryFacade //
+				.updatePortfolio(PortfolioDTOConverter.convert(request));
 
 		return new UpdatePortfolioResponse() //
-				.withPortfolio(PortfolioDTOConverter.convert(updatedPortfolio));
+				.withPortfolio(updatedPortfolio);
 	}
 }
