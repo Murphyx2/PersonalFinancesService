@@ -6,10 +6,13 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Component;
 
+import com.app.personalfinancesservice.converters.CategoryConverter;
+import com.app.personalfinancesservice.converters.CategoryDTOConverter;
 import com.app.personalfinancesservice.converters.UUIDConverter;
 import com.app.personalfinancesservice.exceptions.MissingIdException;
 import com.app.personalfinancesservice.repository.CategoryRepository;
 import com.personalfinance.api.domain.category.Category;
+import com.personalfinance.api.domain.category.dto.CategoryDTO;
 import com.personalfinance.api.domain.transaction.TransactionType;
 import com.personalfinance.api.facade.CategoryRepositoryFacade;
 
@@ -36,7 +39,7 @@ public class CategoryRepositoryFacadeImpl implements CategoryRepositoryFacade {
 				.getCategoriesByUserId(userIdUUID) //
 				.stream() //
 				.anyMatch(category -> //
-						category.getName().equals(name) //
+						category.getName().equals(name.toUpperCase()) //
 								&& category.getTransactionType().equals(transactionType) //
 				);
 
@@ -57,21 +60,32 @@ public class CategoryRepositoryFacadeImpl implements CategoryRepositoryFacade {
 	}
 
 	@Override
-	public void deleteCategory(Category category) {
-		categoryRepository.delete(category);
-	}
+	public void deleteCategory(String id, String userId) {
 
-	@Override
-	public List<Category> getCategories(String userId) {
-
-		UUID userIdUUID = UUIDConverter //
+		UUID userUUID = UUIDConverter //
 				.convert(userId, USER_ID_LABEL, CATEGORY_LABEL);
 
-		return categoryRepository.getCategoriesByUserId(userIdUUID);
+		UUID categoryUUID = UUIDConverter //
+				.convert(id, CATEGORY_ID_LABEL, CATEGORY_LABEL);
+
+		//Get the category and remove it
+		categoryRepository //
+				.getCategoryByIdAndUserId(categoryUUID, userUUID) //
+				.ifPresent(categoryRepository::delete);
 	}
 
 	@Override
-	public Category getCategory(String id, String userId) {
+	public List<CategoryDTO> getCategories(String userId) {
+
+		UUID userUUID = UUIDConverter //
+				.convert(userId, USER_ID_LABEL, CATEGORY_LABEL);
+
+		return CategoryDTOConverter //
+				.convertMany(categoryRepository.getCategoriesByUserId(userUUID));
+	}
+
+	@Override
+	public CategoryDTO getCategory(String id, String userId) {
 		UUID userIdUUID = UUIDConverter //
 				.convert(userId, USER_ID_LABEL, CATEGORY_LABEL);
 
@@ -81,17 +95,41 @@ public class CategoryRepositoryFacadeImpl implements CategoryRepositoryFacade {
 		Optional<Category> category = categoryRepository //
 				.getCategoryByIdAndUserId(categoryId, userIdUUID);
 
-		return category.orElse(null);
+		return CategoryDTOConverter.convert(category.orElse(null));
 	}
 
 	@Override
-	public Category saveCategory(Category category) {
+	public CategoryDTO saveCategory(Category category) {
 
 		if (category == null) {
 			throw new MissingIdException(CATEGORY_LABEL, "category");
 		}
 
-		return categoryRepository.save(category);
+		return CategoryDTOConverter //
+				.convert(categoryRepository.save(category));
+	}
+
+	@Override
+	public CategoryDTO updateCategory(CategoryDTO categoryDTO) {
+
+		if (categoryDTO == null) {
+			throw new MissingIdException(CATEGORY_LABEL, "categoryDTO");
+		}
+
+		UUID userUUID = UUIDConverter //
+				.convert(categoryDTO.getUserId(), USER_ID_LABEL, CATEGORY_LABEL);
+
+		UUID categoryId = UUIDConverter //
+				.convert(categoryDTO.getId(), CATEGORY_ID_LABEL, CATEGORY_LABEL);
+
+		Category oldCategory = categoryRepository //
+				.getCategoryByIdAndUserId(categoryId, userUUID) //
+				.orElseThrow(() -> new MissingIdException(CATEGORY_LABEL, "category"));
+
+		Category updatedCategory = categoryRepository //
+				.save(CategoryConverter.convert(oldCategory, categoryDTO));
+
+		return CategoryDTOConverter.convert(updatedCategory);
 	}
 }
 

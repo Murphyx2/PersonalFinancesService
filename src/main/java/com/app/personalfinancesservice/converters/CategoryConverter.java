@@ -6,7 +6,6 @@ import java.util.UUID;
 import com.personalfinance.api.domain.category.Category;
 import com.personalfinance.api.domain.category.dto.CategoryDTO;
 import com.personalfinance.api.domain.category.input.CreateCategoryRequest;
-import com.personalfinance.api.domain.category.input.UpdateCategoryRequest;
 
 public class CategoryConverter {
 
@@ -28,7 +27,7 @@ public class CategoryConverter {
 				.withCreatedAt(LocalDateTime.now());
 	}
 
-	public static Category convert(Category oldCategory, UpdateCategoryRequest request) {
+	public static Category convert(Category oldCategory, CategoryDTO request) {
 		if (oldCategory == null || request == null) {
 			return null;
 		}

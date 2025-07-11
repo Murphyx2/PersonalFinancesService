@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.personalfinance.api.domain.category.Category;
 import com.personalfinance.api.domain.category.dto.CategoryDTO;
+import com.personalfinance.api.domain.category.input.UpdateCategoryRequest;
 
 public class CategoryDTOConverter {
 
@@ -20,6 +21,20 @@ public class CategoryDTOConverter {
 				.withName(category.getName()) //
 				.withTransactionType(category.getTransactionType()) //
 				.withCreatedAt(category.getCreatedAt()) //
+				;
+	}
+
+	public static CategoryDTO convert(UpdateCategoryRequest request) {
+
+		if (request == null) {
+			return null;
+		}
+
+		return new CategoryDTO() //
+				.withId(request.getId()) //
+				.withUserId(request.getUserId()) //
+				.withName(request.getName()) //
+				.withTransactionType(request.getTransactionType()) //
 				;
 	}
 

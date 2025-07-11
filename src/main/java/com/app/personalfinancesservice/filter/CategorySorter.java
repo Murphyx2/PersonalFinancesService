@@ -4,39 +4,39 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import com.personalfinance.api.domain.category.Category;
+import com.personalfinance.api.domain.category.dto.CategoryDTO;
 import com.personalfinance.api.filter.SortBy;
 import com.personalfinance.api.filter.SortDirection;
 
 public class CategorySorter {
 
-	public static List<Category> sort(List<Category> categories, SortBy sortBy, SortDirection direction) {
+	public static List<CategoryDTO> sort(List<CategoryDTO> categories, SortBy sortBy, SortDirection direction) {
 
 		if (categories == null || categories.isEmpty()) {
 			return categories;
 		}
 
-		Comparator<Category> comparator = getComparator(sortBy);
+		Comparator<CategoryDTO> comparator = getComparator(sortBy);
 		if (SortDirection.DESC.equals(direction)) {
 			comparator = comparator.reversed();
 		}
 
 		// Clone List
-		List<Category> sortedCategories = new ArrayList<>(categories);
+		List<CategoryDTO> sortedCategories = new ArrayList<>(categories);
 		// Apply sort
 		sortedCategories.sort(comparator);
 		return sortedCategories;
 	}
 
-	private static Comparator<Category> getComparator(SortBy sortBy) {
+	private static Comparator<CategoryDTO> getComparator(SortBy sortBy) {
 
-		if(sortBy == null){
+		if (sortBy == null) {
 			sortBy = SortBy.CREATED_AT;
 		}
 
 		return switch (sortBy) {
-			case SortBy.NAME -> Comparator.comparing(Category::getName);
-			default -> Comparator.comparing(Category::getCreatedAt);
+			case SortBy.NAME -> Comparator.comparing(CategoryDTO::getName);
+			default -> Comparator.comparing(CategoryDTO::getCreatedAt);
 		};
 	}
 

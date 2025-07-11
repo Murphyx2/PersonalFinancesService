@@ -7,10 +7,9 @@ import org.springframework.stereotype.Service;
 import com.app.personalfinancesservice.converters.CategoryConverter;
 import com.app.personalfinancesservice.converters.CategoryDTOConverter;
 import com.app.personalfinancesservice.exceptions.CreateNewItemException;
-import com.app.personalfinancesservice.exceptions.NotFoundException;
 import com.app.personalfinancesservice.filter.CategoryFilter;
 import com.app.personalfinancesservice.filter.CategorySorter;
-import com.personalfinance.api.domain.category.Category;
+import com.personalfinance.api.domain.category.dto.CategoryDTO;
 import com.personalfinance.api.domain.category.input.CreateCategoryRequest;
 import com.personalfinance.api.domain.category.input.DeleteCategoryRequest;
 import com.personalfinance.api.domain.category.input.GetCategoriesRequest;
@@ -50,23 +49,17 @@ public class CategoryService implements CategoryServiceBase {
 					, CATEGORY_LABEL);
 		}
 
-		Category category = categoryRepositoryFacade //
+		CategoryDTO category = categoryRepositoryFacade //
 				.saveCategory(CategoryConverter.convert(request));
 
 		return new CreateCategoryResponse() //
-				.withCategory(CategoryDTOConverter.convert(category));
+				.withCategory(category);
 	}
 
 	@Override
 	public DeleteCategoryResponse deleteCategory(DeleteCategoryRequest request) {
 
-		Category category = categoryRepositoryFacade //
-				.getCategory(request.getId(), request.getUserId());
-		if (category == null) {
-			return new DeleteCategoryResponse().withSuccess(true);
-		}
-
-		categoryRepositoryFacade.deleteCategory(category);
+		categoryRepositoryFacade.deleteCategory(request.getId(), request.getUserId());
 
 		return new DeleteCategoryResponse().withSuccess(true);
 	}
@@ -74,42 +67,34 @@ public class CategoryService implements CategoryServiceBase {
 	@Override
 	public GetCategoriesResponse getCategories(GetCategoriesRequest request) {
 
-		List<Category> categories = categoryRepositoryFacade //
+		List<CategoryDTO> categories = categoryRepositoryFacade //
 				.getCategories(request.getUserId());
 		// Filter results
-		List<Category> filteredCategories = CategoryFilter //
+		List<CategoryDTO> filteredCategories = CategoryFilter //
 				.filterByTransactionType(categories, request.getTransactionType());
 		// Sort the results
-		List<Category> categorySorter = CategorySorter //
+		List<CategoryDTO> categorySorter = CategorySorter //
 				.sort(filteredCategories, request.getSortBy(), request.getSortDirection());
 
 		return new GetCategoriesResponse() //
-				.withCategories(CategoryDTOConverter.convertMany(categorySorter));
+				.withCategories(categorySorter);
 	}
 
 	@Override
 	public GetCategoryResponse getCategory(GetCategoryRequest request) {
 
-		Category category = categoryRepositoryFacade //
+		CategoryDTO category = categoryRepositoryFacade //
 				.getCategory(request.getId(), request.getUserId());
 
-		return new GetCategoryResponse() //
-				.withCategory(CategoryDTOConverter.convert(category));
+		return new GetCategoryResponse().withCategory(category);
 	}
 
 	@Override
 	public UpdateCategoryResponse updateCategory(UpdateCategoryRequest request) {
 
-		Category oldCategory = categoryRepositoryFacade //
-				.getCategory(request.getId(), request.getUserId());
-		if (oldCategory == null) {
-			throw new NotFoundException(CATEGORY_LABEL, "category", request.getId());
-		}
+		CategoryDTO updatedCategory = categoryRepositoryFacade //
+				.updateCategory(CategoryDTOConverter.convert(request));
 
-		Category updatedCategory = categoryRepositoryFacade //
-				.saveCategory(CategoryConverter.convert(oldCategory, request));
-
-		return new UpdateCategoryResponse() //
-				.withCategory(CategoryDTOConverter.convert(updatedCategory));
+		return new UpdateCategoryResponse().withCategory(updatedCategory);
 	}
 }

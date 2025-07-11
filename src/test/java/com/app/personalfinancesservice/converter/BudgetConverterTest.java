@@ -7,7 +7,7 @@ import com.app.personalfinancesservice.converters.CategoryConverter;
 import com.personalfinance.api.domain.budget.Budget;
 import com.personalfinance.api.domain.budget.input.CreateBudgetRequest;
 import com.personalfinance.api.domain.category.Category;
-import com.personalfinance.api.domain.category.input.UpdateCategoryRequest;
+import com.personalfinance.api.domain.category.dto.CategoryDTO;
 import com.personalfinance.api.domain.transaction.TransactionType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,7 +42,7 @@ class BudgetConverterTest {
 		UUID userId = UUID.randomUUID();
 		UUID id = UUID.randomUUID();
 
-		UpdateCategoryRequest request = new UpdateCategoryRequest() //
+		CategoryDTO request = new CategoryDTO() //
 				.withId(id.toString()) //
 				.withUserId(userId.toString()) //
 				.withName("Updated Name") //
