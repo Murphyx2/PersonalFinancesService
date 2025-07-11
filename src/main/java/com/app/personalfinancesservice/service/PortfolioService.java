@@ -38,6 +38,7 @@ public class PortfolioService implements PortfolioServiceBase {
 		this.portfolioRepositoryFacade = portfolioRepositoryFacade;
 	}
 
+	// TODO: Replace the save from Accepting a DTO to accept an entity, in this case, It makes more sense
 	@Override
 	public CreatePortfolioResponse createPortfolio(CreatePortfolioRequest request) {
 

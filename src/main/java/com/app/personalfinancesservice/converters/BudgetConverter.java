@@ -3,6 +3,7 @@ package com.app.personalfinancesservice.converters;
 import java.time.LocalDateTime;
 
 import com.personalfinance.api.domain.budget.Budget;
+import com.personalfinance.api.domain.budget.dto.BudgetDTO;
 import com.personalfinance.api.domain.budget.input.CreateBudgetRequest;
 import com.personalfinance.api.domain.budget.input.UpdateBudgetRequest;
 
@@ -27,7 +28,30 @@ public class BudgetConverter {
 				;
 	}
 
+
+
 	public static Budget convert(UpdateBudgetRequest request, Budget oldBudget) {
+
+		if (oldBudget == null) {
+			return null;
+		}
+
+		return new Budget() //
+				.withName(request.getName()) //
+				.withDescription(request.getDescription()) //
+				.withStartAt(request.getStartAt()) //
+				.withEndAt(request.getEndAt()) //
+				.withId(oldBudget.getId()) //
+				.withUserId(oldBudget.getUserId()) //
+				.withPortfolioId(oldBudget.getPortfolioId()) //
+				.withTransactions(oldBudget.getTransactions()) //
+				.withCreatedAt(oldBudget.getCreatedAt()) //
+				.withUpdatedAt(LocalDateTime.now()) //
+				;
+
+	}
+
+	public static Budget convert(BudgetDTO request, Budget oldBudget) {
 
 		if (oldBudget == null) {
 			return null;

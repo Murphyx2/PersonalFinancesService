@@ -35,8 +35,8 @@ public class PortfolioRepositoryFacadeImpl implements PortfolioRepositoryFacade 
 
 	@Override
 	@Caching(evict = { //
-			@CacheEvict(value = "portfoliosList", key = "#portfolio.userId"), //
-			@CacheEvict(value = "portfolios", key = "#portfolio.userId + '_' + #portfolio.id") //
+			@CacheEvict(value = "portfoliosList", key = "#portfolioDTO.userId"), //
+			@CacheEvict(value = "portfolios", key = "#portfolioDTO.userId + '_' + #portfolioDTO.id") //
 	})
 	public boolean deletePortfolio(PortfolioDTO portfolioDTO) {
 

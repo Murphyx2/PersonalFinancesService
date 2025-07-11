@@ -10,7 +10,7 @@ import com.app.personalfinancesservice.converters.BudgetDTOConverter;
 import com.app.personalfinancesservice.exceptions.NotFoundException;
 import com.app.personalfinancesservice.filter.BudgetSorter;
 import com.app.personalfinancesservice.utils.DateUtils;
-import com.personalfinance.api.domain.budget.Budget;
+import com.personalfinance.api.domain.budget.dto.BudgetDTO;
 import com.personalfinance.api.domain.budget.input.CreateBudgetRequest;
 import com.personalfinance.api.domain.budget.input.DeleteBudgetRequest;
 import com.personalfinance.api.domain.budget.input.GetBudgetRequest;
@@ -41,23 +41,21 @@ public class BudgetService implements BudgetServiceBase {
 	@Override
 	public CreateBudgetResponse createBudget(CreateBudgetRequest request) {
 
-		// Check if portfolio exists
+		// Check if the portfolio exists
 		if (!portfolioRepositoryFacade.existsPortfolio(request.getPortfolioId(), request.getUserId())) {
 			throw new NotFoundException(BUDGET_LABEL, "portfolio", request.getPortfolioId());
 		}
 
 		// Check if dates are correct
-		if(DateUtils.isStartDateGreaterThanStartDate(request.getEndAt(), request.getStartAt())
-		) {
+		if (DateUtils.isStartDateGreaterThanStartDate(request.getEndAt(), request.getStartAt())) {
 			throw new DateTimeException("End date should be greater than start");
 		}
 
 		// Convert request to a budget and save it
-		Budget newBudget = budgetRepositoryFacade //
+		BudgetDTO newBudget = budgetRepositoryFacade //
 				.saveBudget(BudgetConverter.convert(request));
 
-		return new CreateBudgetResponse() //
-				.withBudget(BudgetDTOConverter.convert(newBudget));
+		return new CreateBudgetResponse().withBudget(newBudget);
 	}
 
 	@Override
@@ -72,10 +70,10 @@ public class BudgetService implements BudgetServiceBase {
 	@Override
 	public GetBudgetResponse getBudget(GetBudgetRequest request) {
 
-		Budget budget = budgetRepositoryFacade //
+		BudgetDTO budget = budgetRepositoryFacade //
 				.getBudgetByIdAndUserId(request.getId(), request.getUserId());
 
-		return new GetBudgetResponse().withBudget(BudgetDTOConverter.convert(budget));
+		return new GetBudgetResponse().withBudget(budget);
 	}
 
 	/***
@@ -86,32 +84,27 @@ public class BudgetService implements BudgetServiceBase {
 	public GetBudgetsResponse getBudgets(GetBudgetsRequest request) {
 
 		// fetch all budgets from Portfolio
-		List<Budget> budgets = budgetRepositoryFacade //
+		List<BudgetDTO> budgets = budgetRepositoryFacade //
 				.getBudgetsByPortfolioIdAndUserId(request.getPortfolioId(), request.getUserId());
 
 		//Filtering results
-		List<Budget> sortedBudgets = BudgetSorter //
+		List<BudgetDTO> sortedBudgets = BudgetSorter //
 				.sort(budgets, request.getSortBy(), request.getSortDirection());
 
-		return new GetBudgetsResponse() //
-				.withBudgets(BudgetDTOConverter.convertMany(sortedBudgets));
+		return new GetBudgetsResponse().withBudgets(sortedBudgets);
 	}
 
 	@Override
 	public UpdateBudgetResponse updateBudget(UpdateBudgetRequest request) {
 
-		Budget oldBudget = budgetRepositoryFacade //
-				.getBudgetByIdAndUserId(request.getId(), request.getUserId());
-
-		if (oldBudget == null) {
-			throw new NotFoundException(BUDGET_LABEL, "budget", request.getId());
+		if (request == null) {
+			throw new NullPointerException("Update request cannot be empty");
 		}
 
 		// Update the oldBudget and save changes
-		Budget updatedBudget = budgetRepositoryFacade //
-				.saveBudget(BudgetConverter.convert(request, oldBudget));
+		BudgetDTO updatedBudgetDTO = budgetRepositoryFacade //
+				.updateBudget(BudgetDTOConverter.convert(request));
 
-		return new UpdateBudgetResponse() //
-				.withBudget(BudgetDTOConverter.convert(updatedBudget));
+		return new UpdateBudgetResponse().withBudget(updatedBudgetDTO);
 	}
 }
