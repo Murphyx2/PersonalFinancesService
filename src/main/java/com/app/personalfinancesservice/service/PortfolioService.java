@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import org.springframework.stereotype.Service;
 
+import com.app.personalfinancesservice.converters.PortfolioConverter;
 import com.app.personalfinancesservice.converters.PortfolioDTOConverter;
 import com.app.personalfinancesservice.exceptions.CreateNewItemException;
 import com.app.personalfinancesservice.exceptions.MissingIdException;
@@ -38,7 +39,6 @@ public class PortfolioService implements PortfolioServiceBase {
 		this.portfolioRepositoryFacade = portfolioRepositoryFacade;
 	}
 
-	// TODO: Replace the save from Accepting a DTO to accept an entity, in this case, It makes more sense
 	@Override
 	public CreatePortfolioResponse createPortfolio(CreatePortfolioRequest request) {
 
@@ -46,7 +46,7 @@ public class PortfolioService implements PortfolioServiceBase {
 		PortfolioDTO portfolioDTO;
 		try {
 			portfolioDTO = portfolioRepositoryFacade //
-					.savePortfolio(PortfolioDTOConverter.convert(request));
+					.savePortfolio(PortfolioConverter.convert(request));
 		} catch (Exception e) {
 			throw new CreateNewItemException("Portfolio", request.getName(), PORTFOLIO_LABEL);
 		}

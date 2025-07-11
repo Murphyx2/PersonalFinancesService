@@ -8,6 +8,7 @@ import java.util.UUID;
 import com.app.personalfinancesservice.converters.PortfolioDTOConverter;
 import com.app.personalfinancesservice.exceptions.CreateNewItemException;
 import com.app.personalfinancesservice.service.PortfolioService;
+import com.personalfinance.api.domain.portfolio.Portfolio;
 import com.personalfinance.api.domain.portfolio.dto.PortfolioDTO;
 import com.personalfinance.api.domain.portfolio.input.CreatePortfolioRequest;
 import com.personalfinance.api.domain.portfolio.input.GetPortfoliosRequest;
@@ -60,7 +61,7 @@ class PortfolioServiceTest {
 		CreatePortfolioRequest request = new CreatePortfolioRequest() //
 				.withUserId(validUserId);
 
-		when(portfolioRepository.savePortfolio(any(PortfolioDTO.class))) //
+		when(portfolioRepository.savePortfolio(any(Portfolio.class))) //
 				.thenThrow(new RuntimeException("Database error"));
 
 		CreateNewItemException exception = assertThrows(CreateNewItemException.class, () -> {
@@ -87,7 +88,7 @@ class PortfolioServiceTest {
 
 		// Configure the mock to return portfolio went saving
 		when(portfolioRepository //
-				.savePortfolio(any(PortfolioDTO.class))) //
+				.savePortfolio(any(Portfolio.class))) //
 				.thenReturn(portfolio);
 
 		// Execute
@@ -95,7 +96,7 @@ class PortfolioServiceTest {
 
 		// Assert
 		verify(portfolioRepository, times(1)) //
-				.savePortfolio(any(PortfolioDTO.class));
+				.savePortfolio(any(Portfolio.class));
 
 		assertEquals(portfolio.getId(), response.getPortfolio().getId());
 		assertEquals(portfolio.getName(), response.getPortfolio().getName());

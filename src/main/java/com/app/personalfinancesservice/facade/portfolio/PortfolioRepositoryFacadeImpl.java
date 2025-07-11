@@ -99,16 +99,13 @@ public class PortfolioRepositoryFacadeImpl implements PortfolioRepositoryFacade 
 	}
 
 	@Override
-	@CacheEvict(value = "portfoliosList", key = "#portfolioDTO.userId")
-	@CachePut(value = "portfolios", key = "#portfolioDTO.userId + '_' + #portfolioDTO.id")
-	public PortfolioDTO savePortfolio(PortfolioDTO portfolioDTO) {
+	@CacheEvict(value = "portfoliosList", key = "#portfolio.userId")
+	@CachePut(value = "portfolios", key = "#portfolio.userId + '_' + #portfolio.id")
+	public PortfolioDTO savePortfolio(Portfolio portfolio) {
 
-		if (portfolioDTO == null) {
-			throw new NotFoundException(PORTFOLIO_LABEL, "portfolioDTO");
+		if (portfolio == null) {
+			throw new NotFoundException(PORTFOLIO_LABEL, "portfolio");
 		}
-
-		Portfolio portfolio = PortfolioConverter //
-				.convert(portfolioDTO);
 
 		return PortfolioDTOConverter //
 				.convert(portfolioRepository.save(portfolio));

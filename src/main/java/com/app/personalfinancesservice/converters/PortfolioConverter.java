@@ -5,17 +5,18 @@ import java.util.UUID;
 
 import com.personalfinance.api.domain.portfolio.Portfolio;
 import com.personalfinance.api.domain.portfolio.dto.PortfolioDTO;
+import com.personalfinance.api.domain.portfolio.input.CreatePortfolioRequest;
 
 public class PortfolioConverter {
 
-	public static Portfolio convert(PortfolioDTO request) {
+	public static Portfolio convert(CreatePortfolioRequest request) {
 
 		if (request == null) {
 			return null;
 		}
 
 		Portfolio portfolio = new Portfolio() //
-				.withUserId(request.getUserId()) //
+				.withUserId(UUIDConverter.convert(request.getUserId(), "userId", "PORTFOLIO")) //
 				.withName(request.getName()) //
 				.withDescription(request.getDescription()) //
 				.withCreated(LocalDateTime.now());
