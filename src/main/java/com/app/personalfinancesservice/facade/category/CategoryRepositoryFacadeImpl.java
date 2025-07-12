@@ -4,6 +4,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Component;
 
 import com.app.personalfinancesservice.converters.CategoryConverter;
@@ -60,6 +64,11 @@ public class CategoryRepositoryFacadeImpl implements CategoryRepositoryFacade {
 	}
 
 	@Override
+
+	@Caching(evict = {
+			@CacheEvict(value = "categoriesList", key = "#userId"),
+			@CacheEvict(value = "categories", key = "#userId + '_' + #id")
+	})
 	public void deleteCategory(String id, String userId) {
 
 		UUID userUUID = UUIDConverter //
@@ -75,6 +84,7 @@ public class CategoryRepositoryFacadeImpl implements CategoryRepositoryFacade {
 	}
 
 	@Override
+	@Cacheable(value = "categoriesList", key = "#userId")
 	public List<CategoryDTO> getCategories(String userId) {
 
 		UUID userUUID = UUIDConverter //
@@ -85,6 +95,7 @@ public class CategoryRepositoryFacadeImpl implements CategoryRepositoryFacade {
 	}
 
 	@Override
+	@Cacheable(value = "categories", key = "#userId + '_' + #id", unless = "#result == null")
 	public CategoryDTO getCategory(String id, String userId) {
 		UUID userIdUUID = UUIDConverter //
 				.convert(userId, USER_ID_LABEL, CATEGORY_LABEL);
@@ -99,6 +110,7 @@ public class CategoryRepositoryFacadeImpl implements CategoryRepositoryFacade {
 	}
 
 	@Override
+	@CacheEvict(value = "categoriesList", key = "#category.userId")
 	public CategoryDTO saveCategory(Category category) {
 
 		if (category == null) {
@@ -110,6 +122,8 @@ public class CategoryRepositoryFacadeImpl implements CategoryRepositoryFacade {
 	}
 
 	@Override
+	@CacheEvict(value = "categoriesList", key = "#categoryDTO.userId")
+	@CachePut(value = "categories", key = "#categoryDTO.userId + '_' + #categoryDTO.id")
 	public CategoryDTO updateCategory(CategoryDTO categoryDTO) {
 
 		if (categoryDTO == null) {
