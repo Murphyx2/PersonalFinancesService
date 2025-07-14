@@ -4,6 +4,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Component;
 
 import com.app.personalfinancesservice.converters.CategoryPlannerConverter;
@@ -78,6 +82,10 @@ public class CategoryPlannerRepositoryImpl implements CategoryPlannerRepositoryF
 	}
 
 	@Override
+	@Caching(evict = {
+			@CacheEvict(value = "categoryPlannerList", key = "#categoryPlannerDTO.budgetId"),
+			@CacheEvict(value = "categoryPlanners", key = "#categoryPlannerDTO.userId + '_' + #categoryPlannerDTO.id")
+	})
 	public void deleteCategoryPlanner(CategoryPlannerDTO categoryPlannerDTO) {
 
 		UUID userUUID = UUIDConverter //
@@ -94,6 +102,7 @@ public class CategoryPlannerRepositoryImpl implements CategoryPlannerRepositoryF
 	}
 
 	@Override
+	@Cacheable(value = "categoryPlannerList", key = "#budgetId", unless = "#result.empty")
 	public List<CategoryPlannerDTO> getCategoriesPlanner(String userId, String budgetId) {
 		UUID userUUID = UUIDConverter //
 				.convert(userId, USER_ID_LABEL, CATEGORY_PLANNER_LABEL);
@@ -108,6 +117,7 @@ public class CategoryPlannerRepositoryImpl implements CategoryPlannerRepositoryF
 	}
 
 	@Override
+	@Cacheable(value = "categoryPlanners", key = "#userId + '_' + #id", unless = "#result == null")
 	public CategoryPlannerDTO getCategoryPlanner(String id, String userId) {
 
 		UUID userUUID = UUIDConverter //
@@ -124,6 +134,7 @@ public class CategoryPlannerRepositoryImpl implements CategoryPlannerRepositoryF
 	}
 
 	@Override
+	@CacheEvict(value = "categoryPlannerList", key = "#categoryPlanner.budgetId")
 	public CategoryPlannerDTO saveCategoryPlanner(CategoryPlanner categoryPlanner) {
 
 		if (categoryPlanner == null) {
@@ -159,6 +170,8 @@ public class CategoryPlannerRepositoryImpl implements CategoryPlannerRepositoryF
 	}
 
 	@Override
+	@CacheEvict(value = "categoryPlannerList", key = "#result.budgetId")
+	@CachePut(value = "categoryPlanners", key = "#categoryPlannerDTO.userId + '_' + #categoryPlannerDTO.id", unless = "#result == null")
 	public CategoryPlannerDTO updateCategoryPlanner(CategoryPlannerDTO categoryPlannerDTO) {
 
 		UUID userUUID = UUIDConverter //

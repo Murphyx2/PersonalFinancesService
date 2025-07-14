@@ -64,7 +64,6 @@ public class CategoryRepositoryFacadeImpl implements CategoryRepositoryFacade {
 	}
 
 	@Override
-
 	@Caching(evict = {
 			@CacheEvict(value = "categoriesList", key = "#userId"),
 			@CacheEvict(value = "categories", key = "#userId + '_' + #id")
