@@ -6,41 +6,54 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Component;
 
+import com.app.personalfinancesservice.converters.CategoryPlannerConverter;
+import com.app.personalfinancesservice.converters.CategoryPlannerDTOConverter;
 import com.app.personalfinancesservice.converters.UUIDConverter;
+import com.app.personalfinancesservice.exceptions.CreateNewItemException;
 import com.app.personalfinancesservice.exceptions.MissingIdException;
+import com.app.personalfinancesservice.exceptions.NotFoundException;
 import com.app.personalfinancesservice.repository.CategoryPlannerJPARepository;
+import com.app.personalfinancesservice.repository.CategoryRepository;
+import com.personalfinance.api.domain.category.Category;
 import com.personalfinance.api.domain.categoryplanner.CategoryPlanner;
+import com.personalfinance.api.domain.categoryplanner.dto.CategoryPlannerDTO;
 import com.personalfinance.api.facade.CategoryPlannerRepositoryFacade;
+
+import static com.app.personalfinancesservice.domain.http.HttpRoutes.CATEGORY_PLANNER;
 
 @Component
 public class CategoryPlannerRepositoryImpl implements CategoryPlannerRepositoryFacade {
 
 	private static final String CATEGORY_PLANNER_LABEL = "CATEGORY_PLANNER";
-
 	private static final String USER_ID_LABEL = "userId";
+	private static final String BUDGET_ID_LABEL = "budgetId";
+	private static final String CATEGORY_ID_LABEL = "categoryId";
+	private static final String CATEGORY_PLANNER_ID_LABEL = "categoryPlannerId";
 
 	private final CategoryPlannerJPARepository categoryPlannerJPARepository;
+	private final CategoryRepository categoryRepository;
 
 	public CategoryPlannerRepositoryImpl( //
 			CategoryPlannerJPARepository categoryPlannerJPARepository //
-	) {
+			, CategoryRepository categoryRepository) {
 		this.categoryPlannerJPARepository = categoryPlannerJPARepository;
+		this.categoryRepository = categoryRepository;
 	}
 
 	@Override
 	public boolean categoryPlannerExists(String categoryId, String budgetId, String userId) {
 
 		UUID categoryUUID = UUIDConverter //
-				.convert(categoryId, "categoryId", CATEGORY_PLANNER_LABEL);
+				.convert(categoryId, CATEGORY_ID_LABEL, CATEGORY_PLANNER_LABEL);
 
-		UUID userIdUUID = UUIDConverter //
+		UUID userUUID = UUIDConverter //
 				.convert(userId, USER_ID_LABEL, CATEGORY_PLANNER_LABEL);
 
 		UUID budgetUUID = UUIDConverter //
-				.convert(budgetId, "budgetId", CATEGORY_PLANNER_LABEL);
+				.convert(budgetId, BUDGET_ID_LABEL, CATEGORY_PLANNER_LABEL);
 
 		List<CategoryPlanner> categoryPlanners = categoryPlannerJPARepository //
-				.getCategoryPlannersByUserIdAndBudgetId(userIdUUID, budgetUUID);
+				.getCategoryPlannersByUserIdAndBudgetId(userUUID, budgetUUID);
 
 		return categoryPlanners //
 				.stream() //
@@ -52,56 +65,132 @@ public class CategoryPlannerRepositoryImpl implements CategoryPlannerRepositoryF
 	@Override
 	public boolean categoryPlannerExists(String id, String userId) {
 
-		UUID userIdUUID = UUIDConverter //
+		UUID userUUID = UUIDConverter //
 				.convert(userId, USER_ID_LABEL, CATEGORY_PLANNER_LABEL);
 
 		UUID categoryPlannerId = UUIDConverter //
-				.convert(id, "categoryPlannerId", CATEGORY_PLANNER_LABEL);
+				.convert(id, CATEGORY_PLANNER_ID_LABEL, CATEGORY_PLANNER_LABEL);
 
 		Optional<CategoryPlanner> categoryPlanner = categoryPlannerJPARepository //
-				.getCategoryPlannerByIdAndUserId(categoryPlannerId, userIdUUID);
+				.getCategoryPlannerByIdAndUserId(categoryPlannerId, userUUID);
 
 		return categoryPlanner.isPresent();
 	}
 
 	@Override
-	public void deleteCategoryPlanner(CategoryPlanner categoryPlanner) {
-		categoryPlannerJPARepository.delete(categoryPlanner);
+	public void deleteCategoryPlanner(CategoryPlannerDTO categoryPlannerDTO) {
+
+		UUID userUUID = UUIDConverter //
+				.convert(categoryPlannerDTO.getUserId(), USER_ID_LABEL, CATEGORY_PLANNER_LABEL);
+
+		UUID categoryPlannerUUID = UUIDConverter //
+				.convert(categoryPlannerDTO.getId(), CATEGORY_PLANNER_ID_LABEL, CATEGORY_PLANNER_LABEL);
+
+		Optional<CategoryPlanner> categoryPlanner = categoryPlannerJPARepository //
+				.getCategoryPlannerByIdAndUserId(categoryPlannerUUID, userUUID);
+
+		categoryPlanner.ifPresent(categoryPlannerJPARepository::delete);
+
 	}
 
 	@Override
-	public List<CategoryPlanner> getCategoriesPlanner(String userId, String budgetId) {
+	public List<CategoryPlannerDTO> getCategoriesPlanner(String userId, String budgetId) {
 		UUID userUUID = UUIDConverter //
 				.convert(userId, USER_ID_LABEL, CATEGORY_PLANNER_LABEL);
 
 		UUID budgetUUID = UUIDConverter //
-				.convert(budgetId, "budgetId", CATEGORY_PLANNER_LABEL);
+				.convert(budgetId, BUDGET_ID_LABEL, CATEGORY_PLANNER_LABEL);
 
-		return categoryPlannerJPARepository //
+		List<CategoryPlanner> categories = categoryPlannerJPARepository //
 				.getCategoryPlannersByUserIdAndBudgetId(userUUID, budgetUUID);
+
+		return CategoryPlannerDTOConverter.convertMany(categories);
 	}
 
 	@Override
-	public CategoryPlanner getCategoryPlanner(String id, String userId) {
+	public CategoryPlannerDTO getCategoryPlanner(String id, String userId) {
 
-		UUID userIdUUID = UUIDConverter //
+		UUID userUUID = UUIDConverter //
 				.convert(userId, USER_ID_LABEL, CATEGORY_PLANNER_LABEL);
 
 		UUID categoryPlannerId = UUIDConverter //
-				.convert(id, "categoryPlannerId", CATEGORY_PLANNER_LABEL);
+				.convert(id, CATEGORY_PLANNER_ID_LABEL, CATEGORY_PLANNER_LABEL);
 
-		return categoryPlannerJPARepository //
-				.getCategoryPlannerByIdAndUserId(categoryPlannerId, userIdUUID) //
-				.orElse(null);
+		Optional<CategoryPlanner> categoryPlanner = categoryPlannerJPARepository //
+				.getCategoryPlannerByIdAndUserId(categoryPlannerId, userUUID);
+
+		return CategoryPlannerDTOConverter //
+				.convert(categoryPlanner.orElse(null));
 	}
 
 	@Override
-	public CategoryPlanner saveCategoryPlanner(CategoryPlanner categoryPlanner) {
+	public CategoryPlannerDTO saveCategoryPlanner(CategoryPlanner categoryPlanner) {
 
 		if (categoryPlanner == null) {
 			throw new MissingIdException(CATEGORY_PLANNER_LABEL, "categoryPlanner");
 		}
 
-		return categoryPlannerJPARepository.save(categoryPlanner);
+		Optional<Category> category = categoryRepository //
+				.getCategoryByIdAndUserId(categoryPlanner.getCategory().getId(), //
+						categoryPlanner.getUserId() //
+				);
+
+		// Check if Category exists
+		if (category.isEmpty()) {
+			throw new NotFoundException(CATEGORY_PLANNER, CATEGORY_ID_LABEL //
+					, categoryPlanner.getUserId().toString());
+		}
+
+		// Check if CategoryPlanner already exists
+		if (this.categoryPlannerExists( //
+				categoryPlanner.getCategory().getId().toString(), //
+				categoryPlanner.getBudgetId().toString(),  //
+				categoryPlanner.getUserId().toString()) //
+		) {
+			String message = String.format("CategoryPlanner for category of name %s already exists", //
+					category.get().getName());
+			throw new CreateNewItemException(CATEGORY_PLANNER, message);
+		}
+
+		categoryPlanner.withCategory(category.get());
+
+		return CategoryPlannerDTOConverter //
+				.convert(categoryPlannerJPARepository.save(categoryPlanner));
+	}
+
+	@Override
+	public CategoryPlannerDTO updateCategoryPlanner(CategoryPlannerDTO categoryPlannerDTO) {
+
+		UUID userUUID = UUIDConverter //
+				.convert(categoryPlannerDTO.getUserId() //
+						, USER_ID_LABEL, CATEGORY_PLANNER_LABEL);
+
+		UUID categoryPlannerUUID = UUIDConverter //
+				.convert(categoryPlannerDTO.getId() //
+						, CATEGORY_PLANNER_ID_LABEL, CATEGORY_PLANNER_LABEL);
+
+		CategoryPlanner oldCategoryPlanner = categoryPlannerJPARepository //
+				.getCategoryPlannerByIdAndUserId(categoryPlannerUUID, userUUID) //
+				.orElseThrow( //
+						() -> new NotFoundException(CATEGORY_PLANNER, CATEGORY_PLANNER_ID_LABEL, categoryPlannerUUID.toString()) //
+				);
+
+		UUID categoryUUID = UUIDConverter //
+				.convert(categoryPlannerDTO.getCategory().getId() //
+						, CATEGORY_ID_LABEL, CATEGORY_PLANNER_LABEL);
+
+		Category category = categoryRepository //
+				.getCategoryByIdAndUserId(categoryUUID, userUUID) //
+				.orElseThrow( //
+						() -> new NotFoundException(CATEGORY_PLANNER, CATEGORY_ID_LABEL, categoryUUID.toString()) //
+				);
+
+		CategoryPlanner categoryPlannerToUpdate = CategoryPlannerConverter //
+				.convert(categoryPlannerDTO, category, oldCategoryPlanner);
+
+		CategoryPlanner updatedCategoryPlanner = categoryPlannerJPARepository //
+				.save(categoryPlannerToUpdate);
+
+		return CategoryPlannerDTOConverter.convert(updatedCategoryPlanner);
 	}
 }

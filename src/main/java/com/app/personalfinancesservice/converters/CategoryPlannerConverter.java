@@ -5,8 +5,8 @@ import java.util.UUID;
 
 import com.personalfinance.api.domain.category.Category;
 import com.personalfinance.api.domain.categoryplanner.CategoryPlanner;
+import com.personalfinance.api.domain.categoryplanner.dto.CategoryPlannerDTO;
 import com.personalfinance.api.domain.categoryplanner.input.CreateCategoryPlannerRequest;
-import com.personalfinance.api.domain.categoryplanner.input.UpdateCategoryPlannerRequest;
 
 public class CategoryPlannerConverter {
 
@@ -20,14 +20,17 @@ public class CategoryPlannerConverter {
 		UUID budgetUUID = UUIDConverter //
 				.convert(request.getBudgetId(), "budgetId", CATEGORY_PLANNER);
 
+		UUID categoryUUID = UUIDConverter //
+				.convert(request.getCategoryId(), "categoryId", CATEGORY_PLANNER);
+
 		return new CategoryPlanner() //
 				.withUserId(userId) //
 				.withBudgetId(budgetUUID) //
 				.withPlannedAmount(Math.abs(request.getPlannedAmount())) //
-				.withCreatedAt(LocalDateTime.now());
+				.withCreatedAt(LocalDateTime.now()).withCategory(new Category().withId(categoryUUID));
 	}
 
-	public static CategoryPlanner convert(UpdateCategoryPlannerRequest request, //
+	public static CategoryPlanner convert(CategoryPlannerDTO request, //
 			Category category, //
 			CategoryPlanner oldCategoryPlanner) {
 

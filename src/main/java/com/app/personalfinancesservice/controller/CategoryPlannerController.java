@@ -20,23 +20,20 @@ import com.personalfinance.api.domain.categoryplanner.input.GetCategoryPlannerRe
 import com.personalfinance.api.domain.categoryplanner.input.GetListCategoryPlannerRequest;
 import com.personalfinance.api.domain.categoryplanner.input.UpdateCategoryPlannerRequest;
 import com.personalfinance.api.domain.categoryplanner.output.CreateCategoryPlannerResponse;
+import com.personalfinance.api.domain.categoryplanner.output.DeleteCategoryPlannerResponse;
 import com.personalfinance.api.domain.categoryplanner.output.GetCategoryPlannerResponse;
 import com.personalfinance.api.domain.categoryplanner.output.GetListCategoryPlannerResponse;
 import com.personalfinance.api.domain.categoryplanner.output.UpdateCategoryPlannerResponse;
 import com.personalfinance.api.domain.transaction.TransactionType;
 import com.personalfinance.api.filter.SortBy;
 import com.personalfinance.api.filter.SortDirection;
-import jakarta.validation.constraints.Null;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping(HttpRoutes.API_ROOT + HttpRoutes.BUDGET)
-@Tag(
-		name = "Category Planner Management",
-		description = "Endpoint to manage categories target amount"
-)
+@Tag(name = "Category Planner Management", description = "Endpoint to manage categories target amount")
 public class CategoryPlannerController {
 
 	private final CategoryPlannerService categoryPlannerService;
@@ -57,7 +54,7 @@ public class CategoryPlannerController {
 
 	@Operation(summary = "Delete a category planner", description = "Delete a category planner by its id")
 	@DeleteMapping(HttpRoutes.CATEGORY_PLANNER + "/{id}")
-	public ResponseEntity<Null> deleteCategoryPlanner(@RequestHeader("X-User-id") String userId, //
+	public ResponseEntity<DeleteCategoryPlannerResponse> deleteCategoryPlanner(@RequestHeader("X-User-id") String userId, //
 			@PathVariable("id") String id) {
 
 		DeleteCategoryPlannerRequest request = new DeleteCategoryPlannerRequest() //
@@ -65,9 +62,7 @@ public class CategoryPlannerController {
 				.withUserId(userId) //
 				;
 
-		categoryPlannerService.deleteCategoryPlanner(request);
-
-		return ResponseEntity.ok(null);
+		return ResponseEntity.ok(categoryPlannerService.deleteCategoryPlanner(request));
 	}
 
 	@Operation(summary = "Get a category planner", description = "Get a category planner by its id")
