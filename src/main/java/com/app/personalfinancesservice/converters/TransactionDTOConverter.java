@@ -3,8 +3,10 @@ package com.app.personalfinancesservice.converters;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.personalfinance.api.domain.category.dto.CategoryDTO;
 import com.personalfinance.api.domain.transaction.Transaction;
 import com.personalfinance.api.domain.transaction.dto.TransactionDTO;
+import com.personalfinance.api.domain.transaction.input.UpdateTransactionRequest;
 
 public class TransactionDTOConverter {
 
@@ -25,6 +27,23 @@ public class TransactionDTOConverter {
 				.withTransactionDate(transaction.getTransactionDate()) //
 				.withCreatedAt(transaction.getCreatedAt()) //
 				.withUpdatedAt(transaction.getUpdatedAt()) //
+				;
+	}
+
+	public static TransactionDTO convert(UpdateTransactionRequest request) {
+
+		if (request == null) {
+			return null;
+		}
+
+		return new TransactionDTO() //
+				.withId(request.getId()) //
+				.withUserId(request.getUserId()) //
+				.withCategory(new CategoryDTO().withId(request.getCategoryId())) //
+				.withDescription(request.getDescription()) //
+				.withCurrencyCode(request.getCurrencyCode()) //
+				.withAmount(request.getAmount()) //
+				.withTransactionDate(request.getTransactionDate()) //
 				;
 	}
 

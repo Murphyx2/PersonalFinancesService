@@ -3,13 +3,14 @@ package com.app.personalfinancesservice.service;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
 import com.app.personalfinancesservice.converters.TransactionConverter;
 import com.app.personalfinancesservice.converters.TransactionDTOConverter;
-import com.app.personalfinancesservice.exceptions.NotFoundException;
+import com.app.personalfinancesservice.converters.UUIDConverter;
 import com.app.personalfinancesservice.filter.TransactionFilter;
 import com.app.personalfinancesservice.filter.TransactionSorter;
 import com.personalfinance.api.domain.category.Category;
@@ -52,74 +53,56 @@ public class TransactionService implements TransactionServiceBase {
 	@Override
 	public CreateTransactionResponse createTransaction(CreateTransactionRequest request) {
 
-		// Check if Budget Exist
-		if (!budgetRepositoryFacade.budgetExists(request.getBudgetId(), request.getUserId())) {
-			String message = String.format("Budget with id %s does not exist", request.getBudgetId());
-			throw new NotFoundException(TRANSACTION_LABEL, message);
-		}
-		// Check if Category exists
+		UUID categoryId = UUIDConverter //
+				.convert(request.getCategoryId(), "categoryId", TRANSACTION_LABEL);
 
-		Category category = categoryRepositoryFacade //
-				.getCategory(request.getCategoryId(), request.getUserId());
-		if (category == null) {
-			String message = String.format("Category with id %s does not exist", request.getCategoryId());
-			throw new NotFoundException(TRANSACTION_LABEL, message);
-		}
-
-		// Convert and save
+		// Convert request to entity
 		Transaction transaction = TransactionConverter.convert(request) //
-				.withCategory(category);
-
-		TransactionDTO updatedTransactionDTO = TransactionDTOConverter //
-				.convert(transactionRepositoryFacade.saveTransaction(transaction));
+				.withCategory(new Category().withId(categoryId));
 
 		return new CreateTransactionResponse() //
-				.withTransaction(updatedTransactionDTO);
+				.withTransaction(transactionRepositoryFacade.saveTransaction(transaction));
 	}
 
 	@Override
 	public DeleteTransactionResponse deleteTransaction(DeleteTransactionRequest request) {
 
-		Transaction transaction = transactionRepositoryFacade //
-				.getTransactionByIdAndUserId(request.getId(), request.getUserId());
-		if (transaction == null) {
-			return new DeleteTransactionResponse().withSuccess(true);
-		}
-
-		transactionRepositoryFacade.deleteTransaction(transaction);
+		transactionRepositoryFacade //
+				.deleteTransaction(new TransactionDTO() //
+						.withId(request.getId()) //
+						.withUserId(request.getUserId()) //
+				);
 		return new DeleteTransactionResponse().withSuccess(true);
 	}
 
 	@Override
 	public GetListTransactionResponse getListTransaction(GetListTransactionRequest request) {
 
-		List<Transaction> transactionList = transactionRepositoryFacade //
+		List<TransactionDTO> transactionList = transactionRepositoryFacade //
 				.getTransactionsByBudgetIdAndUserId(request.getBudgetId(), request.getUserId());
 		// Filter
-		List<Transaction> filteredTransaction = TransactionFilter //
+		List<TransactionDTO> filteredTransaction = TransactionFilter //
 				.filterByTransactionType(transactionList, request.getTransactionType());
 
 		filteredTransaction = TransactionFilter //
 				.filterByTransactionName(filteredTransaction, request.getCategoryName());
 
 		// Sort
-		List<Transaction> sortedTransactions = TransactionSorter //
+		List<TransactionDTO> sortedTransactions = TransactionSorter //
 				.sortTransactions(filteredTransaction, request.getSortBy(), request.getSortDirection());
 
 		return new GetListTransactionResponse() //
-				.withTransactions(TransactionDTOConverter //
-						.convertMany(sortedTransactions) //
-				);
+				.withTransactions(sortedTransactions);
 	}
 
 	@Override
 	public GetTransactionResponse getTransaction(GetTransactionRequest request) {
 
-		Transaction transaction = transactionRepositoryFacade //
+		TransactionDTO transactionDTO = transactionRepositoryFacade //
 				.getTransactionByIdAndUserId(request.getId(), request.getUserId());
 
 		return new GetTransactionResponse() //
-				.withTransaction(TransactionDTOConverter.convert(transaction));
+				.withTransaction(transactionDTO);
 	}
 
 	@Override
@@ -138,28 +121,7 @@ public class TransactionService implements TransactionServiceBase {
 	@Override
 	public UpdateTransactionResponse updateTransaction(UpdateTransactionRequest request) {
 
-		//Get transaction
-		Transaction transaction = transactionRepositoryFacade //
-				.getTransactionByIdAndUserId(request.getId(), request.getUserId());
-		if (transaction == null) {
-			String message = String.format("Transaction with id %s does not exist", request.getId());
-			throw new NotFoundException(TRANSACTION_LABEL, message);
-		}
-
-		// Get Category
-		Category category = categoryRepositoryFacade //
-				.getCategory(request.getCategoryId(), request.getUserId());
-		if (category == null) {
-			String message = String.format("Category with id %s does not exist", request.getCategoryId());
-			throw new NotFoundException(TRANSACTION_LABEL, message);
-		}
-
-		Transaction updatedTransaction = TransactionConverter //
-				.convert(transaction, category, request);
-
-		TransactionDTO updatedTransactionDTO = TransactionDTOConverter //
-				.convert(transactionRepositoryFacade.saveTransaction(updatedTransaction) //
-				);
+		TransactionDTO updatedTransactionDTO = transactionRepositoryFacade.updateTransaction(TransactionDTOConverter.convert(request));
 
 		return new UpdateTransactionResponse().withTransaction(updatedTransactionDTO);
 	}

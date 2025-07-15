@@ -2,10 +2,9 @@ package com.app.personalfinancesservice.converters;
 
 import java.time.LocalDateTime;
 
-import com.personalfinance.api.domain.category.Category;
 import com.personalfinance.api.domain.transaction.Transaction;
+import com.personalfinance.api.domain.transaction.dto.TransactionDTO;
 import com.personalfinance.api.domain.transaction.input.CreateTransactionRequest;
-import com.personalfinance.api.domain.transaction.input.UpdateTransactionRequest;
 
 public class TransactionConverter {
 
@@ -29,10 +28,9 @@ public class TransactionConverter {
 	}
 
 	public static Transaction convert(Transaction oldTransaction, //
-			Category category, //
-			UpdateTransactionRequest request) {
+			TransactionDTO request) {
 
-		if(oldTransaction == null || category == null ||  request == null) {
+		if (oldTransaction == null || request == null) {
 			return null;
 		}
 
@@ -41,7 +39,6 @@ public class TransactionConverter {
 				.withAmount(request.getAmount()) //
 				.withTransactionDate(request.getTransactionDate()) //
 				.withCurrencyCode(request.getCurrencyCode()) //
-				.withCategory(category) //
 				.withUpdatedAt(LocalDateTime.now()) //
 				;
 	}

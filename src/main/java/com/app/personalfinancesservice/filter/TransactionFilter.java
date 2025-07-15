@@ -2,12 +2,12 @@ package com.app.personalfinancesservice.filter;
 
 import java.util.List;
 
-import com.personalfinance.api.domain.transaction.Transaction;
 import com.personalfinance.api.domain.transaction.TransactionType;
+import com.personalfinance.api.domain.transaction.dto.TransactionDTO;
 
 public class TransactionFilter {
 
-	public static List<Transaction> filterByTransactionType(List<Transaction> transactions, TransactionType transactionType) {
+	public static List<TransactionDTO> filterByTransactionType(List<TransactionDTO> transactions, TransactionType transactionType) {
 
 		if (transactions == null || transactions.isEmpty() || transactionType == null) {
 			return transactions;
@@ -21,7 +21,7 @@ public class TransactionFilter {
 				.toList();
 	}
 
-	public static List<Transaction> filterByTransactionName(List<Transaction> transactions, String transactionName) {
+	public static List<TransactionDTO> filterByTransactionName(List<TransactionDTO> transactions, String transactionName) {
 
 		if (transactions == null || transactions.isEmpty() || transactionName == null) {
 			return transactions;
