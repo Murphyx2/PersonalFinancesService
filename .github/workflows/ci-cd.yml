@@ -57,7 +57,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: surefire-html-report
-          path: target/reports/*.*
+          path: target/reports/*
       # Step 8: SonarQube Scan
 #      - name: SonarQube Scan
 #        run: mvn sonar:sonar -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.projectKey=PersonalFinance
