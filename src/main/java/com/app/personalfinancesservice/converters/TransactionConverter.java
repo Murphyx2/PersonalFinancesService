@@ -2,16 +2,23 @@ package com.app.personalfinancesservice.converters;
 
 import java.time.LocalDateTime;
 
-import com.app.personalfinancesservice.domain.category.Category;
-import com.app.personalfinancesservice.domain.transaction.Transaction;
-import com.app.personalfinancesservice.domain.transaction.input.CreateTransactionRequest;
-import com.app.personalfinancesservice.domain.transaction.input.UpdateTransactionRequest;
+import com.personalfinance.api.domain.transaction.Transaction;
+import com.personalfinance.api.domain.transaction.dto.TransactionDTO;
+import com.personalfinance.api.domain.transaction.input.CreateTransactionRequest;
 
 public class TransactionConverter {
 
+	private static final String TRANSACTION_LABEL = "TRANSACTION";
+
 	public static Transaction convert(CreateTransactionRequest request) {
 
+		if (request == null) {
+			return null;
+		}
+
 		return new Transaction() //
+				.withBudgetId(UUIDConverter.convert(request.getBudgetId(), "budgetId", TRANSACTION_LABEL)) //
+				.withUserId(UUIDConverter.convert(request.getUserId(), "userId", TRANSACTION_LABEL)) //
 				.withAmount(Math.abs(request.getAmount())) //
 				.withCurrencyCode(request.getCurrencyCode()) //
 				.withDescription(request.getDescription()) //
@@ -21,15 +28,17 @@ public class TransactionConverter {
 	}
 
 	public static Transaction convert(Transaction oldTransaction, //
-			Category category, //
-			UpdateTransactionRequest request) {
+			TransactionDTO request) {
+
+		if (oldTransaction == null || request == null) {
+			return null;
+		}
 
 		return oldTransaction //
 				.withDescription(request.getDescription()) //
 				.withAmount(request.getAmount()) //
 				.withTransactionDate(request.getTransactionDate()) //
 				.withCurrencyCode(request.getCurrencyCode()) //
-				.withCategory(category) //
 				.withUpdatedAt(LocalDateTime.now()) //
 				;
 	}

@@ -27,6 +27,7 @@ public class LoggingFilter extends OncePerRequestFilter {
 	private static final String AUTHORIZATION_HEADER = "Authorization";
 
 	@Override
+	@SuppressWarnings("squid:S2629")
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) //
 			throws ServletException, IOException { //
 
@@ -49,6 +50,11 @@ public class LoggingFilter extends OncePerRequestFilter {
 				request.getRequestURI(), //
 				requestHeaders //
 		));
+
+		if (request.getRequestURI().startsWith("/swagger-ui") || request.getRequestURI().startsWith("/v3/api-docs")) {
+			filterChain.doFilter(request, response);
+			return;
+		}
 
 		filterChain.doFilter(request, response);
 

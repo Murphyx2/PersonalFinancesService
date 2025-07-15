@@ -2,51 +2,70 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main, dev ]
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    permissions:
+      packages: read
+      contents: read
     steps:
       # Step 1:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       # Step 2:
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'corretto'
-
       # Step 3: Cache maven dependencies to improve build speed
       - name: Cache Maven dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-      # Step 4:
+      # Step 4: Build with Maven
       - name: Build with Maven
-        run: mvn clean package -DSkipTests=false
-      # Step 5:
+        run: mvn clean package -DSkipTests=false --settings .github/settings.xml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # Step 5: Run tests
       - name: Run tests
-        run: mvn test
+        run: mvn test --settings .github/settings.xml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # Step 5.1:
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: target/surefire-reports/*.xml
       # Step 6: Generate Surefire HTML report
       - name: Generate surefire report
-        run: mvn surefire-report:report
-      # Step 6: Upload test results for visibility
+        run: mvn surefire-report:report --settings .github/settings.xml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # Step 7
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: surefire-html-report
           path: target/site/surefire-report.html
-      # Step 7: Notify if something fails
+      # Step 8: SonarQube Scan
+#      - name: SonarQube Scan
+#        run: mvn sonar:sonar -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.projectKey=PersonalFinance
+      # Step 9: Notify if something fails
       - name: Report failure
         if: failure()
         run: echo "Woops!, Build or tests failed. Check the logs above."
-      # Step 8: Upload the JAR File
+      # Step 10: Upload the JAR File
       - name: Upload JAR artifact
         uses: actions/upload-artifact@v4
         with:

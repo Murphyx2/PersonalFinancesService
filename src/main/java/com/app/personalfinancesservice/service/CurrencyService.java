@@ -8,10 +8,10 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.app.personalfinancesservice.domain.currency.DefaultCurrencies;
-import com.app.personalfinancesservice.domain.currency.input.GetCurrencyRequest;
-import com.app.personalfinancesservice.domain.currency.output.GetCurrencyResponse;
-import com.app.personalfinancesservice.domain.service.CurrencyServiceBase;
+import com.personalfinance.api.domain.currency.DefaultCurrencies;
+import com.personalfinance.api.domain.currency.input.GetCurrencyRequest;
+import com.personalfinance.api.domain.currency.output.GetCurrencyResponse;
+import com.personalfinance.api.service.CurrencyServiceBase;
 
 @Service
 public class CurrencyService implements CurrencyServiceBase {

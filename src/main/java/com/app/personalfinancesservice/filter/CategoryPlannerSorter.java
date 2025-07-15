@@ -4,29 +4,29 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import com.app.personalfinancesservice.domain.categoryplanner.CategoryPlanner;
-import com.app.personalfinancesservice.domain.filter.SortBy;
-import com.app.personalfinancesservice.domain.filter.SortDirection;
+import com.personalfinance.api.domain.categoryplanner.dto.CategoryPlannerDTO;
+import com.personalfinance.api.filter.SortBy;
+import com.personalfinance.api.filter.SortDirection;
 
 public class CategoryPlannerSorter {
 
-	public static List<CategoryPlanner> sort(final List<CategoryPlanner> categoryPlanners, SortBy sortBy, SortDirection direction) {
+	public static List<CategoryPlannerDTO> sort(final List<CategoryPlannerDTO> categoryPlanners, SortBy sortBy, SortDirection direction) {
 
 		if (categoryPlanners == null || categoryPlanners.isEmpty()) {
 			return categoryPlanners;
 		}
 
-		Comparator<CategoryPlanner> comparator = getComparator(sortBy);
+		Comparator<CategoryPlannerDTO> comparator = getComparator(sortBy);
 		if (SortDirection.DESC.equals(direction)) {
 			comparator = comparator.reversed();
 		}
 
-		List<CategoryPlanner> sortedCategoryPlanners = new ArrayList<>(categoryPlanners);
+		List<CategoryPlannerDTO> sortedCategoryPlanners = new ArrayList<>(categoryPlanners);
 		sortedCategoryPlanners.sort(comparator);
 		return sortedCategoryPlanners;
 	}
 
-	private static Comparator<CategoryPlanner> getComparator(SortBy sortBy) {
+	private static Comparator<CategoryPlannerDTO> getComparator(SortBy sortBy) {
 
 		if (sortBy == null) {
 			sortBy = SortBy.CREATED_AT;
@@ -35,7 +35,7 @@ public class CategoryPlannerSorter {
 		return switch (sortBy) {
 			case SortBy.NAME -> Comparator.comparing(categoryPlanner -> categoryPlanner.getCategory().getName());
 			case SortBy.TRANSACTION_TYPE -> Comparator.comparing(categoryPlanner -> categoryPlanner.getCategory().getTransactionType());
-			default -> Comparator.comparing(CategoryPlanner::getCreatedAt);
+			default -> Comparator.comparing(CategoryPlannerDTO::getCreatedAt);
 
 		};
 	}

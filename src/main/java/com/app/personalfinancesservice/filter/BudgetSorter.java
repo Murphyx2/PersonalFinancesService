@@ -4,40 +4,40 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import com.app.personalfinancesservice.domain.budget.Budget;
-import com.app.personalfinancesservice.domain.filter.SortBy;
-import com.app.personalfinancesservice.domain.filter.SortDirection;
+import com.personalfinance.api.domain.budget.dto.BudgetDTO;
+import com.personalfinance.api.filter.SortBy;
+import com.personalfinance.api.filter.SortDirection;
 
 public class BudgetSorter {
 
-	public static List<Budget> sort(final List<Budget> budgets, SortBy sortBy, SortDirection direction) {
+	public static List<BudgetDTO> sort(final List<BudgetDTO> budgets, SortBy sortBy, SortDirection direction) {
 
 		if (budgets == null || budgets.isEmpty()) {
 			return budgets;
 		}
 
-		Comparator<Budget> comparator = getComparator(sortBy);
+		Comparator<BudgetDTO> comparator = getComparator(sortBy);
 
 		if (SortDirection.DESC.equals(direction)) {
 			comparator = comparator.reversed();
 		}
 
-		List<Budget> sorterBudgets = new ArrayList<>(budgets);
+		List<BudgetDTO> sorterBudgets = new ArrayList<>(budgets);
 		sorterBudgets.sort(comparator);
 		return sorterBudgets;
 	}
 
-	private static Comparator<Budget> getComparator(SortBy sortBy) {
+	private static Comparator<BudgetDTO> getComparator(SortBy sortBy) {
 
-		if(sortBy == null){
+		if (sortBy == null) {
 			sortBy = SortBy.CREATED_AT;
 		}
 
 		return switch (sortBy) {
-			case SortBy.NAME -> Comparator.comparing(Budget::getName);
-			case SortBy.START_AT -> Comparator.comparing(Budget::getStartAt);
-			case SortBy.END_AT -> Comparator.comparing(Budget::getEndAt);
-			default -> Comparator.comparing(Budget::getCreatedAt);
+			case SortBy.NAME -> Comparator.comparing(BudgetDTO::getName);
+			case SortBy.START_AT -> Comparator.comparing(BudgetDTO::getStartAt);
+			case SortBy.END_AT -> Comparator.comparing(BudgetDTO::getEndAt);
+			default -> Comparator.comparing(BudgetDTO::getCreatedAt);
 		};
 	}
 

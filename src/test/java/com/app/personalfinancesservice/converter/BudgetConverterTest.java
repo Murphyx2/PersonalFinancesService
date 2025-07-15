@@ -4,11 +4,11 @@ import java.util.UUID;
 
 import com.app.personalfinancesservice.converters.BudgetConverter;
 import com.app.personalfinancesservice.converters.CategoryConverter;
-import com.app.personalfinancesservice.domain.budget.Budget;
-import com.app.personalfinancesservice.domain.budget.input.CreateBudgetRequest;
-import com.app.personalfinancesservice.domain.category.Category;
-import com.app.personalfinancesservice.domain.category.input.UpdateCategoryRequest;
-import com.app.personalfinancesservice.domain.transaction.TransactionType;
+import com.personalfinance.api.domain.budget.Budget;
+import com.personalfinance.api.domain.budget.input.CreateBudgetRequest;
+import com.personalfinance.api.domain.category.Category;
+import com.personalfinance.api.domain.category.dto.CategoryDTO;
+import com.personalfinance.api.domain.transaction.TransactionType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -42,9 +42,17 @@ class BudgetConverterTest {
 		UUID userId = UUID.randomUUID();
 		UUID id = UUID.randomUUID();
 
-		UpdateCategoryRequest request = new UpdateCategoryRequest().withId(id.toString()).withUserId(userId.toString()).withName("Updated Name").withTransactionType(TransactionType.INCOME);
+		CategoryDTO request = new CategoryDTO() //
+				.withId(id.toString()) //
+				.withUserId(userId.toString()) //
+				.withName("Updated Name") //
+				.withTransactionType(TransactionType.INCOME);
 
-		Category oldCategory = new Category().withId(id).withUserId(userId).withName("Old Name").withTransactionType(TransactionType.EXPENSE);
+		Category oldCategory = new Category() //
+				.withId(id) //
+				.withUserId(userId) //
+				.withName("Old Name") //
+				.withTransactionType(TransactionType.EXPENSE);
 
 		Category updateCategory = CategoryConverter.convert(oldCategory, request);
 

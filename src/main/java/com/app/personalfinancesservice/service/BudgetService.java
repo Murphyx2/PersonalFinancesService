@@ -1,84 +1,79 @@
 package com.app.personalfinancesservice.service;
 
+import java.time.DateTimeException;
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
 import com.app.personalfinancesservice.converters.BudgetConverter;
-import com.app.personalfinancesservice.converters.UUIDConverter;
-import com.app.personalfinancesservice.domain.budget.Budget;
-import com.app.personalfinancesservice.domain.budget.input.CreateBudgetRequest;
-import com.app.personalfinancesservice.domain.budget.input.DeleteBudgetRequest;
-import com.app.personalfinancesservice.domain.budget.input.GetBudgetRequest;
-import com.app.personalfinancesservice.domain.budget.input.GetBudgetsRequest;
-import com.app.personalfinancesservice.domain.budget.input.UpdateBudgetRequest;
-import com.app.personalfinancesservice.domain.budget.output.CreateBudgetResponse;
-import com.app.personalfinancesservice.domain.budget.output.DeleteBudgetResponse;
-import com.app.personalfinancesservice.domain.budget.output.GetBudgetResponse;
-import com.app.personalfinancesservice.domain.budget.output.GetBudgetsResponse;
-import com.app.personalfinancesservice.domain.budget.output.UpdateBudgetResponse;
-import com.app.personalfinancesservice.domain.portfolio.Portfolio;
-import com.app.personalfinancesservice.domain.portfolio.input.GetPortfoliosRequest;
-import com.app.personalfinancesservice.domain.service.BudgetServiceBase;
+import com.app.personalfinancesservice.converters.BudgetDTOConverter;
 import com.app.personalfinancesservice.exceptions.NotFoundException;
 import com.app.personalfinancesservice.filter.BudgetSorter;
-import com.app.personalfinancesservice.repository.BudgetRepository;
+import com.app.personalfinancesservice.utils.DateUtils;
+import com.personalfinance.api.domain.budget.dto.BudgetDTO;
+import com.personalfinance.api.domain.budget.input.CreateBudgetRequest;
+import com.personalfinance.api.domain.budget.input.DeleteBudgetRequest;
+import com.personalfinance.api.domain.budget.input.GetBudgetRequest;
+import com.personalfinance.api.domain.budget.input.GetBudgetsRequest;
+import com.personalfinance.api.domain.budget.input.UpdateBudgetRequest;
+import com.personalfinance.api.domain.budget.output.CreateBudgetResponse;
+import com.personalfinance.api.domain.budget.output.DeleteBudgetResponse;
+import com.personalfinance.api.domain.budget.output.GetBudgetResponse;
+import com.personalfinance.api.domain.budget.output.GetBudgetsResponse;
+import com.personalfinance.api.domain.budget.output.UpdateBudgetResponse;
+import com.personalfinance.api.facade.BudgetRepositoryFacade;
+import com.personalfinance.api.facade.PortfolioRepositoryFacade;
+import com.personalfinance.api.service.BudgetServiceBase;
 
 @Service
 public class BudgetService implements BudgetServiceBase {
 
 	private static final String BUDGET_LABEL = "BUDGET";
 
-	BudgetRepository budgetRepository;
+	private final BudgetRepositoryFacade budgetRepositoryFacade;
+	private final PortfolioRepositoryFacade portfolioRepositoryFacade;
 
-	PortfolioService portfolioService;
-
-	public BudgetService(BudgetRepository budgetRepository, PortfolioService portfolioService) {
-		this.budgetRepository = budgetRepository;
-		this.portfolioService = portfolioService;
-	}
-
-	public boolean budgetExists(UUID budgetId, UUID userId) {
-		return budgetRepository.existsByIdAndUserId(budgetId, userId);
+	public BudgetService(BudgetRepositoryFacade budgetRepositoryFacade, PortfolioRepositoryFacade portfolioRepositoryFacade) {
+		this.budgetRepositoryFacade = budgetRepositoryFacade;
+		this.portfolioRepositoryFacade = portfolioRepositoryFacade;
 	}
 
 	@Override
 	public CreateBudgetResponse createBudget(CreateBudgetRequest request) {
 
-		//Check if portfolio exists
-		GetPortfoliosRequest requestPortfolio = new GetPortfoliosRequest() //
-				.withUserId(request.getUserId()) //
-				.withPortfolioId(request.getPortfolioId());
-		Portfolio portfolio = portfolioService.getPortfolios(requestPortfolio) //
-				.getPortfolios().getFirst();
-
-		if (portfolio == null) {
+		// Check if the portfolio exists
+		if (!portfolioRepositoryFacade.existsPortfolio(request.getPortfolioId(), request.getUserId())) {
 			throw new NotFoundException(BUDGET_LABEL, "portfolio", request.getPortfolioId());
 		}
 
-		// Convert request to budget and save it
-		Budget requestBudget = BudgetConverter.convert(request);
+		// Check if dates are correct
+		if (DateUtils.isStartDateGreaterThanStartDate(request.getEndAt(), request.getStartAt())) {
+			throw new DateTimeException("End date should be greater than start");
+		}
 
-		return new CreateBudgetResponse() //
-				.withBudget(budgetRepository.save(requestBudget));
+		// Convert request to a budget and save it
+		BudgetDTO newBudget = budgetRepositoryFacade //
+				.saveBudget(BudgetConverter.convert(request));
+
+		return new CreateBudgetResponse().withBudget(newBudget);
 	}
 
 	@Override
 	public DeleteBudgetResponse deleteBudget(DeleteBudgetRequest request) {
 
-		GetBudgetsRequest requestBudget = new GetBudgetsRequest().withId(request.getId()) //
-				.withUserId(request.getUserId()) //
-				;
-
-		List<Budget> getResponse = getBudgets(requestBudget).getBudgets();
-		if (getResponse == null || getResponse.isEmpty()) {
-			return new DeleteBudgetResponse().withSuccess(false);
-		}
-
-		budgetRepository.delete(getResponse.getFirst());
+		budgetRepositoryFacade //
+				.deleteBudget(request.getId(), request.getUserId());
 
 		return new DeleteBudgetResponse().withSuccess(true);
+	}
+
+	@Override
+	public GetBudgetResponse getBudget(GetBudgetRequest request) {
+
+		BudgetDTO budget = budgetRepositoryFacade //
+				.getBudgetByIdAndUserId(request.getId(), request.getUserId());
+
+		return new GetBudgetResponse().withBudget(budget);
 	}
 
 	/***
@@ -88,59 +83,28 @@ public class BudgetService implements BudgetServiceBase {
 	@Override
 	public GetBudgetsResponse getBudgets(GetBudgetsRequest request) {
 
-		List<Budget> budgets;
-
-		final UUID userId = UUIDConverter //
-				.convert(request.getUserId(), "userId", BUDGET_LABEL);
-
 		// fetch all budgets from Portfolio
-		if (request.getId() == null) {
-			final UUID portfolioId = UUIDConverter //
-					.convert(request.getPortfolioId(), "portfolioId", BUDGET_LABEL);
-			budgets = budgetRepository.getAllByUserIdAndPortfolioId(userId, portfolioId);
-		} else {
-			final UUID budgetId = UUIDConverter //
-					.convert(request.getId(), "budgetId", BUDGET_LABEL);
-			budgets = budgetRepository.getListByIdAndUserId(budgetId, userId);
-		}
+		List<BudgetDTO> budgets = budgetRepositoryFacade //
+				.getBudgetsByPortfolioIdAndUserId(request.getPortfolioId(), request.getUserId());
 
 		//Filtering results
-		List<Budget> sortedBudgets = BudgetSorter //
+		List<BudgetDTO> sortedBudgets = BudgetSorter //
 				.sort(budgets, request.getSortBy(), request.getSortDirection());
 
 		return new GetBudgetsResponse().withBudgets(sortedBudgets);
 	}
 
 	@Override
-	public GetBudgetResponse getBudget(GetBudgetRequest request) {
-
-		final UUID userId = UUIDConverter //
-				.convert(request.getUserId(), "userId", BUDGET_LABEL);
-
-		final UUID budgetId = UUIDConverter //
-				.convert(request.getId(), "budgetId", BUDGET_LABEL);
-
-		Budget budget = budgetRepository.getByIdAndUserId(budgetId, userId) //
-				.orElseThrow(() -> new NotFoundException(BUDGET_LABEL, "budget", request.getId()));
-
-		return new GetBudgetResponse().withBudget(budget);
-	}
-
-	@Override
 	public UpdateBudgetResponse updateBudget(UpdateBudgetRequest request) {
 
-		GetBudgetsRequest requestBudget = new GetBudgetsRequest() //
-				.withId(request.getId()) //
-				.withUserId(request.getUserId());
-
-		Budget oldBudget = getBudgets(requestBudget).getBudgets().getFirst();
-
-		if (oldBudget == null) {
-			throw new NotFoundException(BUDGET_LABEL, "budget", request.getId());
+		if (request == null) {
+			throw new NullPointerException("Update request cannot be empty");
 		}
 
-		Budget updatedBudget = budgetRepository.save(BudgetConverter.convert(request, oldBudget));
+		// Update the oldBudget and save changes
+		BudgetDTO updatedBudgetDTO = budgetRepositoryFacade //
+				.updateBudget(BudgetDTOConverter.convert(request));
 
-		return new UpdateBudgetResponse().withBudget(updatedBudget);
+		return new UpdateBudgetResponse().withBudget(updatedBudgetDTO);
 	}
 }
