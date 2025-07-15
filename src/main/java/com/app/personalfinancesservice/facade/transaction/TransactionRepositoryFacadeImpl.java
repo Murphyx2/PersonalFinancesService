@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import com.app.personalfinancesservice.converters.TransactionConverter;
@@ -34,7 +37,9 @@ public class TransactionRepositoryFacadeImpl implements TransactionRepositoryFac
 		this.categoryRepository = categoryRepository;
 	}
 
+
 	@Override
+	@CacheEvict(value = "transactions", key = "#transactionDTO.userId + '_' + #transactionDTO.id")
 	public void deleteTransaction(TransactionDTO transactionDTO) {
 
 		UUID userUUID = UUIDConverter //
@@ -49,7 +54,9 @@ public class TransactionRepositoryFacadeImpl implements TransactionRepositoryFac
 		transaction.ifPresent(transactionRepository::delete);
 	}
 
+
 	@Override
+	@Cacheable(value = "transactions", key = "#userId + '_' + #transactionId", unless = "#result == null")
 	public TransactionDTO getTransactionByIdAndUserId(String transactionId, String userId) {
 
 		UUID userUUID = UUIDConverter //
@@ -64,7 +71,9 @@ public class TransactionRepositoryFacadeImpl implements TransactionRepositoryFac
 		);
 	}
 
+
 	@Override
+	@Cacheable(value = "transactionsList", key = "#userId + '_' + #budgetId", unless = "#result.empty")
 	public List<TransactionDTO> getTransactionsByBudgetIdAndUserId(String budgetId, String userId) {
 
 		UUID userIdUUID = UUIDConverter //
@@ -78,7 +87,9 @@ public class TransactionRepositoryFacadeImpl implements TransactionRepositoryFac
 		);
 	}
 
+
 	@Override
+	@CacheEvict(value = "transactionsList", key = "#transaction.userId + '_' + #transaction.budgetId")
 	public TransactionDTO saveTransaction(Transaction transaction) {
 
 		if (transaction == null) {
@@ -101,7 +112,10 @@ public class TransactionRepositoryFacadeImpl implements TransactionRepositoryFac
 		return TransactionDTOConverter.convert(transactionRepository.save(transaction));
 	}
 
+
 	@Override
+	@CacheEvict(value = "transactionsList", key = "#transactionDTO.userId + '_' + #result.budgetId")
+	@CachePut(value = "transactions", key = "#transactionDTO.userId + '_' + #transactionDTO.id", unless = "#result == null")
 	public TransactionDTO updateTransaction(TransactionDTO transactionDTO) {
 
 		UUID userUUID = UUIDConverter //
