@@ -32,9 +32,27 @@
     cd PersonalFinancesService
     ```
 
-2. **Configure the Database**
+2. **Configure the Application and Database**
 
-    Edit `src/main/resources/application.yml` to set up your database.  
+   From `.envTemplate` create a new enviromental variable file `.env` and refactor the parameters.
+    ```
+        # APPLICATION
+        SERVER_PORT=1111
+        DEV_SERVER=1111
+
+        # DB
+        DB_HOST=personal-finance-db
+        POSTGRES_DB=personal_finance_db
+        POSTGRES_USER=postgresUsername
+        POSTGRES_PASSWORD=postgresPassword
+        DB_PORT=1111
+        DB_PORT_EXTERNAL=1111
+
+        # SECURITY
+        SECRET_KEY="Secrets are meant to be hidden"
+     ```
+    
+   or edit `src/main/resources/application.yml` to set up your instance.  
     Example configuration for PostgreSQL:
     ```properties
 
@@ -49,17 +67,17 @@
     
     ```
 
-3. **Build the Project**
+4. **Build the Project**
     ```bash
     mvn clean install
     ```
 
-4. **Run the Application**
+5. **Run the Application**
     ```bash
     mvn spring-boot:run
     ```
 
-The API will be available at [http://localhost:8080](http://localhost:8080) (or the port specified in `application.yml`).
+The API will be available at [http://localhost:8080](http://localhost:8080) (or the port specified in `application.yml` or `.env`).
 
 ---
 
