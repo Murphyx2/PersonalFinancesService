@@ -54,7 +54,8 @@ public class PortfolioController {
 
 	@Operation(summary = "Delete a Portfolio", description = "Delete a portfolio by its id")
 	@DeleteMapping("/{id}")
-	public ResponseEntity<DeletePortfolioResponse> deletePortfolio(@RequestHeader("X-User-id") String userId, @PathVariable String id) {
+	public ResponseEntity<DeletePortfolioResponse> deletePortfolio(@RequestHeader("X-User-id") String userId, //
+			@PathVariable String id) {
 
 		DeletePortfolioRequest request = new DeletePortfolioRequest() //
 				.withId(id) //
