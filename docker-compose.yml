@@ -6,14 +6,17 @@ services:
     env_file:
       - .env
     depends_on:
+      - redis
       - personal-finance-db
     networks:
       - personal_finance_net
       - app-network
+
+  # REDIS
   redis:
     image: redis:7.4
     ports:
-      - "6379:6379"
+      - "${REDIS_PORT}:${REDIS_PORT}"
     networks:
       - personal_finance_net
 

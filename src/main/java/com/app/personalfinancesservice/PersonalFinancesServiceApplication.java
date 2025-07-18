@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import io.github.cdimascio.dotenv.Dotenv;
@@ -16,7 +15,6 @@ import io.github.cdimascio.dotenv.Dotenv;
 @SuppressWarnings("squid:S2629")
 @SpringBootApplication
 @EntityScan(basePackages = "com.personalfinance.api.domain")
-@EnableCaching
 public class PersonalFinancesServiceApplication {
 
 	private static final Logger logger = LoggerFactory.getLogger(PersonalFinancesServiceApplication.class);

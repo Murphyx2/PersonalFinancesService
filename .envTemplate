@@ -1,0 +1,24 @@
+# APPLICATION
+SERVER_PORT=1111
+DEV_SERVER=1111
+
+# DB
+DB_HOST=personal-finance-db
+POSTGRES_DB=personal_finance_db
+POSTGRES_USER=postgresUsername
+POSTGRES_PASSWORD=postgresPassword
+DB_PORT=1111
+DB_PORT_EXTERNAL=1111
+
+# SECURITY
+SECRET_KEY="Secrets are meant to be hidden"
+
+# REDIS
+REDIS_HOST=redis
+REDIS_PORT=1111
+REDIS_USER=none
+REDIS_PASSWORD=none
+APP_CACHE_ENABLED=true
+
+DEV_REDIS_HOST=localhost
+DEV_REDIS_PORT=1111

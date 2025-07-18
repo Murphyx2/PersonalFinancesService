@@ -12,15 +12,19 @@ spring:
       ddl-auto: update
   data:
     redis:
-      host: localhost
-      port: 6379
-      # username: your-username
-      # password: your-password
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      # username: ${REDIS_USER}
+      # password: ${REDIS_PASSWORD}
   cache:
     type: redis
     redis:
       time-to-live: 60000
       cache-null-values: false
+
+app:
+  cache:
+    enabled: ${APP_CACHE_ENABLED}
 
 server:
   port: ${SERVER_PORT:8500}
@@ -66,26 +70,30 @@ spring:
       ddl-auto: update
   data:
     redis:
-      host: localhost
-      port: 6379
-      # username: your-username
-      # password: your-password
+      host: ${DEV_REDIS_HOST}
+      port: ${DEV_REDIS_PORT}
+      # username: ${REDIS_USER}
+      # password: ${REDIS_PASSWORD}
   cache:
     type: redis
     redis:
       time-to-live: 60000
       cache-null-values: false
+app:
+  cache:
+    enabled: true # Disable for dev environment.
+
 server:
     port: ${SERVER_PORT:8400}
 
 eureka:
   client:
-    enabled: false  # Disable Eureka in dev
+    enabled: false  # Disable during standalone development Eureka in dev
 
 springdoc:
   api-docs:
     path: /v3/api-docs
-    enabled: true
+    enabled: false
   swagger-ui:
     path: /swagger-ui/index.html
     enabled: true
